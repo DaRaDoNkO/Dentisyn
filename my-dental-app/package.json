@@ -1,0 +1,25 @@
+{
+  "name": "my-dental-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "jsdom": "^27.4.0",
+    "playwright": "^1.58.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^10.2.0",
+    "@heyputer/puter.js": "^2.2.5",
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.8",
+    "zod": "^4.3.6"
+  }
+}

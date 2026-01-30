@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "dashboard": "Табло",
+    "patients": "Пациенти",
+    "calendar": "Календар"
+  },
+  "dashboard": {
+    "quickStats": "Бърза Статистика",
+    "today": "Днес",
+    "urgent": "Спешни",
+    "completed": "Завършени",
+    "nextPatient": "Следващ Пациент",
+    "reason": "Причина:",
+    "openChart": "Отвори Картон",
+    "patientQueue": "Опашка Пациенти (Активни)"
+  },
+  "table": {
+    "name": "Име",
+    "time": "Час",
+    "status": "Статус",
+    "actions": "Действия",
+    "view": "Преглед",
+    "billing": "Сметка",
+    "checkIn": "Регистрирай",
+    "cancel": "Откажи"
+  },
+  "status": {
+    "completed": "Завършен",
+    "waiting": "Чакащ",
+    "confirmed": "Потвърден"
+  }
+}
