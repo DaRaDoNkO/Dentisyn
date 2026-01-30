@@ -12,7 +12,7 @@
     "nextPatient": "Следващ Пациент",
     "reason": "Причина:",
     "openChart": "Отвори Картон",
-    "patientQueue": "Опашка Пациенти (Активни)"
+    "patientQueue": "График"
   },
   "table": {
     "name": "Име",

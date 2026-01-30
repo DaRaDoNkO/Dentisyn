@@ -2,6 +2,10 @@ import './style.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import i18next from './i18n';
+import { Navbar } from './components/layout/Navbar';
+import { QuickStats } from './components/dashboard/QuickStats';
+import { NextPatient } from './components/dashboard/NextPatient';
+import { PatientQueue } from './components/dashboard/PatientQueue';
 
 type ThemeMode = 'light' | 'dark';
 type LanguageMode = 'en' | 'bg';
@@ -9,6 +13,30 @@ type LanguageMode = 'en' | 'bg';
 const THEME_STORAGE_KEY = 'dentisyn-theme';
 const LANG_STORAGE_KEY = 'dentisyn-language';
 const rootElement = document.documentElement;
+
+// ========== RENDER UI COMPONENTS ==========
+const renderApp = () => {
+	const appElement = document.querySelector<HTMLDivElement>('#app');
+	if (!appElement) return;
+
+	appElement.innerHTML = `
+		${Navbar()}
+		<main class="container py-4">
+			<div class="row g-4 mb-4">
+				<div class="col-lg-4">
+					${QuickStats()}
+				</div>
+				<div class="col-lg-8">
+					${NextPatient()}
+				</div>
+			</div>
+			${PatientQueue()}
+		</main>
+	`;
+};
+
+// Render the app structure first
+renderApp();
 
 // ========== THEME MANAGEMENT ==========
 const applyTheme = (mode: ThemeMode) => {
