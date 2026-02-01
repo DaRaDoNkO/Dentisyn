@@ -1,78 +1,145 @@
-# Dental App Agent Instructions
+# Copilot Instructions for DentiSyn Dental App
 
-You are an expert **Senior Full-Stack Healthcare Engineer** building a secure, accessible, and high-performance Dental Practice Management application.
+You are building a **Dental Practice Management MVP** using TypeScript, Bootstrap 5, and Vite—with LocalStorage persistence and i18n support (English/Bulgarian).
 
-Your goal is to write production-grade **TypeScript** code that prioritizes human readability, modularity, and strict "Agentic Development" workflows.
+## Core Architecture
 
----
+**Component-Driven String Rendering:** Components like `Navbar()` and `QuickStats()` return HTML strings, not DOM elements. Bootstrap your app in [main.ts](src/main.ts) by calling `renderApp()`, then attach event listeners to rendered elements using type-asserted DOM queries.
 
-## 1. Core Technology Stack
-* **Frontend Structure:** Semantic **HTML5**.
-* **Styling:** **Bootstrap 5** (Utility-first approach), CSS3.
-* **Logic:** **TypeScript** (Strict Mode enabled).
-* **Runtime:** Vite (latest).
-* **AI Integration:** **Puter.js** (for Perplexity/LLM integration).
-* **Persistence (Phase 1):** **Browser LocalStorage** (No external database).
-* **Testing:** **Vitest** (Logic), **Playwright** (Visual/E2E).
-* **Validation:** **Zod** (Schema validation).
+**Data Flow:** UI Components → Services (business logic) → Repositories (localStorage abstraction). Type definitions in [src/types/](src/types/); validation schemas in [src/schemas/](src/schemas/).
 
----
+## Build & Development
 
-## 2. Phase 1: MVP Constraints (Strict)
-* **No Backend Database:** Do NOT attempt to set up SQL, MongoDB, or Docker databases yet.
-* **Local Persistence:** Use a "Repository Pattern" to save all data (Patients, Appointments) to `window.localStorage`.
-    * *Example:* `PatientRepository.save(patient)` handles the storage logic. The UI should never touch `localStorage` directly.
-* **State Reset:** Provide a "Reset Demo Data" button in the UI that clears LocalStorage and re-seeds it with **Faker.js** mock data.
+```bash
+npm run dev      # Vite dev server (http://localhost:5173)
+npm run build    # Compile TS + bundle to dist/
+npm run preview  # Test production build locally
+npx vitest       # Run unit tests
+npx playwright test  # Run E2E tests (when playwright tests exist)
+```
 
----
+## Key Patterns & Conventions
 
-## 3. Architecture & Modularity (Human Readability)
-* **Single Responsibility Principle:** Each file must do ONE thing only.
-    * *UI:* Handles display and user events only.
-    * *Services:* Handle business logic and calculations.
-    * *Repositories:* Handle data saving/loading.
-* **File Limits:** If a file exceeds **150 lines**, you must refactor it into smaller modules.
-* **Separation of Concerns:**
-    * NEVER mix complex logic inside HTML components. Move logic to a `src/services/` file and import it.
-    * NEVER write inline CSS. Use Bootstrap classes.
+**DOM Selection & Event Handling:** Always use type assertions when querying and attaching listeners:
+```typescript
+const btn = document.getElementById('theme-toggle') as HTMLButtonElement;
+btn.addEventListener('click', () => {
+  console.info(`[AUDIT] Theme toggled | Time: ${new Date().toISOString()}`);
+  // Update theme logic
+});
+```
 
----
+**i18n (English/Bulgarian):** Use `data-i18n` attributes in HTML; translation keys defined in [src/locales/{en,bg}.json](src/locales/en.json). System auto-detects browser language via i18next-browser-languagedetector.
 
-## 4. Coding Standards & DOM Interaction
-### TypeScript & HTML
-* **HTML First:** Build the UI using standard HTML5 files. Keep them clean.
-* **Type Assertion:** When selecting HTML elements in TypeScript, you must use **Type Assertion** to prevent errors.
-    * *Bad:* `const btn = document.getElementById('save-btn');`
-    * *Good:* `const btn = document.getElementById('save-btn') as HTMLButtonElement;`
-* **No `any` Policy:** You are strictly forbidden from using the `any` type. Define explicit interfaces (e.g., `interface Patient`).
+**Puter.js Integration (AI Research):** Call Puter.js from service functions for external AI queries. Example—check drug interactions service:
+```typescript
+// src/services/drugService.ts
+export async function checkDrugInteractions(drugName: string): Promise<string> {
+  try {
+    const prompt = `Check for drug interactions with ${drugName}. List any serious interactions found.`;
+    const result = await puter.ai.chat(prompt, { 
+      model: 'perplexity/sonar-reasoning-pro' 
+    });
+    console.info(`[AUDIT] DRUG_CHECK | Drug: ${drugName} | Time: ${new Date().toISOString()}`);
+    return result;
+  } catch (error) {
+    console.error(`[ERROR] Drug check failed: ${error}`);
+    throw error;
+  }
+}
+```
+Call this from components via onclick handlers that invoke services.
 
-### Validation (Zod)
-* **Input Safety:** Every HTML input field must be validated against a **Zod schema** before saving.
+**Styling:** Bootstrap 5 utilities only; override global styles in [src/style.css](src/style.css).
 
----
+**Storage Keys:** Prefix with `dentisyn-` (e.g., `dentisyn-theme`, `dentisyn-language`).
 
-## 5. Data Privacy & Compliance
-* **Zero Real PHI:** NEVER use, generate, or request real Patient Health Information.
-* **Mock Data Only:** Use **Faker.js** to generate realistic but fake patient data.
-* **Audit Logging:** Every function that modifies LocalStorage must log to the console:
-    ```typescript
-    console.info(`[AUDIT] Action: UPDATE_PATIENT | Time: ${new Date().toISOString()}`);
-    ```
+**Mock Data:** Faker.js only—no real patient data ever. Log all state mutations to console with ISO timestamps for auditability.
 
----
+## Project Structure
 
-## 6. Integration: Puter.js (AI Research)
-* **Usage:** Use **Puter.js** for features like "Check Drug Interactions."
-* **Pattern:** Call Puter directly from the frontend services.
-* **Model:** Use `puter.ai.chat(prompt, { model: 'perplexity/sonar-reasoning-pro' })` for accuracy.
+- [src/components/dashboard/](src/components/dashboard/) — QuickStats, NextPatient, PatientQueue widgets
+- [src/components/layout/](src/components/layout/) — Navbar
+- [src/services/](src/services/) — Business logic, Puter.js calls (scaffold as needed)
+- [src/repositories/](src/repositories/) — localStorage queries (implement Repository Pattern here)
+- [src/schemas/](src/schemas/) — Zod validation (scaffold Patient, Appointment, etc.)
 
----
+## Testing Strategy
 
-## 7. Project Structure
-Maintain this folder structure strictly to ensure readability:
-* `src/types/` - TypeScript Interfaces only.
-* `src/schemas/` - Zod validation schemas only.
-* `src/services/` - Logic & Puter.js calls (No UI code).
-* `src/repositories/` - LocalStorage interaction code.
-* `src/components/` - HTML/UI logic.
-* `tests/` - Vitest and Playwright specifications.
+**Unit Tests (Vitest):** Verify component HTML output and i18n attributes. After rendering, simulate DOM events and verify state changes:
+```typescript
+import { JSDOM } from 'jsdom';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { Navbar } from '../src/components/layout/Navbar';
+
+describe('Navbar DOM Events', () => {
+  let dom: JSDOM;
+
+  beforeEach(() => {
+    dom = new JSDOM(`<!DOCTYPE html><body id="root"></body>`);
+    (global as any).document = dom.window.document;
+    (global as any).window = dom.window;
+  });
+
+  it('should toggle theme on button click', () => {
+    const root = document.getElementById('root') as HTMLDivElement;
+    root.innerHTML = Navbar();
+    
+    const themeBtn = document.getElementById('theme-toggle') as HTMLButtonElement;
+    expect(themeBtn).toBeTruthy();
+    
+    // Simulate click (actual handler tested in main.ts integration)
+    const clickEvent = new MouseEvent('click', { bubbles: true });
+    themeBtn.dispatchEvent(clickEvent);
+    expect(clickEvent.bubbles).toBe(true);
+  });
+});
+```
+
+**E2E Tests (Playwright):** Test full user workflows. Create [tests/e2e.spec.ts](tests/e2e.spec.ts):
+```typescript
+import { test, expect } from '@playwright/test';
+
+test.describe('Dental App E2E', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('http://localhost:5173');
+  });
+
+  test('should toggle theme and persist to localStorage', async ({ page }) => {
+    // Click theme toggle button
+    const themeBtn = page.locator('#theme-toggle');
+    await expect(themeBtn).toBeVisible();
+    await themeBtn.click();
+    
+    // Verify localStorage was updated
+    const theme = await page.evaluate(() => localStorage.getItem('dentisyn-theme'));
+    expect(theme).toBeTruthy();
+  });
+
+  test('should toggle language and update UI text', async ({ page }) => {
+    const langBtn = page.locator('#lang-toggle');
+    await langBtn.click();
+    
+    // Verify language changed (check for different text content)
+    const navText = await page.locator('nav').textContent();
+    expect(navText).toBeTruthy();
+  });
+
+  test('should display patient queue with all rows', async ({ page }) => {
+    await expect(page.locator('table')).toBeVisible();
+    const rows = page.locator('tbody tr');
+    const count = await rows.count();
+    expect(count).toBeGreaterThan(0);
+  });
+});
+```
+Run: `npx playwright test` (requires dev server running).
+
+## Non-Negotiable Constraints
+
+- **Strict TypeScript:** `strict: true` enabled; forbidden to use `any`. Define explicit interfaces/types.
+- **150-line file limit:** Refactor immediately if exceeded.
+- **Phase 1 = LocalStorage only:** No external databases, APIs, or backends.
+- **Testing:** Write Vitest tests in [tests/](tests/components.test.ts). Verify HTML output correctness and i18n attribute presence (see navbar tests as reference).
+
+See [src/types/patient.ts](src/types/patient.ts) for current type definitions.
