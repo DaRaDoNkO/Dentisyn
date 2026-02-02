@@ -2,6 +2,7 @@ import { patientRepository } from '../../repositories/patientRepository';
 import { appointmentRepository } from '../../repositories/appointmentRepository';
 import type { Patient, Doctor } from '../../types/patient';
 import { validateEGN, validateLNCh, detectIDType } from '../../utils/bgUtils';
+import { loadCalendarSettings } from '../settings/CalendarSettings/index';
 
 let selectedPatient: Patient | null = null;
 
@@ -20,11 +21,83 @@ const COUNTRY_CODES = [
 ];
 
 /**
- * Render the appointment creation modal HTML with smart features
+ * Generate time options for dropdown in 15-minute intervals
+ * @param startHour - Starting hour (0-23)
+ * @param endHour - Ending hour (0-23)
+ * @param interval - Interval in minutes (default: 15)
+ * @param is24h - Use 24-hour format (default: true)
+ * @returns HTML option elements as string
  */
+function generateTimeOptions(
+  startHour: number = 0,
+  endHour: number = 23,
+  interval: number = 15,
+  is24h: boolean = true
+): string {
+  const options: string[] = [];
+  
+  for (let hour = startHour; hour <= endHour; hour++) {
+    for (let minute = 0; minute < 60; minute += interval) {
+      if (hour === endHour && minute > 0) break; // Stop at endHour:00
+      
+      const timeValue = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+      let displayText: string;
+      
+      if (is24h) {
+        displayText = timeValue;
+      } else {
+        // Convert to 12-hour format
+        const period = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+        displayText = `${String(displayHour).padStart(2, '0')}:${String(minute).padStart(2, '0')} ${period}`;
+      }
+      
+      options.push(`<option value="${timeValue}">${displayText}</option>`);
+    }
+  }
+  
+  return options.join('\n');
+}
+
+/**
+ * Filter available doctors based on selected time slot
+ * @param startTime - Start time in HH:MM format
+ * @param endTime - End time in HH:MM format
+ * @returns Array of available doctor objects with id and name
+ */
+function getAvailableDoctors(startTime: string, endTime: string): Array<{id: Doctor, name: string}> {
+  const settings = loadCalendarSettings();
+  const availableDoctors: Array<{id: Doctor, name: string}> = [];
+  
+  settings.doctorSchedules.forEach(schedule => {
+    const isStartValid = startTime >= schedule.startTime;
+    const isEndValid = endTime <= schedule.endTime;
+    
+    if (isStartValid && isEndValid) {
+      availableDoctors.push({
+        id: schedule.doctorId,
+        name: schedule.doctorName
+      });
+    }
+  });
+  
+  return availableDoctors;
+}
+
 export const renderAppointmentModal = (clickedDateISO: string): string => {
   const clickedDate = new Date(clickedDateISO);
   const defaultEndTime = new Date(clickedDate.getTime() + 30 * 60000); // 30 min duration
+  
+  // Load user's time format preference
+  const settings = loadCalendarSettings();
+  const is24h = settings.timeFormat === '24h';
+  
+  // Generate time options (8 AM to 8 PM)
+  const timeOptions = generateTimeOptions(8, 20, 15, is24h);
+  
+  // Get default selected times
+  const startTimeValue = `${String(clickedDate.getHours()).padStart(2, '0')}:${String(clickedDate.getMinutes()).padStart(2, '0')}`;
+  const endTimeValue = `${String(defaultEndTime.getHours()).padStart(2, '0')}:${String(defaultEndTime.getMinutes()).padStart(2, '0')}`;
 
   return `
     <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
@@ -163,17 +236,7 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
                 </div>
               </div>
 
-              <!-- Doctor Selection -->
-              <div class="mb-3">
-                <label for="doctorSelect" class="form-label fw-bold" data-i18n="appointment.assignDoctor">Assign Doctor</label>
-                <select class="form-select" id="doctorSelect" required>
-                  <option value="" disabled selected>Select a doctor...</option>
-                  <option value="dr-ivanov">Dr. Ivanov</option>
-                  <option value="dr-ruseva">Dr. Ruseva</option>
-                </select>
-              </div>
-
-              <!-- Date & Time -->
+              <!-- Date & Time (MOVED UP) -->
               <div class="row">
                 <div class="col-md-6 mb-3">
                   <label for="appointmentDate" class="form-label fw-bold">Date</label>
@@ -187,24 +250,33 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
                 </div>
                 <div class="col-md-3 mb-3">
                   <label for="appointmentStartTime" class="form-label fw-bold">Start Time</label>
-                  <input 
-                    type="time" 
-                    class="form-control" 
-                    id="appointmentStartTime" 
-                    value="${String(clickedDate.getHours()).padStart(2, '0')}:${String(clickedDate.getMinutes()).padStart(2, '0')}"
-                    required
-                  >
+                  <select class="form-select" id="appointmentStartTime" required>
+                    ${timeOptions.split('\n').map(opt => {
+                      const match = opt.match(/value="([^"]+)"/);
+                      const value = match ? match[1] : '';
+                      return opt.replace('<option', `<option${value === startTimeValue ? ' selected' : ''}`);
+                    }).join('\n')}
+                  </select>
                 </div>
                 <div class="col-md-3 mb-3">
                   <label for="appointmentEndTime" class="form-label fw-bold">End Time</label>
-                  <input 
-                    type="time" 
-                    class="form-control" 
-                    id="appointmentEndTime" 
-                    value="${String(defaultEndTime.getHours()).padStart(2, '0')}:${String(defaultEndTime.getMinutes()).padStart(2, '0')}"
-                    required
-                  >
+                  <select class="form-select" id="appointmentEndTime" required>
+                    ${timeOptions.split('\n').map(opt => {
+                      const match = opt.match(/value="([^"]+)"/);
+                      const value = match ? match[1] : '';
+                      return opt.replace('<option', `<option${value === endTimeValue ? ' selected' : ''}`);
+                    }).join('\n')}
+                  </select>
                 </div>
+              </div>
+
+              <!-- Doctor Selection (MOVED AFTER TIME) -->
+              <div class="mb-3">
+                <label for="doctorSelect" class="form-label fw-bold" data-i18n="appointment.assignDoctor">Assign Doctor</label>
+                <select class="form-select" id="doctorSelect" required>
+                  <option value="" disabled selected>Select time first...</option>
+                </select>
+                <small class="text-muted" id="doctorAvailabilityHint">Available doctors will appear based on selected time</small>
               </div>
 
               <!-- Reason/Notes (OPTIONAL) -->
@@ -256,7 +328,57 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
   const newPatientForm = document.getElementById('newPatientForm') as HTMLElement;
   const saveAppointmentBtn = document.getElementById('saveAppointmentBtn') as HTMLButtonElement;
   
+  // Get time and doctor selection elements
+  const startTimeSelect = document.getElementById('appointmentStartTime') as HTMLSelectElement;
+  const endTimeSelect = document.getElementById('appointmentEndTime') as HTMLSelectElement;
+  const doctorSelect = document.getElementById('doctorSelect') as HTMLSelectElement;
+  const doctorHint = document.getElementById('doctorAvailabilityHint') as HTMLElement;
+  
   console.info('[DEBUG] AppointmentModal initialized with smart features');
+
+  // --- UPDATE AVAILABLE DOCTORS BASED ON TIME ---
+  const updateAvailableDoctors = () => {
+    const startTime = startTimeSelect?.value;
+    const endTime = endTimeSelect?.value;
+    
+    if (!startTime || !endTime) {
+      doctorSelect.innerHTML = '<option value="" disabled selected>Select time first...</option>';
+      if (doctorHint) doctorHint.textContent = 'Please select start and end time first';
+      return;
+    }
+    
+    const availableDoctors = getAvailableDoctors(startTime, endTime);
+    
+    if (availableDoctors.length === 0) {
+      doctorSelect.innerHTML = '<option value="" disabled selected>No doctors available at this time</option>';
+      if (doctorHint) {
+        doctorHint.textContent = 'No doctors work during the selected time. Please choose a different time slot.';
+        doctorHint.className = 'text-danger';
+      }
+      console.warn(`[WARN] No doctors available for time slot: ${startTime} - ${endTime}`);
+    } else {
+      doctorSelect.innerHTML = '<option value="" disabled selected>Select a doctor...</option>';
+      availableDoctors.forEach(doctor => {
+        const option = document.createElement('option');
+        option.value = doctor.id;
+        option.textContent = doctor.name;
+        doctorSelect.appendChild(option);
+      });
+      
+      if (doctorHint) {
+        doctorHint.textContent = `${availableDoctors.length} doctor(s) available for this time slot`;
+        doctorHint.className = 'text-success';
+      }
+      console.info(`[DEBUG] Updated doctor list: ${availableDoctors.length} available`);
+    }
+  };
+  
+  // Attach change listeners to time selects
+  startTimeSelect?.addEventListener('change', updateAvailableDoctors);
+  endTimeSelect?.addEventListener('change', updateAvailableDoctors);
+  
+  // Initial update
+  updateAvailableDoctors();
 
   // --- SMART PATIENT SEARCH (TYPEAHEAD) ---
   const handleTypeahead = (e: Event) => {
@@ -556,8 +678,8 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
     // Get form values
     const doctorEl = document.getElementById('doctorSelect') as HTMLSelectElement;
     const dateEl = document.getElementById('appointmentDate') as HTMLInputElement;
-    const startTimeEl = document.getElementById('appointmentStartTime') as HTMLInputElement;
-    const endTimeEl = document.getElementById('appointmentEndTime') as HTMLInputElement;
+    const startTimeEl = document.getElementById('appointmentStartTime') as HTMLSelectElement;
+    const endTimeEl = document.getElementById('appointmentEndTime') as HTMLSelectElement;
     const reasonEl = document.getElementById('appointmentReason') as HTMLTextAreaElement;
     
     if (!doctorEl || !dateEl || !startTimeEl || !endTimeEl || !reasonEl) {
@@ -573,6 +695,27 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
     
     if (!doctor || !date || !startTime || !endTime) {
       alert('Please fill in all required fields (Doctor, Date, Times)');
+      return;
+    }
+
+    // Validate doctor is available at selected time
+    const availableDoctors = getAvailableDoctors(startTime, endTime);
+    const isDoctorAvailable = availableDoctors.some(d => d.id === doctor);
+    
+    if (!isDoctorAvailable) {
+      const settings = loadCalendarSettings();
+      const doctorSchedule = settings.doctorSchedules.find(s => s.doctorId === doctor);
+      const doctorName = doctorSchedule?.doctorName || doctor;
+      const workingHours = doctorSchedule 
+        ? `${doctorSchedule.startTime} - ${doctorSchedule.endTime}`
+        : 'unknown';
+      
+      alert(
+        `Cannot create appointment: ${doctorName} is not available at this time.\n\n` +
+        `Working hours: ${workingHours}\n` +
+        `Selected time: ${startTime} - ${endTime}\n\n` +
+        `Please select a different time or doctor.`
+      );
       return;
     }
 

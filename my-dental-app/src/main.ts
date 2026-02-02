@@ -6,8 +6,8 @@ import { QuickStats } from './components/dashboard/QuickStats';
 import { NextPatient } from './components/dashboard/NextPatient';
 import { PatientQueue } from './components/dashboard/PatientQueue';
 import { renderCalendarHTML } from './components/calendar/CalendarLayout';
-import { initCalendar } from './components/calendar/CalendarLogic';
-import { renderCalendarSettings, initCalendarSettings } from './components/settings/CalendarSettings/index';
+import { initCalendar, refreshCalendarSettings } from './components/calendar/CalendarLogic';
+import { renderCalendarSettings, initCalendarSettings, setRefreshCallback } from './components/settings/CalendarSettings/index';
 
 // Import Bootstrap and make it globally available
 // @ts-ignore - Bootstrap doesn't have type declarations
@@ -170,8 +170,12 @@ const renderApp = (view: View = 'dashboard') => {
     // Specific Module Initialization
     if (view === 'calendar') {
         initCalendar();
+        // Wire up the refresh callback for settings
+        setRefreshCallback(refreshCalendarSettings);
     } else if (view === 'settings') {
         initCalendarSettings();
+        // Wire up the refresh callback for settings
+        setRefreshCallback(refreshCalendarSettings);
     }
 };
 

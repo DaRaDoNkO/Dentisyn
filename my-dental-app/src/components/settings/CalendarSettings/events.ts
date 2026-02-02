@@ -2,6 +2,14 @@ import type { CalendarSettings, DoctorSchedule } from './types';
 import { defaultSettings } from './types';
 import { loadCalendarSettings, saveCalendarSettings } from './storage';
 
+// Import the refresh function to apply settings immediately
+let refreshCalendarSettings: (() => void) | null = null;
+
+// Allow setting the refresh callback from outside
+export const setRefreshCallback = (callback: () => void) => {
+  refreshCalendarSettings = callback;
+};
+
 /**
  * Initialize Calendar Settings page event handlers
  */
@@ -63,6 +71,16 @@ export const initCalendarSettings = () => {
 
     // Save to localStorage
     saveCalendarSettings(settings);
+
+    // Apply settings immediately to calendar if available
+    if (refreshCalendarSettings) {
+      try {
+        refreshCalendarSettings();
+        console.info('[DEBUG] Calendar settings applied immediately');
+      } catch (error) {
+        console.error('[ERROR] Failed to refresh calendar settings:', error);
+      }
+    }
 
     // Show success alert
     if (settingsAlert) {
