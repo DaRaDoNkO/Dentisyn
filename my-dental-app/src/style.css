@@ -86,3 +86,74 @@ a:hover {
   border-right: 0;
   border-left: 0.3em solid;
 }
+
+/* Mobile/Tablet: Show nested dropdown on right side */
+@media (max-width: 991px) {
+  .dropdown-menu-mobile-right {
+    left: 100% !important;
+    right: auto !important;
+    top: 0;
+    margin-left: 0.125rem;
+  }
+  
+  .dropdown-menu .dropdown-menu-mobile-right {
+    left: 100% !important;
+    right: auto !important;
+  }
+}
+
+/* Calendar Settings Modern Layout */
+.calendar-settings-page {
+  color: #1f2937;
+}
+
+.calendar-settings-card-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.25rem;
+}
+
+.calendar-settings-badge {
+  font-weight: 600;
+  padding: 0.5rem 0.85rem;
+  color: #475569;
+}
+
+.calendar-settings-select {
+  max-width: 320px;
+}
+
+.calendar-settings-schedule {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: 0 0.5rem 1.2rem rgba(15, 23, 42, 0.06);
+}
+
+.calendar-settings-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+}
+
+.calendar-settings-actions .btn {
+  min-width: 120px;
+}
+
+@media (max-width: 576px) {
+  .calendar-settings-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .calendar-settings-select {
+    max-width: 100%;
+  }
+
+  .calendar-settings-icon {
+    display: none;
+  }
+}

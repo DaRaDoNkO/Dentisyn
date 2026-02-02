@@ -28,7 +28,7 @@ export interface LNChValidationResult {
  * - Weights: [2, 4, 8, 5, 10, 9, 7, 3, 6]
  * - Checksum = (sum of digit[i] * weight[i]) mod 11
  * - If checksum == 10, it becomes 0
- * - 9th digit (index 8) determines sex: even = female, odd = male
+ * - 9th digit (index 8) determines sex: even = male, odd = female
  * 
  * @param egn - The EGN string to validate
  * @returns Validation result with extracted information
@@ -117,9 +117,9 @@ export const validateEGN = (egn: string): EGNValidationResult => {
   }
 
   // Extract sex from 9th digit (index 8)
-  // Even = female, Odd = male
+  // Even = male, Odd = female
   const sexDigit = digits[8];
-  const sex: 'm' | 'f' = sexDigit % 2 === 0 ? 'f' : 'm';
+  const sex: 'm' | 'f' = sexDigit % 2 === 0 ? 'm' : 'f';
 
   return {
     valid: true,

@@ -3,23 +3,23 @@ import { validateEGN, validateLNCh, detectIDType } from '../src/utils/bgUtils';
 
 describe('Bulgarian ID Validation', () => {
   describe('EGN Validation', () => {
-    it('should validate a correct EGN for male born in 1985', () => {
-      // EGN: 8505155559 (15 May 1985, Male - checksum 9)
+    it('should validate a correct EGN for female born in 1985', () => {
+      // EGN: 8505155559 (15 May 1985, Female - checksum 9)
       const result = validateEGN('8505155559');
       expect(result.valid).toBe(true);
-      expect(result.sex).toBe('m');
+      expect(result.sex).toBe('f');
       expect(result.dob?.getFullYear()).toBe(1985);
       expect(result.dob?.getMonth()).toBe(4); // May (0-indexed)
       expect(result.dob?.getDate()).toBe(15);
     });
 
-    it('should validate a correct EGN for female born in 2000', () => {
-      // EGN for someone born 20 March 2000, Female
+    it('should validate a correct EGN for male born in 2000', () => {
+      // EGN for someone born 20 March 2000, Male
       // Month 03 + 40 = 43 for year 2000+
       // Calculated checksum: 0
       const result = validateEGN('0043204440');
       expect(result.valid).toBe(true);
-      expect(result.sex).toBe('f');
+      expect(result.sex).toBe('m');
       expect(result.dob?.getFullYear()).toBe(2000);
       expect(result.dob?.getMonth()).toBe(2); // March (0-indexed)
       expect(result.dob?.getDate()).toBe(20);
@@ -156,16 +156,16 @@ describe('Bulgarian ID Validation', () => {
   });
 
   describe('EGN Sex Extraction', () => {
-    it('should extract male sex (odd 9th digit)', () => {
+    it('should extract female sex (odd 9th digit)', () => {
       const result = validateEGN('8505155559'); // 9th digit = 5 (odd), checksum = 9
       expect(result.valid).toBe(true);
-      expect(result.sex).toBe('m');
+      expect(result.sex).toBe('f');
     });
 
-    it('should extract female sex (even 9th digit)', () => {
+    it('should extract male sex (even 9th digit)', () => {
       const result = validateEGN('8505154444'); // 9th digit = 4 (even), checksum = 4
       expect(result.valid).toBe(true);
-      expect(result.sex).toBe('f');
+      expect(result.sex).toBe('m');
     });
   });
 });

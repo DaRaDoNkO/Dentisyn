@@ -22,7 +22,7 @@ Located at: `src/utils/bgUtils.ts`
   - Weights: `[2, 4, 8, 5, 10, 9, 7, 3, 6]`
   - Checksum = (sum of digit[i] × weight[i]) mod 11
   - If checksum == 10, use 0
-  - 9th digit (index 8) determines sex: even = female, odd = male
+  - 9th digit (index 8) determines sex: even = male, odd = female
 
 - **Returns:**
   ```typescript

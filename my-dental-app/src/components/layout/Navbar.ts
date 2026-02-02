@@ -30,25 +30,6 @@ export function Navbar(): string {
             </li>
           </ul>
           <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
-            <li class="nav-item me-lg-2 mb-2 mb-lg-0">
-              <button
-                id="lang-toggle"
-                type="button"
-                class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
-              >
-                <span>EN</span>
-              </button>
-            </li>
-            <li class="nav-item me-lg-2 mb-2 mb-lg-0">
-              <button
-                id="theme-toggle"
-                type="button"
-                class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
-              >
-                <span aria-hidden="true">🌙</span>
-                <span>Mode</span>
-              </button>
-            </li>
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle d-flex align-items-center gap-2"
@@ -66,11 +47,22 @@ export function Navbar(): string {
                   <a class="dropdown-item dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-gear me-2"></i>Settings
                   </a>
-                  <ul class="dropdown-menu">
+                  <ul class="dropdown-menu dropdown-menu-mobile-right">
                     <li><a class="dropdown-item" href="#" id="navCalendarSettings">
                       <i class="bi bi-calendar3 me-2"></i>Calendar
                     </a></li>
                   </ul>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="#" id="lang-toggle">
+                    <i class="bi bi-translate me-2"></i>Language
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#" id="theme-toggle">
+                    <i class="bi bi-moon me-2"></i>Dark Mode
+                  </a>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li><a class="dropdown-item" href="#">Logout</a></li>
