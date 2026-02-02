@@ -7,7 +7,7 @@ import { NextPatient } from './components/dashboard/NextPatient';
 import { PatientQueue } from './components/dashboard/PatientQueue';
 import { renderCalendarHTML } from './components/calendar/CalendarLayout';
 import { initCalendar } from './components/calendar/CalendarLogic';
-import { renderCalendarSettings, initCalendarSettings } from './components/settings/CalendarSettings';
+import { renderCalendarSettings, initCalendarSettings } from './components/settings/CalendarSettings/index';
 
 // Import Bootstrap and make it globally available
 // @ts-ignore - Bootstrap doesn't have type declarations

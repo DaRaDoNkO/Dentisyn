@@ -29,11 +29,20 @@ btn.addEventListener('click', () => {
 });
 ```
 
+**File Organization:** Keep files under 150 lines. For components with multiple concerns (render + events + storage), split into modular folders with:
+- `types.ts` — Interfaces and type definitions
+- `storage.ts` — localStorage operations
+- `render.ts` — HTML string generation
+- `events.ts` — Event handlers and initialization
+- `index.ts` — Barrel exports
+
+See [src/components/settings/CalendarSettings/](src/components/settings/CalendarSettings/) as reference.
+
 **i18n (English/Bulgarian):** Use `data-i18n` attributes in HTML; translation keys defined in [src/locales/{en,bg}.json](src/locales/en.json). System auto-detects browser language via i18next-browser-languagedetector.
 
-**Puter.js Integration (AI Research):** Call Puter.js from service functions for external AI queries. Example—check drug interactions service:
+**Puter.js Integration (AI Research):** When implementing AI features, create service modules (e.g., src/services/drugService.ts) that call Puter.js for external AI queries. Example:
 ```typescript
-// src/services/drugService.ts
+// Future: src/services/drugService.ts
 export async function checkDrugInteractions(drugName: string): Promise<string> {
   try {
     const prompt = `Check for drug interactions with ${drugName}. List any serious interactions found.`;
@@ -48,7 +57,7 @@ export async function checkDrugInteractions(drugName: string): Promise<string> {
   }
 }
 ```
-Call this from components via onclick handlers that invoke services.
+Call services from components via onclick handlers.
 
 **Styling:** Bootstrap 5 utilities only; override global styles in [src/style.css](src/style.css).
 
@@ -60,9 +69,12 @@ Call this from components via onclick handlers that invoke services.
 
 - [src/components/dashboard/](src/components/dashboard/) — QuickStats, NextPatient, PatientQueue widgets
 - [src/components/layout/](src/components/layout/) — Navbar
-- [src/services/](src/services/) — Business logic, Puter.js calls (scaffold as needed)
-- [src/repositories/](src/repositories/) — localStorage queries (implement Repository Pattern here)
-- [src/schemas/](src/schemas/) — Zod validation (scaffold Patient, Appointment, etc.)
+- [src/components/calendar/](src/components/calendar/) — CalendarLayout (render), CalendarLogic (events)
+- [src/components/appointment/](src/components/appointment/) — AppointmentModal (patient search, scheduling)
+- [src/components/settings/CalendarSettings/](src/components/settings/CalendarSettings/) — types, storage, render, events (modular structure)
+- [src/repositories/](src/repositories/) — localStorage queries using Repository Pattern (patientRepository, appointmentRepository)
+- [src/utils/](src/utils/) — Utility functions (bgUtils for EGN/LNCh validation)
+- [src/types/](src/types/) — TypeScript type definitions (patient.ts)
 
 ## Testing Strategy
 

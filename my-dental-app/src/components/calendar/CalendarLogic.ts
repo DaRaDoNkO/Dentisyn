@@ -8,7 +8,7 @@ import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { renderAppointmentModal, initAppointmentModal } from '../appointment/AppointmentModal';
 import { appointmentRepository } from '../../repositories/appointmentRepository';
-import { loadCalendarSettings } from '../settings/CalendarSettings';
+import { loadCalendarSettings } from '../settings/CalendarSettings/index';
 
 // Store calendar instance globally for refreshing
 let calendarInstance: Calendar | null = null;
