@@ -1,11 +1,26 @@
 import { patientRepository } from '../../repositories/patientRepository';
 import { appointmentRepository } from '../../repositories/appointmentRepository';
 import type { Patient, Doctor } from '../../types/patient';
+import { validateEGN, validateLNCh, detectIDType } from '../../utils/bgUtils';
 
 let selectedPatient: Patient | null = null;
 
+// Country codes for phone input
+const COUNTRY_CODES = [
+  { code: '+359', country: 'Bulgaria' },
+  { code: '+1', country: 'USA/Canada' },
+  { code: '+44', country: 'UK' },
+  { code: '+49', country: 'Germany' },
+  { code: '+33', country: 'France' },
+  { code: '+39', country: 'Italy' },
+  { code: '+34', country: 'Spain' },
+  { code: '+30', country: 'Greece' },
+  { code: '+40', country: 'Romania' },
+  { code: '+90', country: 'Turkey' },
+];
+
 /**
- * Render the appointment creation modal HTML
+ * Render the appointment creation modal HTML with smart features
  */
 export const renderAppointmentModal = (clickedDateISO: string): string => {
   const clickedDate = new Date(clickedDateISO);
@@ -21,50 +36,138 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
           </div>
           <div class="modal-body">
             <form id="appointmentForm">
-              <!-- Patient Search/Selection -->
+              <!-- Smart Patient Search (Typeahead) -->
               <div class="mb-3">
-                <label for="patientSearch" class="form-label" data-i18n="appointment.patientSearch">Search Patient</label>
-                <div class="input-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="patientSearch"
-                    placeholder="Enter name or phone..."
-                    autocomplete="off"
-                  >
-                  <button class="btn btn-outline-secondary" type="button" id="createNewPatientBtn" data-i18n="appointment.newPatient">New Patient</button>
-                </div>
-                <small class="text-muted d-block mt-2" data-i18n="appointment.patientSearchHint">Type to search existing patients or click "New Patient"</small>
+                <label for="patientNameSearch" class="form-label fw-bold" data-i18n="appointment.patientName">
+                  Patient Name
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="patientNameSearch"
+                  placeholder="Type to search or create new patient..."
+                  autocomplete="off"
+                >
+                <small class="text-muted d-block mt-1" data-i18n="appointment.typeaheadHint">
+                  Start typing to search existing patients
+                </small>
                 
-                <!-- Patient Search Results -->
-                <div id="patientSearchResults" class="list-group mt-2" style="display: none;"></div>
+                <!-- Typeahead Dropdown -->
+                <div id="patientTypeaheadDropdown" class="dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;">
+                  <!-- Results populated dynamically -->
+                </div>
               </div>
 
               <!-- Selected Patient Display -->
-              <div id="selectedPatientInfo" class="alert alert-info" style="display: none;">
-                <strong id="selectedPatientName"></strong><br>
-                <small id="selectedPatientPhone"></small>
+              <div id="selectedPatientInfo" class="alert alert-info d-flex justify-content-between align-items-center" style="display: none;">
+                <div>
+                  <strong id="selectedPatientName"></strong><br>
+                  <small id="selectedPatientDetails" class="text-muted"></small>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="changePatientBtn">
+                  <i class="bi bi-pencil"></i> Change
+                </button>
               </div>
 
-              <!-- Patient Details (for new patient) -->
+              <!-- New/Edit Patient Form (hidden initially) -->
               <div id="newPatientForm" style="display: none;">
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label for="newPatientName" class="form-label" data-i18n="appointment.fullName">Full Name</label>
-                    <input type="text" class="form-control" id="newPatientName">
+                <div class="border-top pt-3 mb-3">
+                  <h6 class="text-primary mb-3">
+                    <i class="bi bi-person-plus me-2"></i>
+                    <span id="patientFormTitle" data-i18n="appointment.newPatientDetails">New Patient Details</span>
+                  </h6>
+                  
+                  <div class="row">
+                    <!-- First Name -->
+                    <div class="col-md-6 mb-3">
+                      <label for="patientFirstName" class="form-label">First Name</label>
+                      <input type="text" class="form-control" id="patientFirstName" required>
+                    </div>
+                    <!-- Last Name -->
+                    <div class="col-md-6 mb-3">
+                      <label for="patientLastName" class="form-label">Last Name</label>
+                      <input type="text" class="form-control" id="patientLastName" required>
+                    </div>
                   </div>
-                  <div class="col-md-6 mb-3">
-                    <label for="newPatientPhone" class="form-label" data-i18n="appointment.phoneNumber">Phone Number</label>
-                    <input type="tel" class="form-control" id="newPatientPhone">
+                  
+                  <!-- Smart Phone Input (Split: Country Code + Number) -->
+                  <div class="mb-3">
+                    <label class="form-label">Phone Number</label>
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="patientCountryCode"
+                        list="countryCodeList"
+                        placeholder="+359"
+                        value="+359"
+                        style="max-width: 100px;"
+                      >
+                      <input
+                        type="tel"
+                        class="form-control"
+                        id="patientPhoneNumber"
+                        placeholder="888123456"
+                        required
+                      >
+                    </div>
+                    <datalist id="countryCodeList">
+                      ${COUNTRY_CODES.map(
+                        (c) => `<option value="${c.code}">${c.country}</option>`
+                      ).join('')}
+                    </datalist>
+                    <small class="text-muted">Numbers only (no spaces or dashes)</small>
+                  </div>
+                  
+                  <!-- ID Type and Number -->
+                  <div class="row">
+                    <div class="col-md-4 mb-3">
+                      <label for="patientIDType" class="form-label">ID Type</label>
+                      <select class="form-select" id="patientIDType">
+                        <option value="egn" selected>BG (EGN)</option>
+                        <option value="lnch">LNCh (Resident)</option>
+                        <option value="foreign">Foreign</option>
+                      </select>
+                      <small class="text-muted">Auto-detects</small>
+                    </div>
+                    <div class="col-md-8 mb-3">
+                      <label for="patientIDNumber" class="form-label">ID Number</label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="patientIDNumber" 
+                        placeholder="Enter EGN, LNCh, or Passport"
+                        maxlength="20"
+                      >
+                      <small id="idValidationFeedback" class="text-muted"></small>
+                    </div>
+                  </div>
+                  
+                  <!-- Date of Birth and Sex (auto-filled for EGN) -->
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="patientDOB" class="form-label">Date of Birth</label>
+                      <input type="date" class="form-control" id="patientDOB">
+                      <small class="text-muted">Auto-filled for EGN</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="patientSex" class="form-label">Sex</label>
+                      <select class="form-select" id="patientSex">
+                        <option value="">Select...</option>
+                        <option value="m">Male</option>
+                        <option value="f">Female</option>
+                      </select>
+                      <small class="text-muted">Auto-filled for EGN</small>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <!-- Doctor Selection -->
               <div class="mb-3">
-                <label for="doctorSelect" class="form-label" data-i18n="appointment.assignDoctor">Assign Doctor</label>
+                <label for="doctorSelect" class="form-label fw-bold" data-i18n="appointment.assignDoctor">Assign Doctor</label>
                 <select class="form-select" id="doctorSelect" required>
-                  <option value="" disabled selected data-i18n="appointment.selectDoctor">Select a doctor...</option>
+                  <option value="" disabled selected>Select a doctor...</option>
                   <option value="dr-ivanov">Dr. Ivanov</option>
                   <option value="dr-ruseva">Dr. Ruseva</option>
                 </select>
@@ -73,7 +176,7 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
               <!-- Date & Time -->
               <div class="row">
                 <div class="col-md-6 mb-3">
-                  <label for="appointmentDate" class="form-label" data-i18n="appointment.date">Date</label>
+                  <label for="appointmentDate" class="form-label fw-bold">Date</label>
                   <input 
                     type="date" 
                     class="form-control" 
@@ -83,7 +186,7 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
                   >
                 </div>
                 <div class="col-md-3 mb-3">
-                  <label for="appointmentStartTime" class="form-label" data-i18n="appointment.startTime">Start Time</label>
+                  <label for="appointmentStartTime" class="form-label fw-bold">Start Time</label>
                   <input 
                     type="time" 
                     class="form-control" 
@@ -93,7 +196,7 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
                   >
                 </div>
                 <div class="col-md-3 mb-3">
-                  <label for="appointmentEndTime" class="form-label" data-i18n="appointment.endTime">End Time</label>
+                  <label for="appointmentEndTime" class="form-label fw-bold">End Time</label>
                   <input 
                     type="time" 
                     class="form-control" 
@@ -104,22 +207,29 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
                 </div>
               </div>
 
-              <!-- Reason/Notes -->
+              <!-- Reason/Notes (OPTIONAL) -->
               <div class="mb-3">
-                <label for="appointmentReason" class="form-label" data-i18n="appointment.reasonNotes">Reason / Notes</label>
+                <label for="appointmentReason" class="form-label">
+                  Reason / Notes 
+                  <span class="badge bg-secondary ms-2">Optional</span>
+                </label>
                 <textarea 
                   class="form-control" 
                   id="appointmentReason" 
                   rows="3" 
                   placeholder="e.g., Regular checkup, Cleaning, Root canal..."
-                  required
                 ></textarea>
+                <small class="text-muted">Leave blank if not specified</small>
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="appointment.cancel">Cancel</button>
-            <button type="button" class="btn btn-primary" id="saveAppointmentBtn" data-i18n="appointment.save">Save Appointment</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-1"></i> Cancel
+            </button>
+            <button type="button" class="btn btn-primary" id="saveAppointmentBtn">
+              <i class="bi bi-check-circle me-1"></i> Save Appointment
+            </button>
           </div>
         </div>
       </div>
@@ -128,54 +238,48 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
 };
 
 /**
- * Initialize appointment modal event handlers
+ * Initialize appointment modal event handlers with smart features
  */
 export const initAppointmentModal = (onSaveCallback?: () => void) => {
   const modal = document.getElementById('appointmentModal') as HTMLElement | null;
   if (!modal) {
-    console.error('[ERROR] appointmentModal element not found in initAppointmentModal');
+    console.error('[ERROR] appointmentModal element not found');
     return;
   }
 
-  const patientSearch = document.getElementById('patientSearch') as HTMLInputElement;
-  const patientSearchResults = document.getElementById('patientSearchResults') as HTMLElement;
+  const patientNameSearch = document.getElementById('patientNameSearch') as HTMLInputElement;
+  const typeaheadDropdown = document.getElementById('patientTypeaheadDropdown') as HTMLElement;
   const selectedPatientInfo = document.getElementById('selectedPatientInfo') as HTMLElement;
   const selectedPatientName = document.getElementById('selectedPatientName') as HTMLElement;
-  const selectedPatientPhone = document.getElementById('selectedPatientPhone') as HTMLElement;
+  const selectedPatientDetails = document.getElementById('selectedPatientDetails') as HTMLElement;
+  const changePatientBtn = document.getElementById('changePatientBtn') as HTMLButtonElement;
   const newPatientForm = document.getElementById('newPatientForm') as HTMLElement;
-  const newPatientBtn = document.getElementById('createNewPatientBtn') as HTMLButtonElement;
   const saveAppointmentBtn = document.getElementById('saveAppointmentBtn') as HTMLButtonElement;
   
-  console.info('[DEBUG] AppointmentModal initialized, elements found:', {
-    modal: !!modal,
-    patientSearch: !!patientSearch,
-    newPatientBtn: !!newPatientBtn,
-    saveAppointmentBtn: !!saveAppointmentBtn
-  });
+  console.info('[DEBUG] AppointmentModal initialized with smart features');
 
-  // Patient Search Handler
-  const handleSearchInput = (e: Event) => {
+  // --- SMART PATIENT SEARCH (TYPEAHEAD) ---
+  const handleTypeahead = (e: Event) => {
     const query = (e.target as HTMLInputElement).value.trim();
 
     if (query.length < 2) {
-      patientSearchResults.style.display = 'none';
+      typeaheadDropdown.style.display = 'none';
       return;
     }
 
     const results = patientRepository.search(query);
+    
+    let dropdownHTML = '';
 
-    if (results.length === 0) {
-      patientSearchResults.innerHTML = `<div class="list-group-item text-muted">No patients found</div>`;
-    } else {
-      patientSearchResults.innerHTML = results
+    // Show existing patients
+    if (results.length > 0) {
+      dropdownHTML += results
         .map(
           (patient) => `
         <button 
           type="button" 
-          class="list-group-item list-group-item-action patient-result" 
+          class="dropdown-item patient-result-item" 
           data-patient-id="${patient.id}"
-          data-patient-name="${patient.name}"
-          data-patient-phone="${patient.phone}"
         >
           <strong>${patient.name}</strong><br>
           <small class="text-muted">${patient.phone}</small>
@@ -183,93 +287,257 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
       `
         )
         .join('');
+    }
+    
+    // Always show "Create new" option
+    dropdownHTML += `
+      <button 
+        type="button" 
+        class="dropdown-item text-primary border-top create-new-patient-item"
+        data-create-name="${query}"
+      >
+        <i class="bi bi-plus-circle me-2"></i>
+        <strong>➕ Create new: "${query}"</strong>
+      </button>
+    `;
 
-      // Attach click handlers to results
-      const resultButtons = patientSearchResults.querySelectorAll('.patient-result');
-      resultButtons.forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-          const button = e.currentTarget as HTMLElement;
-          const patientId = button.dataset.patientId;
-          const patientName = button.dataset.patientName || '';
-          const patientPhone = button.dataset.patientPhone || '';
+    typeaheadDropdown.innerHTML = dropdownHTML;
+    typeaheadDropdown.style.display = 'block';
 
-          selectedPatient = patientRepository.getById(patientId!) || null;
+    // Attach click handlers
+    const patientResults = typeaheadDropdown.querySelectorAll('.patient-result-item');
+    patientResults.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const button = e.currentTarget as HTMLElement;
+        const patientId = button.dataset.patientId;
+        selectExistingPatient(patientId!);
+      });
+    });
 
-          if (selectedPatient) {
-            patientSearch.value = '';
-            patientSearchResults.style.display = 'none';
-            selectedPatientInfo.style.display = 'block';
-            newPatientForm.style.display = 'none';
-
-            selectedPatientName.textContent = patientName;
-            selectedPatientPhone.textContent = `Phone: ${patientPhone}`;
-          }
-        });
+    const createNewBtn = typeaheadDropdown.querySelector('.create-new-patient-item');
+    if (createNewBtn) {
+      createNewBtn.addEventListener('click', (e) => {
+        const button = e.currentTarget as HTMLElement;
+        const nameToCreate = button.dataset.createName || '';
+        switchToEditMode(nameToCreate);
       });
     }
-
-    patientSearchResults.style.display = 'block';
   };
 
-  if (patientSearch) {
-    patientSearch.addEventListener('input', handleSearchInput);
+  if (patientNameSearch) {
+    patientNameSearch.addEventListener('input', handleTypeahead);
+    
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!patientNameSearch.contains(e.target as Node) && !typeaheadDropdown.contains(e.target as Node)) {
+        typeaheadDropdown.style.display = 'none';
+      }
+    });
   }
 
-  // New Patient Button Handler
-  const handleNewPatient = () => {
-    if (patientSearch) patientSearch.value = '';
-    if (patientSearchResults) patientSearchResults.style.display = 'none';
-    if (selectedPatientInfo) selectedPatientInfo.style.display = 'none';
-    if (newPatientForm) newPatientForm.style.display = 'block';
+  // Select existing patient
+  const selectExistingPatient = (patientId: string) => {
+    selectedPatient = patientRepository.getById(patientId);
+    
+    if (selectedPatient) {
+      patientNameSearch.value = '';
+      typeaheadDropdown.style.display = 'none';
+      selectedPatientInfo.style.display = 'flex';
+      newPatientForm.style.display = 'none';
+
+      selectedPatientName.textContent = selectedPatient.name;
+      selectedPatientDetails.textContent = `Phone: ${selectedPatient.phone}`;
+      
+      console.info('[DEBUG] Selected existing patient:', selectedPatient.id);
+    }
+  };
+
+  // Switch to edit mode (create new patient)
+  const switchToEditMode = (nameToSplit: string) => {
+    patientNameSearch.value = '';
+    typeaheadDropdown.style.display = 'none';
+    selectedPatientInfo.style.display = 'none';
+    newPatientForm.style.display = 'block';
     selectedPatient = null;
+
+    // Split name by space and auto-fill First/Last Name
+    const firstNameInput = document.getElementById('patientFirstName') as HTMLInputElement;
+    const lastNameInput = document.getElementById('patientLastName') as HTMLInputElement;
+    
+    if (firstNameInput && lastNameInput && nameToSplit) {
+      const parts = nameToSplit.trim().split(/\s+/);
+      firstNameInput.value = parts[0] || '';
+      lastNameInput.value = parts.slice(1).join(' ') || '';
+      console.info('[DEBUG] Auto-filled name from query:', { first: parts[0], last: parts.slice(1).join(' ') });
+    }
   };
-  
-  if (newPatientBtn) {
-    newPatientBtn.addEventListener('click', handleNewPatient);
+
+  // Change patient button
+  if (changePatientBtn) {
+    changePatientBtn.addEventListener('click', () => {
+      selectedPatientInfo.style.display = 'none';
+      selectedPatient = null;
+      patientNameSearch.value = '';
+      patientNameSearch.focus();
+      console.info('[DEBUG] User clicked Change Patient');
+    });
   }
 
-  // Save Appointment Handler
-  const handleSaveAppointment = () => {
-    console.info('[DEBUG] Save appointment button clicked');
-    
-    const form = document.getElementById('appointmentForm') as HTMLFormElement;
-    
-    if (!form) {
-      console.error('[ERROR] appointmentForm not found');
-      alert('Form not found. Please refresh the page and try again.');
+  // --- SMART PHONE INPUT (VALIDATION) ---
+  const phoneNumberInput = document.getElementById('patientPhoneNumber') as HTMLInputElement;
+  
+  if (phoneNumberInput) {
+    phoneNumberInput.addEventListener('input', (e) => {
+      const input = e.target as HTMLInputElement;
+      // Replace non-digits with empty string
+      input.value = input.value.replace(/\D/g, '');
+    });
+  }
+
+  // --- ID AUTO-DETECTION LOGIC (FROM BULGARIAN ID UTILS) ---
+  const patientIDNumber = document.getElementById('patientIDNumber') as HTMLInputElement;
+  const patientIDType = document.getElementById('patientIDType') as HTMLSelectElement;
+  const patientDOB = document.getElementById('patientDOB') as HTMLInputElement;
+  const patientSex = document.getElementById('patientSex') as HTMLSelectElement;
+  const idValidationFeedback = document.getElementById('idValidationFeedback') as HTMLElement;
+
+  const handleIDAutoDetect = () => {
+    if (!patientIDNumber || !patientIDType || !patientDOB || !patientSex || !idValidationFeedback) {
       return;
     }
 
-    // Get or create patient
+    const idValue = patientIDNumber.value.trim();
+    
+    if (!idValue) {
+      idValidationFeedback.textContent = '';
+      idValidationFeedback.className = 'text-muted';
+      return;
+    }
+
+    const previousType = patientIDType.value;
+    const detectedType = detectIDType(idValue);
+
+    console.info('[DEBUG] ID Auto-Detect:', { idValue, previousType, detectedType });
+
+    // Case A: Valid EGN
+    if (detectedType === 'egn') {
+      const egnResult = validateEGN(idValue);
+      
+      if (egnResult.valid && egnResult.dob && egnResult.sex) {
+        patientIDType.value = 'egn';
+        
+        const year = egnResult.dob.getFullYear();
+        const month = String(egnResult.dob.getMonth() + 1).padStart(2, '0');
+        const day = String(egnResult.dob.getDate()).padStart(2, '0');
+        patientDOB.value = `${year}-${month}-${day}`;
+        
+        patientSex.value = egnResult.sex;
+        
+        idValidationFeedback.textContent = '✓ Valid EGN - DOB and sex auto-filled';
+        idValidationFeedback.className = 'text-success';
+        
+        console.info('[DEBUG] EGN validated and auto-filled');
+      }
+    }
+    // Case B: Valid LNCh
+    else if (detectedType === 'lnch') {
+      const lnchResult = validateLNCh(idValue);
+      
+      if (lnchResult.valid) {
+        if (previousType === 'lnch') {
+          idValidationFeedback.textContent = '✓ Valid LNCh number';
+          idValidationFeedback.className = 'text-success';
+        } else {
+          const shouldSwitch = confirm('Detected LNCh format (Resident ID).\n\nSwitch patient type to LNCh?');
+          
+          if (shouldSwitch) {
+            patientIDType.value = 'lnch';
+            idValidationFeedback.textContent = '✓ Valid LNCh - Switched to LNCh type';
+            idValidationFeedback.className = 'text-success';
+          } else {
+            idValidationFeedback.textContent = '⚠ Valid LNCh but kept current type';
+            idValidationFeedback.className = 'text-warning';
+          }
+          
+          patientDOB.value = '';
+          patientSex.value = '';
+        }
+      }
+    }
+    // Case C: Foreign/Invalid
+    else if (detectedType === 'foreign') {
+      if (previousType === 'foreign') {
+        idValidationFeedback.textContent = 'Foreign ID / Passport';
+        idValidationFeedback.className = 'text-muted';
+      } else {
+        const shouldSwitch = confirm('ID does not match EGN/LNCh format.\n\nMark patient as Foreign?');
+        
+        if (shouldSwitch) {
+          patientIDType.value = 'foreign';
+          idValidationFeedback.textContent = 'Marked as Foreign ID';
+          idValidationFeedback.className = 'text-info';
+        } else {
+          idValidationFeedback.textContent = '⚠ Invalid EGN/LNCh format';
+          idValidationFeedback.className = 'text-warning';
+        }
+        
+        patientDOB.value = '';
+        patientSex.value = '';
+      }
+    }
+    else {
+      idValidationFeedback.textContent = '✗ Invalid ID format';
+      idValidationFeedback.className = 'text-danger';
+      patientDOB.value = '';
+      patientSex.value = '';
+    }
+  };
+
+  if (patientIDNumber) {
+    patientIDNumber.addEventListener('blur', handleIDAutoDetect);
+  }
+
+  // --- SAVE APPOINTMENT HANDLER ---
+  const handleSaveAppointment = () => {
+    console.info('[DEBUG] Save appointment button clicked');
+    
     let patient: Patient | null = null;
 
+    // Check if creating new patient or using existing
     if (newPatientForm && newPatientForm.style.display !== 'none') {
       // Creating new patient
-      const nameEl = document.getElementById('newPatientName') as HTMLInputElement;
-      const phoneEl = document.getElementById('newPatientPhone') as HTMLInputElement;
+      const firstNameInput = document.getElementById('patientFirstName') as HTMLInputElement;
+      const lastNameInput = document.getElementById('patientLastName') as HTMLInputElement;
+      const countryCodeInput = document.getElementById('patientCountryCode') as HTMLInputElement;
+      const phoneNumberInput = document.getElementById('patientPhoneNumber') as HTMLInputElement;
       
-      if (!nameEl || !phoneEl) {
+      if (!firstNameInput || !lastNameInput || !countryCodeInput || !phoneNumberInput) {
         alert('Patient form fields not found');
         return;
       }
       
-      const name = nameEl.value.trim();
-      const phone = phoneEl.value.trim();
+      const firstName = firstNameInput.value.trim();
+      const lastName = lastNameInput.value.trim();
+      const countryCode = countryCodeInput.value.trim();
+      const phoneNumber = phoneNumberInput.value.trim();
       
-      if (!name || !phone) {
-        alert('Please enter patient name and phone number');
+      if (!firstName || !lastName || !phoneNumber) {
+        alert('Please enter patient first name, last name, and phone number');
         return;
       }
 
-      const existingPatient = patientRepository.exists(name, phone);
+      const fullName = `${firstName} ${lastName}`;
+      const fullPhone = `${countryCode}${phoneNumber}`;
+
+      const existingPatient = patientRepository.exists(fullName, fullPhone);
       if (existingPatient) {
         alert('A patient with this name or phone number already exists!');
         return;
       }
 
       patient = patientRepository.create({
-        name,
-        phone,
+        name: fullName,
+        phone: fullPhone,
         appointmentTime: new Date().toISOString(),
         status: 'Confirmed',
         statusIcon: 'calendar',
@@ -281,7 +549,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
       patient = selectedPatient;
       console.info('[DEBUG] Using existing patient:', patient.id);
     } else {
-      alert('Please select an existing patient or create a new one!');
+      alert('Please search for an existing patient or create a new one!');
       return;
     }
 
@@ -301,10 +569,10 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
     const date = dateEl.value;
     const startTime = startTimeEl.value;
     const endTime = endTimeEl.value;
-    const reason = reasonEl.value.trim();
+    const reason = reasonEl.value.trim() || 'No reason specified'; // Optional field
     
-    if (!doctor || !date || !startTime || !endTime || !reason) {
-      alert('Please fill in all required fields');
+    if (!doctor || !date || !startTime || !endTime) {
+      alert('Please fill in all required fields (Doctor, Date, Times)');
       return;
     }
 
@@ -327,70 +595,40 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
       `[AUDIT] APPOINTMENT_SAVED | ID: ${appointment.id} | Patient: ${patient.name} | Doctor: ${doctor} | Time: ${new Date().toISOString()}`
     );
 
-    // Reset form and state
-    form.reset();
+    // Reset state
     selectedPatient = null;
     if (newPatientForm) newPatientForm.style.display = 'none';
     if (selectedPatientInfo) selectedPatientInfo.style.display = 'none';
-    if (patientSearchResults) patientSearchResults.style.display = 'none';
+    if (typeaheadDropdown) typeaheadDropdown.style.display = 'none';
 
-    // Close the modal
+    // Close modal
     const bsModal = (window as any).bootstrap?.Modal?.getInstance(modal);
     if (bsModal) {
-      console.info('[DEBUG] Closing modal');
       bsModal.hide();
-    } else {
-      console.error('[ERROR] Could not get Bootstrap modal instance');
-      alert('Modal close failed. Refresh the page.');
     }
     
-    // Call the callback to refresh calendar
+    // Callback to refresh calendar
     if (onSaveCallback) {
-      console.info('[DEBUG] Calling calendar refresh callback');
       onSaveCallback();
     }
   };
 
   if (saveAppointmentBtn) {
-    console.info('[DEBUG] Attaching save handler to button');
     saveAppointmentBtn.addEventListener('click', handleSaveAppointment);
-  } else {
-    console.error('[ERROR] saveAppointmentBtn not found - cannot attach event handler');
   }
 
-  // Cleanup function to remove event listeners when modal is hidden
+  // --- CLEANUP ON MODAL HIDE ---
   modal.addEventListener('hidden.bs.modal', () => {
-    console.info('[DEBUG] Modal hidden - starting cleanup');
+    console.info('[DEBUG] Modal hidden - cleanup');
     
-    if (patientSearch && handleSearchInput) {
-      patientSearch.removeEventListener('input', handleSearchInput);
-    }
-    if (newPatientBtn && handleNewPatient) {
-      newPatientBtn.removeEventListener('click', handleNewPatient);
-    }
-    if (saveAppointmentBtn && handleSaveAppointment) {
-      saveAppointmentBtn.removeEventListener('click', handleSaveAppointment);
-    }
-    
-    // Clean up modal from DOM
     const modalContainer = document.getElementById('appointmentModalContainer');
     if (modalContainer) {
       modalContainer.innerHTML = '';
-      console.info('[DEBUG] Modal container cleared');
     }
     
-    // Remove any lingering backdrops
-    const backdrops = document.querySelectorAll('.modal-backdrop');
-    backdrops.forEach(backdrop => {
-      backdrop.remove();
-      console.info('[DEBUG] Removed backdrop');
-    });
-    
-    // Ensure body classes are cleared
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
     document.body.classList.remove('modal-open');
     document.body.style.overflow = '';
     document.body.style.paddingRight = '';
-    
-    console.info('[DEBUG] Modal cleanup complete');
   }, { once: true });
 };

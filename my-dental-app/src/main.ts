@@ -7,6 +7,7 @@ import { NextPatient } from './components/dashboard/NextPatient';
 import { PatientQueue } from './components/dashboard/PatientQueue';
 import { renderCalendarHTML } from './components/calendar/CalendarLayout';
 import { initCalendar } from './components/calendar/CalendarLogic';
+import { renderCalendarSettings, initCalendarSettings } from './components/settings/CalendarSettings';
 
 // Import Bootstrap and make it globally available
 // @ts-ignore - Bootstrap doesn't have type declarations
@@ -24,7 +25,7 @@ declare global {
 
 type ThemeMode = 'light' | 'dark';
 type LanguageMode = 'en' | 'bg';
-type View = 'dashboard' | 'calendar';
+type View = 'dashboard' | 'calendar' | 'settings';
 
 const THEME_STORAGE_KEY = 'dentisyn-theme';
 const LANG_STORAGE_KEY = 'dentisyn-language';
@@ -91,12 +92,14 @@ const renderTranslations = () => {
 const setupNavigationHandlers = () => {
     const dashboardLink = document.querySelector('[data-i18n="nav.dashboard"]') as HTMLAnchorElement;
     const calendarLink = document.querySelector('[data-i18n="nav.calendar"]') as HTMLAnchorElement;
+    const settingsLink = document.getElementById('navCalendarSettings') as HTMLAnchorElement;
 
     // Helper to set active class
     const updateActiveState = (view: View) => {
         document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
         if (view === 'dashboard') dashboardLink?.classList.add('active');
         if (view === 'calendar') calendarLink?.classList.add('active');
+        // Settings doesn't highlight main nav
     };
     
     // Set initial active state
@@ -110,6 +113,11 @@ const setupNavigationHandlers = () => {
     calendarLink?.addEventListener('click', (e) => {
         e.preventDefault();
         renderApp('calendar');
+    });
+    
+    settingsLink?.addEventListener('click', (e) => {
+        e.preventDefault();
+        renderApp('settings');
     });
 };
 
@@ -140,6 +148,12 @@ const renderApp = (view: View = 'dashboard') => {
         <main class="container py-4">
             ${calendarHTML}
         </main>`;
+    } else if (view === 'settings') {
+        const settingsHTML = renderCalendarSettings();
+        mainContent = `
+        <main class="container py-4">
+            ${settingsHTML}
+        </main>`;
     }
 
 	appElement.innerHTML = `
@@ -156,6 +170,8 @@ const renderApp = (view: View = 'dashboard') => {
     // Specific Module Initialization
     if (view === 'calendar') {
         initCalendar();
+    } else if (view === 'settings') {
+        initCalendarSettings();
     }
 };
 

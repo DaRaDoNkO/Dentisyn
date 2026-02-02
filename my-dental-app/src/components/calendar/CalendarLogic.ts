@@ -8,6 +8,7 @@ import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { renderAppointmentModal, initAppointmentModal } from '../appointment/AppointmentModal';
 import { appointmentRepository } from '../../repositories/appointmentRepository';
+import { loadCalendarSettings } from '../settings/CalendarSettings';
 
 // Store calendar instance globally for refreshing
 let calendarInstance: Calendar | null = null;
@@ -15,6 +16,18 @@ let calendarInstance: Calendar | null = null;
 export const initCalendar = () => {
     const calendarEl = document.getElementById('calendar') as HTMLElement;
     if (!calendarEl) return;
+
+    // Load user settings from localStorage
+    const settings = loadCalendarSettings();
+    console.info('[DEBUG] Loaded calendar settings:', settings);
+
+    // Determine slot duration based on settings
+    const slotDuration = `00:${String(settings.slotDuration).padStart(2, '0')}:00`;
+    
+    // Determine time label format based on settings
+    const slotLabelFormat = settings.timeFormat === '12h'
+      ? { hour: 'numeric', minute: '2-digit', meridiem: 'short' }
+      : { hour: '2-digit', minute: '2-digit', hour12: false };
 
     // Doctor Colors
     const COLOR_IVANOV = '#198754'; // Green
@@ -81,7 +94,8 @@ export const initCalendar = () => {
             day: 'Day',
             list: 'List'
         },
-        slotDuration: '00:15:00',
+        slotDuration: slotDuration, // Apply from settings
+        slotLabelFormat: slotLabelFormat as any, // Apply from settings
         editable: true,
         selectable: true,
         height: 'auto',
