@@ -155,3 +155,34 @@ Run: `npx playwright test` (requires dev server running).
 - **Testing:** Write Vitest tests in [tests/](tests/components.test.ts). Verify HTML output correctness and i18n attribute presence (see navbar tests as reference).
 
 See [src/types/patient.ts](src/types/patient.ts) for current type definitions.
+
+## Documentation Maintenance Rules
+
+**Rule #8 - Automatic README Updates:**
+
+Whenever we complete a **major feature** (e.g., "Added EGN Logic", "New Calendar Resource View", "Patient Queue Dashboard", "Settings Persistence Engine"), **you must automatically prompt me**:
+
+> "✅ Feature completed! Would you like me to update the README.md to document this new functionality?"
+
+**What qualifies as a "major feature"?**
+- New UI components with user-facing functionality
+- Core business logic implementations (EGN validation, appointment scheduling)
+- System settings or configuration capabilities
+- Data persistence mechanisms
+- Integration with external services (Puter.js, FullCalendar)
+- Testing infrastructure additions
+
+**What does NOT require README updates?**
+- Bug fixes or minor refactoring
+- Internal code reorganization without user-facing changes
+- Dependency version updates
+- Stylistic improvements
+
+**README Update Process:**
+1. Identify which section(s) need updates (Key Features, Tech Stack, etc.)
+2. Add feature to appropriate bulleted list with clear description
+3. Update any relevant code examples or screenshots
+4. Increment version if applicable
+5. Commit changes with descriptive message: `docs: add [Feature Name] to README`
+
+This ensures the README.md stays synchronized with the actual codebase without manual overhead.

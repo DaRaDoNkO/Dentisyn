@@ -62,9 +62,16 @@ export function Navbar(): string {
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="#">Profile</a></li>
-                <li><a class="dropdown-item" href="#" id="navCalendarSettings">
-                  <i class="bi bi-gear me-2"></i>Calendar Settings
-                </a></li>
+                <li class="dropdown dropstart">
+                  <a class="dropdown-item dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-gear me-2"></i>Settings
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" id="navCalendarSettings">
+                      <i class="bi bi-calendar3 me-2"></i>Calendar
+                    </a></li>
+                  </ul>
+                </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li><a class="dropdown-item" href="#">Logout</a></li>
               </ul>

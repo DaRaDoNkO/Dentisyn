@@ -46,3 +46,43 @@ a:hover {
   padding: 0.35rem 0.85rem;
   font-weight: 600;
 }
+/* Nested Dropdown Styles */
+.dropdown-menu .dropdown-menu {
+  left: auto;
+  right: 100%;
+  top: 0;
+  margin-top: 0;
+  margin-right: 0.125rem;
+}
+
+/* Show nested dropdown on hover for desktop */
+@media (min-width: 992px) {
+  .dropdown:hover > .dropdown-menu,
+  .dropdown-menu .dropdown:hover > .dropdown-menu {
+    display: block;
+  }
+  
+  .dropdown > .dropdown-toggle:active,
+  .dropdown-menu .dropdown > .dropdown-toggle:active {
+    pointer-events: none;
+  }
+}
+
+/* Ensure dropdown arrow is visible */
+.dropdown-item.dropdown-toggle::after {
+  display: inline-block;
+  margin-left: 0.255em;
+  vertical-align: 0.255em;
+  content: "";
+  border-top: 0.3em solid transparent;
+  border-right: 0.3em solid;
+  border-bottom: 0.3em solid transparent;
+  float: right;
+  margin-top: 0.5em;
+}
+
+/* Dropstart arrow positioning */
+.dropstart .dropdown-item.dropdown-toggle::after {
+  border-right: 0;
+  border-left: 0.3em solid;
+}

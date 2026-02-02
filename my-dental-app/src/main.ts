@@ -89,6 +89,55 @@ const renderTranslations = () => {
 	});
 };
 
+// Setup nested dropdown hover behavior
+const setupNestedDropdowns = () => {
+    // For mobile/tablet - handle click on Settings to toggle submenu
+    const settingsDropdownToggle = document.querySelector('.dropdown-menu .dropdown-toggle') as HTMLElement;
+    
+    if (settingsDropdownToggle) {
+        // Prevent default link behavior on mobile
+        settingsDropdownToggle.addEventListener('click', (e) => {
+            const isMobile = window.innerWidth < 992;
+            if (isMobile) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const parentDropdown = settingsDropdownToggle.closest('.dropdown') as HTMLElement;
+                const submenu = parentDropdown?.querySelector('.dropdown-menu') as HTMLElement;
+                
+                if (submenu) {
+                    const isVisible = submenu.classList.contains('show');
+                    submenu.classList.toggle('show', !isVisible);
+                }
+            }
+        });
+        
+        // Desktop - show on hover
+        const parentDropdown = settingsDropdownToggle.closest('.dropdown') as HTMLElement;
+        if (parentDropdown) {
+            parentDropdown.addEventListener('mouseenter', () => {
+                const isDesktop = window.innerWidth >= 992;
+                if (isDesktop) {
+                    const submenu = parentDropdown.querySelector('.dropdown-menu') as HTMLElement;
+                    if (submenu) {
+                        submenu.classList.add('show');
+                    }
+                }
+            });
+            
+            parentDropdown.addEventListener('mouseleave', () => {
+                const isDesktop = window.innerWidth >= 992;
+                if (isDesktop) {
+                    const submenu = parentDropdown.querySelector('.dropdown-menu') as HTMLElement;
+                    if (submenu) {
+                        submenu.classList.remove('show');
+                    }
+                }
+            });
+        }
+    }
+};
+
 const setupNavigationHandlers = () => {
     const dashboardLink = document.querySelector('[data-i18n="nav.dashboard"]') as HTMLAnchorElement;
     const calendarLink = document.querySelector('[data-i18n="nav.calendar"]') as HTMLAnchorElement;
@@ -165,6 +214,7 @@ const renderApp = (view: View = 'dashboard') => {
     setupThemeHandlers();
     setupLanguageHandlers();
     setupNavigationHandlers();
+    setupNestedDropdowns();
     renderTranslations();
 
     // Specific Module Initialization
