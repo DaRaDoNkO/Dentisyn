@@ -94,11 +94,20 @@ a:hover {
     right: auto !important;
     top: 0;
     margin-left: 0.125rem;
+    position: absolute;
   }
   
   .dropdown-menu .dropdown-menu-mobile-right {
     left: 100% !important;
     right: auto !important;
+  }
+  
+  .dropdown-menu .dropdown-menu-mobile-right.show {
+    display: block;
+  }
+  
+  .dropdown-menu .dropdown {
+    position: relative;
   }
 }
 
@@ -155,5 +164,20 @@ a:hover {
 
   .calendar-settings-icon {
     display: none;
+  }
+}
+
+/* Mobile Navigation: Align all nav items to the right */
+@media (max-width: 991px) {
+  .navbar-collapse {
+    text-align: right;
+  }
+  
+  .navbar-nav {
+    align-items: flex-end !important;
+  }
+  
+  .navbar-nav .nav-item {
+    text-align: right;
   }
 }

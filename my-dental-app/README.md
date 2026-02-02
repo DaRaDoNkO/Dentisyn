@@ -1,8 +1,8 @@
 # DentiSyn - Dental Practice Management Software
 
-> A professional, localized web application for dental clinics featuring Dark Mode, Multi-Language support, and Smart Scheduling capabilities.
+> A professional, localized web application for dental clinics featuring Dark Mode, Multi-Language support, Smart Scheduling, and fully responsive mobile/tablet design.
 
-![Version](https://img.shields.io/badge/version-0.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue.svg)
 ![License](https://img.shields.io/badge/license-Private-red.svg)
 
@@ -14,7 +14,8 @@
 
 ### Why DentiSyn?
 
-- **🌍 Localized for Bulgaria**: Full support for Bulgarian EGN (ЕГН) and LNCh (ЛНЧ) ID validation
+- **🌍 Localized for Bulgaria**: Full support for Bulgarian EGN (ЕГН) and LNCh (ЛНЧ) ID validation with accurate sex extraction
+- **📱 Mobile-First Design**: Fully responsive with optimized mobile/tablet navigation and layouts
 - **🌓 Dark Mode**: Eye-friendly interface with automatic theme switching
 - **🌐 Multi-Language**: Seamless switching between English and Bulgarian
 - **📅 Smart Scheduling**: Intelligent appointment management with resource allocation
@@ -48,10 +49,11 @@ Built with **Vanilla TypeScript** (no framework) for:
 ## ✨ Key Features
 
 ### 🎯 Smart Appointment Modal
-- **Auto-detection**: Recognizes Bulgarian EGN (10 digits) vs LNCh (9 digits)
-- **ID Validation**: Real-time validation with checksum algorithms
-- **Auto-fill Intelligence**: Extracts Age, Sex, and Birth Date from EGN
+- **Auto-detection**: Recognizes Bulgarian EGN (10 digits) vs LNCh (10 digits) via checksum validation
+- **ID Validation**: Real-time validation with accurate checksum algorithms
+- **Auto-fill Intelligence**: Extracts Date of Birth and Sex from EGN (even digit = male, odd digit = female)
 - **Error Handling**: Clear validation messages in both languages
+- **Foreign ID Support**: Handles passports and international identification
 
 ### 📆 Resource Calendar
 - **15-Minute Time Slots**: Precision scheduling with customizable intervals
@@ -67,16 +69,20 @@ Built with **Vanilla TypeScript** (no framework) for:
 - **Quick Stats**: At-a-glance metrics for daily operations
 
 ### ⚙️ Settings Engine
-- **Custom Clinic Hours**: Configure start/end times for each day
+- **Modern UI Design**: 2026-style card layouts with gradient headers and subtle shadows
+- **Responsive Layout**: Mobile-optimized with right-side dropdown positioning on small screens
+- **Custom Clinic Hours**: Configure start/end times per doctor with visual schedule cards
 - **Time Format Toggle**: 12-hour vs 24-hour display preference
 - **LocalStorage Persistence**: All settings saved automatically
-- **Reset to Defaults**: One-click restoration of factory settings
+- **Compact Actions**: Small, clearly labeled Save/Discard buttons
 
 ### 🌐 Additional Features
-- **Responsive Design**: Mobile, tablet, and desktop optimized
+- **Fully Responsive Design**: Mobile-first approach with right-aligned navigation on small screens
+- **Smart Dropdown Menus**: Settings submenu opens on the right side to stay visible on mobile/tablet
+- **Unified User Menu**: Language toggle and Dark Mode integrated into user dropdown
 - **Toast Notifications**: Non-intrusive feedback system
 - **Data Validation**: Zod schemas ensure data integrity
-- **Test Coverage**: Unit and E2E tests for critical paths
+- **Comprehensive Test Coverage**: 48 passing unit tests + 5 E2E tests
 
 ---
 
@@ -209,6 +215,26 @@ Configure custom operating hours in Settings → Calendar Settings.
 
 ### Time Format
 Switch between 12-hour (AM/PM) and 24-hour format in Settings.
+
+---
+
+## 🆕 Recent Updates (v0.1.0)
+
+### Mobile & Tablet Improvements
+- ✅ Right-aligned navigation items on mobile view
+- ✅ Settings submenu now opens on the right side to prevent off-screen issues
+- ✅ Language and Dark Mode toggles moved to User dropdown for cleaner UI
+
+### Calendar Settings Redesign
+- ✅ Modernized 2026-style design with gradient card headers
+- ✅ Compact action buttons (Save/Discard) with icons
+- ✅ Improved responsive layout for mobile/tablet devices
+- ✅ Visual schedule cards with better spacing and shadows
+
+### EGN Validation Fix
+- ✅ Corrected sex extraction logic (even digit = male, odd digit = female)
+- ✅ Updated all tests and documentation to match Bulgarian ID standards
+- ✅ Enhanced validation feedback in appointment modal
 
 ---
 

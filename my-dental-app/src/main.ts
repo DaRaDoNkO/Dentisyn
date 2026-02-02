@@ -91,51 +91,46 @@ const renderTranslations = () => {
 
 // Setup nested dropdown hover behavior
 const setupNestedDropdowns = () => {
-    // For mobile/tablet - handle click on Settings to toggle submenu
     const settingsDropdownToggle = document.querySelector('.dropdown-menu .dropdown-toggle') as HTMLElement;
     
     if (settingsDropdownToggle) {
-        // Prevent default link behavior on mobile
+        // Handle click on Settings to toggle submenu (works for both mobile and desktop)
         settingsDropdownToggle.addEventListener('click', (e) => {
-            const isMobile = window.innerWidth < 992;
-            if (isMobile) {
-                e.preventDefault();
-                e.stopPropagation();
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const parentLi = settingsDropdownToggle.closest('li.dropdown') as HTMLElement;
+            const submenu = parentLi?.querySelector('.dropdown-menu') as HTMLElement;
+            
+            if (submenu) {
+                const isVisible = submenu.classList.contains('show');
                 
-                const parentDropdown = settingsDropdownToggle.closest('.dropdown') as HTMLElement;
-                const submenu = parentDropdown?.querySelector('.dropdown-menu') as HTMLElement;
+                // Close all other submenus
+                document.querySelectorAll('.dropdown-menu .dropdown-menu.show').forEach(menu => {
+                    if (menu !== submenu) {
+                        menu.classList.remove('show');
+                    }
+                });
                 
-                if (submenu) {
-                    const isVisible = submenu.classList.contains('show');
-                    submenu.classList.toggle('show', !isVisible);
+                // Toggle this submenu
+                if (isVisible) {
+                    submenu.classList.remove('show');
+                } else {
+                    submenu.classList.add('show');
                 }
             }
         });
-        
-        // Desktop - show on hover
-        const parentDropdown = settingsDropdownToggle.closest('.dropdown') as HTMLElement;
-        if (parentDropdown) {
-            parentDropdown.addEventListener('mouseenter', () => {
-                const isDesktop = window.innerWidth >= 992;
-                if (isDesktop) {
-                    const submenu = parentDropdown.querySelector('.dropdown-menu') as HTMLElement;
-                    if (submenu) {
-                        submenu.classList.add('show');
-                    }
-                }
-            });
-            
-            parentDropdown.addEventListener('mouseleave', () => {
-                const isDesktop = window.innerWidth >= 992;
-                if (isDesktop) {
-                    const submenu = parentDropdown.querySelector('.dropdown-menu') as HTMLElement;
-                    if (submenu) {
-                        submenu.classList.remove('show');
-                    }
-                }
+    }
+    
+    // Close submenu when clicking outside
+    document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (!target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-menu .dropdown-menu.show').forEach(menu => {
+                menu.classList.remove('show');
             });
         }
-    }
+    });
 };
 
 const setupNavigationHandlers = () => {
