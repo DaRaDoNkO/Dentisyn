@@ -43,11 +43,11 @@ export function Navbar(): string {
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="#">Profile</a></li>
-                <li class="dropdown dropstart">
-                  <a class="dropdown-item dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <li class="dropdown">
+                  <a class="dropdown-item dropdown-toggle" href="#" id="settingsDropdownToggle">
                     <i class="bi bi-gear me-2"></i>Settings
                   </a>
-                  <ul class="dropdown-menu dropdown-menu-mobile-right">
+                  <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="#" id="navCalendarSettings">
                       <i class="bi bi-calendar3 me-2"></i>Calendar
                     </a></li>

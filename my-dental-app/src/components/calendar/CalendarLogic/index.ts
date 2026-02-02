@@ -8,6 +8,7 @@
  * - showEventDetailsPopup: Display appointment details in a popup
  */
 
+
 export { initCalendar } from './initialization';
 export { refreshCalendar, refreshCalendarSettings } from './refresh';
 export { showEventDetailsPopup } from './eventHandlers';

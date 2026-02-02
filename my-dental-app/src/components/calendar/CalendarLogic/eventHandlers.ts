@@ -1,7 +1,7 @@
 import type { EventDropArg } from '@fullcalendar/core';
 import { showToast } from '../../../utils/toast';
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
-import { loadCalendarSettings } from '../../settings/CalendarSettings/index';
+import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index';
 import type { Doctor } from '../../../types/patient';
 
 /**
@@ -9,11 +9,11 @@ import type { Doctor } from '../../../types/patient';
  */
 export const showEventDetailsPopup = (event: any) => {
   const { patientName, phone, reason, doctor } = event.extendedProps;
-  
+
   // Remove any existing popups
   const existingPopup = document.getElementById('event-details-popup');
   if (existingPopup) existingPopup.remove();
-  
+
   // Create popup
   const popup = document.createElement('div');
   popup.id = 'event-details-popup';
@@ -30,11 +30,11 @@ export const showEventDetailsPopup = (event: any) => {
     min-width: 350px;
     max-width: 500px;
   `;
-  
+
   const doctorName = doctor === 'dr-ivanov' ? 'Dr. Ivanov' : 'Dr. Ruseva';
   const startTime = event.start ? event.start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'N/A';
   const endTime = event.end ? event.end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'N/A';
-  
+
   popup.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
       <h5 style="margin: 0; color: #333; font-weight: 600;">Appointment Details</h5>
@@ -81,7 +81,7 @@ export const showEventDetailsPopup = (event: any) => {
       </button>
     </div>
   `;
-  
+
   // Create overlay
   const overlay = document.createElement('div');
   overlay.id = 'event-popup-overlay';
@@ -94,19 +94,19 @@ export const showEventDetailsPopup = (event: any) => {
     background: rgba(0,0,0,0.5);
     z-index: 9999;
   `;
-  
+
   document.body.appendChild(overlay);
   document.body.appendChild(popup);
-  
+
   // Close handlers
   const closePopup = () => {
     popup.remove();
     overlay.remove();
   };
-  
+
   document.getElementById('closeEventPopup')?.addEventListener('click', closePopup);
   overlay.addEventListener('click', closePopup);
-  
+
   // Edit handler (for now, just show a message - you can implement full edit later)
   document.getElementById('editEventBtn')?.addEventListener('click', () => {
     closePopup();
@@ -116,7 +116,7 @@ export const showEventDetailsPopup = (event: any) => {
       duration: 5000
     });
   });
-  
+
   console.info(`[DEBUG] Showing event details for appointment: ${event.id}`);
 };
 
@@ -127,10 +127,10 @@ export const handleEventDrop = (info: EventDropArg) => {
   const settings = loadCalendarSettings();
   const event = info.event;
   const doctor = event.extendedProps.doctor as Doctor;
-  
+
   // Find doctor's working hours
   const doctorSchedule = settings.doctorSchedules.find(s => s.doctorId === doctor);
-  
+
   if (!doctorSchedule) {
     console.warn(`[WARN] No schedule found for doctor: ${doctor}`);
     info.revert();
@@ -141,11 +141,11 @@ export const handleEventDrop = (info: EventDropArg) => {
     });
     return;
   }
-  
+
   // Get event start and end times
   const eventStart = event.start;
   const eventEnd = event.end;
-  
+
   if (!eventStart || !eventEnd) {
     info.revert();
     showToast({
@@ -155,19 +155,19 @@ export const handleEventDrop = (info: EventDropArg) => {
     });
     return;
   }
-  
+
   // Extract time from event (HH:MM format)
   const eventStartTime = `${String(eventStart.getHours()).padStart(2, '0')}:${String(eventStart.getMinutes()).padStart(2, '0')}`;
   const eventEndTime = `${String(eventEnd.getHours()).padStart(2, '0')}:${String(eventEnd.getMinutes()).padStart(2, '0')}`;
-  
+
   // Check if event is within doctor's working hours
   const isStartValid = eventStartTime >= doctorSchedule.startTime;
   const isEndValid = eventEndTime <= doctorSchedule.endTime;
-  
+
   if (!isStartValid || !isEndValid) {
     // Revert the move
     info.revert();
-    
+
     // Show error toast
     const doctorName = doctorSchedule.doctorName;
     showToast({
@@ -175,23 +175,23 @@ export const handleEventDrop = (info: EventDropArg) => {
       message: `Cannot move appointment outside ${doctorName}'s working hours (${doctorSchedule.startTime} - ${doctorSchedule.endTime}).`,
       duration: 10000
     });
-    
+
     console.info(`[AUDIT] APPOINTMENT_MOVE_BLOCKED | Doctor: ${doctor} | Time: ${eventStartTime}-${eventEndTime} | Reason: Outside working hours`);
     return;
   }
-  
+
   // Valid move - update in repository if it's a stored appointment
   if (event.id && event.id.startsWith('appointment-')) {
     const newStartISO = eventStart.toISOString();
     const newEndISO = eventEnd.toISOString();
-    
+
     appointmentRepository.update(event.id, {
       startTime: newStartISO,
       endTime: newEndISO
     });
-    
+
     console.info(`[AUDIT] APPOINTMENT_MOVED | ID: ${event.id} | New time: ${eventStartTime}-${eventEndTime}`);
-    
+
     showToast({
       type: 'success',
       message: 'Appointment moved successfully!',

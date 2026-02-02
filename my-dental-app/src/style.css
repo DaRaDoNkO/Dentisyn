@@ -1,183 +1,394 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* =========================================
+   1. DESIGN TOKENS & VARIABLES
+   ========================================= */
 :root {
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  /* Core palette - "Medical Modern" (Clean Teals & Deep Blues) */
+  --primary-hue: 195;
+  --primary-sat: 85%;
+  --primary-light: 45%;
+
+  --secondary-hue: 245;
+  --secondary-sat: 60%;
+  --secondary-light: 60%;
+
+  /* Light Theme Colors */
+  --bg-body-light: #f0f4f8;
+  /* Soft blue-grey background */
+  --bg-card-light: rgba(255, 255, 255, 0.75);
+  --text-main-light: #1e293b;
+  --text-muted-light: #64748b;
+  --border-light: rgba(255, 255, 255, 0.6);
+  --shadow-light: 0 10px 30px -5px rgba(100, 116, 139, 0.15);
+
+  /* Dark Theme Colors */
+  --bg-body-dark: #0f172a;
+  /* Deep slate */
+  --bg-card-dark: rgba(30, 41, 59, 0.7);
+  --text-main-dark: #f8fafc;
+  --text-muted-dark: #94a3b8;
+  --border-dark: rgba(255, 255, 255, 0.08);
+  --shadow-dark: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+
+  /* Bootstrap Override Hooks */
+  --bs-body-font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --bs-border-radius: 1rem;
+  --bs-border-radius-lg: 1.5rem;
+  --bs-border-radius-xl: 2rem;
+
+  /* Shared values */
+  --glass-blur: 12px;
+  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =========================================
+   2. THEME CONFIGURATION
+   ========================================= */
+
+/* Default Light Mode application */
+[data-bs-theme="light"] {
+  --app-bg: var(--bg-body-light);
+  --card-bg: var(--bg-card-light);
+  --text-main: var(--text-main-light);
+  --text-muted: var(--text-muted-light);
+  --border-color: var(--border-light);
+  --card-shadow: var(--shadow-light);
+  --accent-gradient: linear-gradient(135deg, hsl(var(--primary-hue), var(--primary-sat), var(--primary-light)), hsl(var(--secondary-hue), var(--secondary-sat), var(--secondary-light)));
+}
+
+/* Dark Mode Overrides */
+[data-bs-theme="dark"] {
+  --app-bg: var(--bg-body-dark);
+  --card-bg: var(--bg-card-dark);
+  --text-main: var(--text-main-dark);
+  --text-muted: var(--text-muted-dark);
+  --border-color: var(--border-dark);
+  --card-shadow: var(--shadow-dark);
+  --accent-gradient: linear-gradient(135deg, hsl(var(--primary-hue), var(--primary-sat), 55%), hsl(var(--secondary-hue), var(--secondary-sat), 65%));
+
+  /* Bootstrap Var Overrides for Dark Mode */
+  --bs-body-bg: var(--bg-body-dark);
+  --bs-body-color: var(--text-main-dark);
+  --bs-card-bg: var(--bg-card-dark);
+  --bs-border-color: var(--border-dark);
+}
+
+/* =========================================
+   3. GLOBAL RESETS & BASE STYLES
+   ========================================= */
+
+body {
+  background-color: var(--app-bg);
+  color: var(--text-main);
+  background-image:
+    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%);
+  background-attachment: fixed;
+  font-family: var(--bs-body-font-family);
+  transition: background-color var(--transition-smooth), color var(--transition-smooth);
+  /* Smooth font rendering */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: #f8f9fa;
-  color: #212529;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-main);
 }
 
 a {
-  color: inherit;
   text-decoration: none;
+  transition: color var(--transition-fast);
 }
 
-a:hover {
-  text-decoration: none;
-}
+/* =========================================
+   4. COMPONENT: GLASS CARDS
+   ========================================= */
 
 .card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--card-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border-color);
+  box-shadow: var(--card-shadow);
+  border-radius: var(--bs-border-radius-lg);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  overflow: hidden;
+  /* For inner content */
 }
 
+/* Lift effect on hover */
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0.75rem 2rem rgba(15, 23, 42, 0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.12);
+  border-color: rgba(64, 196, 255, 0.3);
+  /* Subtle highlight */
 }
+
+[data-bs-theme="dark"] .card:hover {
+  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.4);
+}
+
+.card-header {
+  background: rgba(255, 255, 255, 0.05);
+  /* Very subtle overlay */
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+  padding: 1.25rem 1.5rem;
+}
+
+/* =========================================
+   5. COMPONENT: BUTTONS & INPUTS
+   ========================================= */
+
+.btn {
+  border-radius: 0.75rem;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  transition: all var(--transition-fast);
+  letter-spacing: 0.01em;
+}
+
+.btn-primary {
+  background: var(--accent-gradient);
+  border: none;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+.btn-primary:hover {
+  background: var(--accent-gradient);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+}
+
+.btn-outline-primary {
+  border-color: hsl(var(--primary-hue), var(--primary-sat), var(--primary-light));
+  color: hsl(var(--primary-hue), var(--primary-sat), var(--primary-light));
+}
+
+.btn-light {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--border-color);
+}
+
+[data-bs-theme="dark"] .btn-light {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.form-control,
+.form-select {
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.6rem 1rem;
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
+  border-color: hsl(var(--primary-hue), var(--primary-sat), var(--primary-light));
+}
+
+[data-bs-theme="dark"] .form-control:focus {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* =========================================
+   6. COMPONENT: STATS & ICONS
+   ========================================= */
 
 .stat-icon {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  background: var(--bg-body-light);
+  /* Fallback */
+  position: relative;
+  z-index: 1;
+}
+
+/* Add a glow behind icons */
+.stat-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0.15;
+  z-index: -1;
 }
 
 .queue-status {
-  padding: 0.35rem 0.85rem;
+  padding: 0.5rem 1rem;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* =========================================
+   7. COMPONENT: NAVIGATION
+   ========================================= */
+
+.navbar {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+  position: relative;
+  z-index: 1050;
+}
+
+[data-bs-theme="dark"] .navbar {
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.navbar-brand {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  /* Force gradient text */
+  font-size: 1.5rem;
+}
+
+.nav-link {
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.5rem;
+  transition: all var(--transition-fast);
+}
+
+.nav-link:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+[data-bs-theme="dark"] .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+  background-color: rgba(56, 189, 248, 0.1);
+  color: hsl(var(--primary-hue), var(--primary-sat), 40%) !important;
   font-weight: 600;
 }
-/* Nested Dropdown Styles */
-.dropdown-menu .dropdown-menu {
-  left: auto;
-  right: 100%;
-  top: 0;
-  margin-top: 0;
-  margin-right: 0.125rem;
+
+[data-bs-theme="dark"] .nav-link.active {
+  background-color: rgba(56, 189, 248, 0.2);
+  color: hsl(var(--primary-hue), var(--primary-sat), 70%) !important;
 }
 
-/* Show nested dropdown on hover for desktop */
-@media (min-width: 992px) {
-  .dropdown:hover > .dropdown-menu,
-  .dropdown-menu .dropdown:hover > .dropdown-menu {
-    display: block;
-  }
-  
-  .dropdown > .dropdown-toggle:active,
-  .dropdown-menu .dropdown > .dropdown-toggle:active {
-    pointer-events: none;
-  }
-}
+/* =========================================
+   8. COMPONENT: CALENDAR & SETTINGS
+   ========================================= */
 
-/* Ensure dropdown arrow is visible */
-.dropdown-item.dropdown-toggle::after {
-  display: inline-block;
-  margin-left: 0.255em;
-  vertical-align: 0.255em;
-  content: "";
-  border-top: 0.3em solid transparent;
-  border-right: 0.3em solid;
-  border-bottom: 0.3em solid transparent;
-  float: right;
-  margin-top: 0.5em;
-}
-
-/* Dropstart arrow positioning */
-.dropstart .dropdown-item.dropdown-toggle::after {
-  border-right: 0;
-  border-left: 0.3em solid;
-}
-
-/* Mobile/Tablet: Show nested dropdown on right side */
-@media (max-width: 991px) {
-  .dropdown-menu-mobile-right {
-    left: 100% !important;
-    right: auto !important;
-    top: 0;
-    margin-left: 0.125rem;
-    position: absolute;
-  }
-  
-  .dropdown-menu .dropdown-menu-mobile-right {
-    left: 100% !important;
-    right: auto !important;
-  }
-  
-  .dropdown-menu .dropdown-menu-mobile-right.show {
-    display: block;
-  }
-  
-  .dropdown-menu .dropdown {
-    position: relative;
-  }
-}
-
-/* Calendar Settings Modern Layout */
 .calendar-settings-page {
-  color: #1f2937;
+  /* Using standard colors now */
 }
 
 .calendar-settings-card-header {
-  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1rem 1.25rem;
+  background: linear-gradient(to right, rgba(238, 242, 255, 0.5), rgba(248, 250, 252, 0.5));
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.5rem;
 }
 
-.calendar-settings-badge {
-  font-weight: 600;
-  padding: 0.5rem 0.85rem;
-  color: #475569;
-}
-
-.calendar-settings-select {
-  max-width: 320px;
-}
-
-.calendar-settings-schedule {
-  background: #ffffff;
-  border-color: #e5e7eb;
-  box-shadow: 0 0.5rem 1.2rem rgba(15, 23, 42, 0.06);
+[data-bs-theme="dark"] .calendar-settings-card-header {
+  background: linear-gradient(to right, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.5));
 }
 
 .calendar-settings-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: #f1f5f9;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(241, 245, 249, 0.8);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
-.calendar-settings-actions .btn {
-  min-width: 120px;
+[data-bs-theme="dark"] .calendar-settings-icon {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-@media (max-width: 576px) {
-  .calendar-settings-page {
-    padding: 1.5rem 1rem;
-  }
-
-  .calendar-settings-select {
-    max-width: 100%;
-  }
-
-  .calendar-settings-icon {
-    display: none;
-  }
+/* Nested Dropdowns */
+.dropdown-menu {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border-radius: 1rem;
+  padding: 0.5rem;
+  /* Removed overflow: hidden to allow nested menus to pop out */
 }
 
-/* Mobile Navigation: Align all nav items to the right */
+/* Nested Dropdowns - Accordion Style */
+.dropdown-menu .dropdown-menu {
+  position: static;
+  /* Flow naturally within the parent */
+  float: none;
+  width: auto;
+  margin-top: 0;
+  background-color: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-left: 1.5rem;
+  /* Indent the nested items */
+  padding-top: 0;
+  padding-bottom: 0;
+  display: none;
+}
+
+.dropdown-menu .dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-item {
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  position: relative;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="dark"] .dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* Mobile specific fixes - cleanup (no longer needed as all are accordion) */
 @media (max-width: 991px) {
-  .navbar-collapse {
-    text-align: right;
-  }
-  
-  .navbar-nav {
-    align-items: flex-end !important;
-  }
-  
-  .navbar-nav .nav-item {
-    text-align: right;
+  .dropdown-menu-mobile-right {
+    left: auto !important;
+    right: auto !important;
   }
 }

@@ -2,7 +2,7 @@ import { patientRepository } from '../../repositories/patientRepository';
 import { appointmentRepository } from '../../repositories/appointmentRepository';
 import type { Patient, Doctor } from '../../types/patient';
 import { validateEGN, validateLNCh, detectIDType } from '../../utils/bgUtils';
-import { loadCalendarSettings } from '../settings/CalendarSettings/index';
+import { loadCalendarSettings } from '../user/Settings/CalendarSettings/index';
 
 let selectedPatient: Patient | null = null;
 
@@ -35,14 +35,14 @@ function generateTimeOptions(
   is24h: boolean = true
 ): string {
   const options: string[] = [];
-  
+
   for (let hour = startHour; hour <= endHour; hour++) {
     for (let minute = 0; minute < 60; minute += interval) {
       if (hour === endHour && minute > 0) break; // Stop at endHour:00
-      
+
       const timeValue = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
       let displayText: string;
-      
+
       if (is24h) {
         displayText = timeValue;
       } else {
@@ -51,11 +51,11 @@ function generateTimeOptions(
         const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
         displayText = `${String(displayHour).padStart(2, '0')}:${String(minute).padStart(2, '0')} ${period}`;
       }
-      
+
       options.push(`<option value="${timeValue}">${displayText}</option>`);
     }
   }
-  
+
   return options.join('\n');
 }
 
@@ -65,14 +65,14 @@ function generateTimeOptions(
  * @param endTime - End time in HH:MM format
  * @returns Array of available doctor objects with id and name
  */
-function getAvailableDoctors(startTime: string, endTime: string): Array<{id: Doctor, name: string}> {
+function getAvailableDoctors(startTime: string, endTime: string): Array<{ id: Doctor, name: string }> {
   const settings = loadCalendarSettings();
-  const availableDoctors: Array<{id: Doctor, name: string}> = [];
-  
+  const availableDoctors: Array<{ id: Doctor, name: string }> = [];
+
   settings.doctorSchedules.forEach(schedule => {
     const isStartValid = startTime >= schedule.startTime;
     const isEndValid = endTime <= schedule.endTime;
-    
+
     if (isStartValid && isEndValid) {
       availableDoctors.push({
         id: schedule.doctorId,
@@ -80,21 +80,21 @@ function getAvailableDoctors(startTime: string, endTime: string): Array<{id: Doc
       });
     }
   });
-  
+
   return availableDoctors;
 }
 
 export const renderAppointmentModal = (clickedDateISO: string): string => {
   const clickedDate = new Date(clickedDateISO);
   const defaultEndTime = new Date(clickedDate.getTime() + 30 * 60000); // 30 min duration
-  
+
   // Load user's time format preference
   const settings = loadCalendarSettings();
   const is24h = settings.timeFormat === '24h';
-  
+
   // Generate time options (8 AM to 8 PM)
   const timeOptions = generateTimeOptions(8, 20, 15, is24h);
-  
+
   // Get default selected times
   const startTimeValue = `${String(clickedDate.getHours()).padStart(2, '0')}:${String(clickedDate.getMinutes()).padStart(2, '0')}`;
   const endTimeValue = `${String(defaultEndTime.getHours()).padStart(2, '0')}:${String(defaultEndTime.getMinutes()).padStart(2, '0')}`;
@@ -186,8 +186,8 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
                     </div>
                     <datalist id="countryCodeList">
                       ${COUNTRY_CODES.map(
-                        (c) => `<option value="${c.code}">${c.country}</option>`
-                      ).join('')}
+    (c) => `<option value="${c.code}">${c.country}</option>`
+  ).join('')}
                     </datalist>
                     <small class="text-muted">Numbers only (no spaces or dashes)</small>
                   </div>
@@ -252,20 +252,20 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
                   <label for="appointmentStartTime" class="form-label fw-bold">Start Time</label>
                   <select class="form-select" id="appointmentStartTime" required>
                     ${timeOptions.split('\n').map(opt => {
-                      const match = opt.match(/value="([^"]+)"/);
-                      const value = match ? match[1] : '';
-                      return opt.replace('<option', `<option${value === startTimeValue ? ' selected' : ''}`);
-                    }).join('\n')}
+    const match = opt.match(/value="([^"]+)"/);
+    const value = match ? match[1] : '';
+    return opt.replace('<option', `<option${value === startTimeValue ? ' selected' : ''}`);
+  }).join('\n')}
                   </select>
                 </div>
                 <div class="col-md-3 mb-3">
                   <label for="appointmentEndTime" class="form-label fw-bold">End Time</label>
                   <select class="form-select" id="appointmentEndTime" required>
                     ${timeOptions.split('\n').map(opt => {
-                      const match = opt.match(/value="([^"]+)"/);
-                      const value = match ? match[1] : '';
-                      return opt.replace('<option', `<option${value === endTimeValue ? ' selected' : ''}`);
-                    }).join('\n')}
+    const match = opt.match(/value="([^"]+)"/);
+    const value = match ? match[1] : '';
+    return opt.replace('<option', `<option${value === endTimeValue ? ' selected' : ''}`);
+  }).join('\n')}
                   </select>
                 </div>
               </div>
@@ -327,28 +327,28 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
   const changePatientBtn = document.getElementById('changePatientBtn') as HTMLButtonElement;
   const newPatientForm = document.getElementById('newPatientForm') as HTMLElement;
   const saveAppointmentBtn = document.getElementById('saveAppointmentBtn') as HTMLButtonElement;
-  
+
   // Get time and doctor selection elements
   const startTimeSelect = document.getElementById('appointmentStartTime') as HTMLSelectElement;
   const endTimeSelect = document.getElementById('appointmentEndTime') as HTMLSelectElement;
   const doctorSelect = document.getElementById('doctorSelect') as HTMLSelectElement;
   const doctorHint = document.getElementById('doctorAvailabilityHint') as HTMLElement;
-  
+
   console.info('[DEBUG] AppointmentModal initialized with smart features');
 
   // --- UPDATE AVAILABLE DOCTORS BASED ON TIME ---
   const updateAvailableDoctors = () => {
     const startTime = startTimeSelect?.value;
     const endTime = endTimeSelect?.value;
-    
+
     if (!startTime || !endTime) {
       doctorSelect.innerHTML = '<option value="" disabled selected>Select time first...</option>';
       if (doctorHint) doctorHint.textContent = 'Please select start and end time first';
       return;
     }
-    
+
     const availableDoctors = getAvailableDoctors(startTime, endTime);
-    
+
     if (availableDoctors.length === 0) {
       doctorSelect.innerHTML = '<option value="" disabled selected>No doctors available at this time</option>';
       if (doctorHint) {
@@ -364,7 +364,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
         option.textContent = doctor.name;
         doctorSelect.appendChild(option);
       });
-      
+
       if (doctorHint) {
         doctorHint.textContent = `${availableDoctors.length} doctor(s) available for this time slot`;
         doctorHint.className = 'text-success';
@@ -372,11 +372,11 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
       console.info(`[DEBUG] Updated doctor list: ${availableDoctors.length} available`);
     }
   };
-  
+
   // Attach change listeners to time selects
   startTimeSelect?.addEventListener('change', updateAvailableDoctors);
   endTimeSelect?.addEventListener('change', updateAvailableDoctors);
-  
+
   // Initial update
   updateAvailableDoctors();
 
@@ -390,7 +390,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
     }
 
     const results = patientRepository.search(query);
-    
+
     let dropdownHTML = '';
 
     // Show existing patients
@@ -410,7 +410,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
         )
         .join('');
     }
-    
+
     // Always show "Create new" option
     dropdownHTML += `
       <button 
@@ -448,7 +448,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
 
   if (patientNameSearch) {
     patientNameSearch.addEventListener('input', handleTypeahead);
-    
+
     // Hide dropdown when clicking outside
     document.addEventListener('click', (e) => {
       if (!patientNameSearch.contains(e.target as Node) && !typeaheadDropdown.contains(e.target as Node)) {
@@ -460,7 +460,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
   // Select existing patient
   const selectExistingPatient = (patientId: string) => {
     selectedPatient = patientRepository.getById(patientId);
-    
+
     if (selectedPatient) {
       patientNameSearch.value = '';
       typeaheadDropdown.style.display = 'none';
@@ -469,7 +469,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
 
       selectedPatientName.textContent = selectedPatient.name;
       selectedPatientDetails.textContent = `Phone: ${selectedPatient.phone}`;
-      
+
       console.info('[DEBUG] Selected existing patient:', selectedPatient.id);
     }
   };
@@ -485,7 +485,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
     // Split name by space and auto-fill First/Last Name
     const firstNameInput = document.getElementById('patientFirstName') as HTMLInputElement;
     const lastNameInput = document.getElementById('patientLastName') as HTMLInputElement;
-    
+
     if (firstNameInput && lastNameInput && nameToSplit) {
       const parts = nameToSplit.trim().split(/\s+/);
       firstNameInput.value = parts[0] || '';
@@ -507,7 +507,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
 
   // --- SMART PHONE INPUT (VALIDATION) ---
   const phoneNumberInput = document.getElementById('patientPhoneNumber') as HTMLInputElement;
-  
+
   if (phoneNumberInput) {
     phoneNumberInput.addEventListener('input', (e) => {
       const input = e.target as HTMLInputElement;
@@ -529,7 +529,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
     }
 
     const idValue = patientIDNumber.value.trim();
-    
+
     if (!idValue) {
       idValidationFeedback.textContent = '';
       idValidationFeedback.className = 'text-muted';
@@ -544,34 +544,34 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
     // Case A: Valid EGN
     if (detectedType === 'egn') {
       const egnResult = validateEGN(idValue);
-      
+
       if (egnResult.valid && egnResult.dob && egnResult.sex) {
         patientIDType.value = 'egn';
-        
+
         const year = egnResult.dob.getFullYear();
         const month = String(egnResult.dob.getMonth() + 1).padStart(2, '0');
         const day = String(egnResult.dob.getDate()).padStart(2, '0');
         patientDOB.value = `${year}-${month}-${day}`;
-        
+
         patientSex.value = egnResult.sex;
-        
+
         idValidationFeedback.textContent = '✓ Valid EGN - DOB and sex auto-filled';
         idValidationFeedback.className = 'text-success';
-        
+
         console.info('[DEBUG] EGN validated and auto-filled');
       }
     }
     // Case B: Valid LNCh
     else if (detectedType === 'lnch') {
       const lnchResult = validateLNCh(idValue);
-      
+
       if (lnchResult.valid) {
         if (previousType === 'lnch') {
           idValidationFeedback.textContent = '✓ Valid LNCh number';
           idValidationFeedback.className = 'text-success';
         } else {
           const shouldSwitch = confirm('Detected LNCh format (Resident ID).\n\nSwitch patient type to LNCh?');
-          
+
           if (shouldSwitch) {
             patientIDType.value = 'lnch';
             idValidationFeedback.textContent = '✓ Valid LNCh - Switched to LNCh type';
@@ -580,7 +580,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
             idValidationFeedback.textContent = '⚠ Valid LNCh but kept current type';
             idValidationFeedback.className = 'text-warning';
           }
-          
+
           patientDOB.value = '';
           patientSex.value = '';
         }
@@ -593,7 +593,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
         idValidationFeedback.className = 'text-muted';
       } else {
         const shouldSwitch = confirm('ID does not match EGN/LNCh format.\n\nMark patient as Foreign?');
-        
+
         if (shouldSwitch) {
           patientIDType.value = 'foreign';
           idValidationFeedback.textContent = 'Marked as Foreign ID';
@@ -602,7 +602,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
           idValidationFeedback.textContent = '⚠ Invalid EGN/LNCh format';
           idValidationFeedback.className = 'text-warning';
         }
-        
+
         patientDOB.value = '';
         patientSex.value = '';
       }
@@ -622,7 +622,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
   // --- SAVE APPOINTMENT HANDLER ---
   const handleSaveAppointment = () => {
     console.info('[DEBUG] Save appointment button clicked');
-    
+
     let patient: Patient | null = null;
 
     // Check if creating new patient or using existing
@@ -632,17 +632,17 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
       const lastNameInput = document.getElementById('patientLastName') as HTMLInputElement;
       const countryCodeInput = document.getElementById('patientCountryCode') as HTMLInputElement;
       const phoneNumberInput = document.getElementById('patientPhoneNumber') as HTMLInputElement;
-      
+
       if (!firstNameInput || !lastNameInput || !countryCodeInput || !phoneNumberInput) {
         alert('Patient form fields not found');
         return;
       }
-      
+
       const firstName = firstNameInput.value.trim();
       const lastName = lastNameInput.value.trim();
       const countryCode = countryCodeInput.value.trim();
       const phoneNumber = phoneNumberInput.value.trim();
-      
+
       if (!firstName || !lastName || !phoneNumber) {
         alert('Please enter patient first name, last name, and phone number');
         return;
@@ -665,7 +665,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
         statusIcon: 'calendar',
         actions: ['View', 'Cancel'],
       });
-      
+
       console.info('[DEBUG] Created new patient:', patient.id);
     } else if (selectedPatient) {
       patient = selectedPatient;
@@ -681,18 +681,18 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
     const startTimeEl = document.getElementById('appointmentStartTime') as HTMLSelectElement;
     const endTimeEl = document.getElementById('appointmentEndTime') as HTMLSelectElement;
     const reasonEl = document.getElementById('appointmentReason') as HTMLTextAreaElement;
-    
+
     if (!doctorEl || !dateEl || !startTimeEl || !endTimeEl || !reasonEl) {
       alert('Some form fields are missing. Please refresh the page.');
       return;
     }
-    
+
     const doctor = doctorEl.value as Doctor;
     const date = dateEl.value;
     const startTime = startTimeEl.value;
     const endTime = endTimeEl.value;
     const reason = reasonEl.value.trim() || 'No reason specified'; // Optional field
-    
+
     if (!doctor || !date || !startTime || !endTime) {
       alert('Please fill in all required fields (Doctor, Date, Times)');
       return;
@@ -701,15 +701,15 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
     // Validate doctor is available at selected time
     const availableDoctors = getAvailableDoctors(startTime, endTime);
     const isDoctorAvailable = availableDoctors.some(d => d.id === doctor);
-    
+
     if (!isDoctorAvailable) {
       const settings = loadCalendarSettings();
       const doctorSchedule = settings.doctorSchedules.find(s => s.doctorId === doctor);
       const doctorName = doctorSchedule?.doctorName || doctor;
-      const workingHours = doctorSchedule 
+      const workingHours = doctorSchedule
         ? `${doctorSchedule.startTime} - ${doctorSchedule.endTime}`
         : 'unknown';
-      
+
       alert(
         `Cannot create appointment: ${doctorName} is not available at this time.\n\n` +
         `Working hours: ${workingHours}\n` +
@@ -749,7 +749,7 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
     if (bsModal) {
       bsModal.hide();
     }
-    
+
     // Callback to refresh calendar
     if (onSaveCallback) {
       onSaveCallback();
@@ -763,12 +763,12 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
   // --- CLEANUP ON MODAL HIDE ---
   modal.addEventListener('hidden.bs.modal', () => {
     console.info('[DEBUG] Modal hidden - cleanup');
-    
+
     const modalContainer = document.getElementById('appointmentModalContainer');
     if (modalContainer) {
       modalContainer.innerHTML = '';
     }
-    
+
     document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
     document.body.classList.remove('modal-open');
     document.body.style.overflow = '';

@@ -5,7 +5,7 @@ import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { loadCalendarSettings } from '../../settings/CalendarSettings/index';
+import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index';
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { showAppointmentModal } from './modal';
 import { showEventDetailsPopup, handleEventDrop } from './eventHandlers';
@@ -24,7 +24,7 @@ export const initCalendar = () => {
 
   // Determine slot duration based on settings
   const slotDuration = `00:${String(settings.slotDuration).padStart(2, '0')}:00`;
-  
+
   // Determine time label format based on settings
   const slotLabelFormat = settings.timeFormat === '12h'
     ? { hour: 'numeric', minute: '2-digit', meridiem: 'short' }
@@ -37,32 +37,32 @@ export const initCalendar = () => {
   // Get appointments from repository
   const appointments = appointmentRepository.getAll();
   const mockEvents = [
-    { 
-      id: '1', 
-      title: 'Consultation - Ivanov', 
-      start: `${new Date().toISOString().split('T')[0]}T10:00:00`, 
-      end: `${new Date().toISOString().split('T')[0]}T10:30:00`, 
-      backgroundColor: COLOR_IVANOV, 
+    {
+      id: '1',
+      title: 'Consultation - Ivanov',
+      start: `${new Date().toISOString().split('T')[0]}T10:00:00`,
+      end: `${new Date().toISOString().split('T')[0]}T10:30:00`,
+      backgroundColor: COLOR_IVANOV,
       borderColor: COLOR_IVANOV,
-      extendedProps: { doctor: 'dr-ivanov' } 
+      extendedProps: { doctor: 'dr-ivanov' }
     },
-    { 
-      id: '2', 
-      title: 'Root Canal - Ruseva', 
-      start: `${new Date().toISOString().split('T')[0]}T14:00:00`, 
-      end: `${new Date().toISOString().split('T')[0]}T15:30:00`, 
-      backgroundColor: COLOR_RUSEVA, 
+    {
+      id: '2',
+      title: 'Root Canal - Ruseva',
+      start: `${new Date().toISOString().split('T')[0]}T14:00:00`,
+      end: `${new Date().toISOString().split('T')[0]}T15:30:00`,
+      backgroundColor: COLOR_RUSEVA,
       borderColor: COLOR_RUSEVA,
-      extendedProps: { doctor: 'dr-ruseva' } 
+      extendedProps: { doctor: 'dr-ruseva' }
     },
-    { 
-      id: '3', 
-      title: 'Checkup - Ivanov', 
+    {
+      id: '3',
+      title: 'Checkup - Ivanov',
       start: new Date(Date.now() + 86400000).toISOString().split('T')[0] + 'T09:00:00',
       end: new Date(Date.now() + 86400000).toISOString().split('T')[0] + 'T09:15:00',
       backgroundColor: COLOR_IVANOV,
       borderColor: COLOR_IVANOV,
-      extendedProps: { doctor: 'dr-ivanov' } 
+      extendedProps: { doctor: 'dr-ivanov' }
     }
   ];
 
@@ -74,8 +74,8 @@ export const initCalendar = () => {
     end: appt.endTime,
     backgroundColor: appt.doctor === 'dr-ivanov' ? COLOR_IVANOV : COLOR_RUSEVA,
     borderColor: appt.doctor === 'dr-ivanov' ? COLOR_IVANOV : COLOR_RUSEVA,
-    extendedProps: { 
-      doctor: appt.doctor, 
+    extendedProps: {
+      doctor: appt.doctor,
       patientName: appt.patientName,
       patientId: appt.patientId,
       phone: appt.phone,
@@ -135,7 +135,7 @@ export const initCalendar = () => {
   });
 
   calendar.render();
-  
+
   // Store calendar instance for refreshing
   setCalendarInstance(calendar);
 
@@ -166,14 +166,14 @@ export const initCalendar = () => {
     const allEvents = calendar.getEvents();
     allEvents.forEach(event => {
       const doctor = event.extendedProps.doctor;
-      
+
       // Default hidden
       let shouldShow = false;
-      
+
       if (doctor === 'dr-ivanov' && showIvanov) shouldShow = true;
       else if (doctor === 'dr-ruseva' && showRuseva) shouldShow = true;
       // Keep other events visible if they don't have doctor prop? Assuming strict filtering here:
-      else if (!doctor) shouldShow = true; 
+      else if (!doctor) shouldShow = true;
 
       if (shouldShow) {
         event.setProp('display', 'auto');
@@ -181,14 +181,14 @@ export const initCalendar = () => {
         event.setProp('display', 'none');
       }
     });
-    
+
     // Update business hours based on selected doctors
     const activeDoctorSchedules = settings.doctorSchedules.filter(schedule => {
       if (schedule.doctorId === 'dr-ivanov' && showIvanov) return true;
       if (schedule.doctorId === 'dr-ruseva' && showRuseva) return true;
       return false;
     });
-    
+
     if (activeDoctorSchedules.length === 0) {
       // No doctors selected - show all hours as non-business (gray everything)
       calendar.setOption('businessHours', []);
@@ -200,7 +200,7 @@ export const initCalendar = () => {
         startTime: schedule.startTime,
         endTime: schedule.endTime,
       }));
-      
+
       calendar.setOption('businessHours', filteredBusinessHours);
       console.info(`[DEBUG] Updated business hours for ${activeDoctorSchedules.length} doctor(s)`);
     }
@@ -208,14 +208,14 @@ export const initCalendar = () => {
 
   filterIvanov?.addEventListener('change', filterEvents);
   filterRuseva?.addEventListener('change', filterEvents);
-  
+
   // Initial Filter Apply
   filterEvents();
 
   // Add fallback click handler for calendar cells
   const calendarCellClickHandler = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    
+
     // Check if clicked on time grid slot or day grid cell
     if (target.closest('.fc-timegrid-slot') || target.closest('.fc-daygrid-day') || target.closest('.fc-col-time-frame')) {
       const cellElement = target.closest('[data-time]') || target.closest('[data-date]') || target.closest('.fc-daygrid-day');

@@ -1,4 +1,4 @@
-import type { Doctor } from '../../../types/patient';
+import type { Doctor } from '../../../../types/patient';
 
 export interface CalendarSettings {
   timeFormat: '24h' | '12h';

@@ -7,7 +7,7 @@ import { NextPatient } from './components/dashboard/NextPatient';
 import { PatientQueue } from './components/dashboard/PatientQueue';
 import { renderCalendarHTML } from './components/calendar/CalendarLayout';
 import { initCalendar, refreshCalendarSettings } from './components/calendar/CalendarLogic/index';
-import { renderCalendarSettings, initCalendarSettings, setRefreshCallback } from './components/settings/CalendarSettings/index';
+import { renderCalendarSettings, initCalendarSettings, setRefreshCallback } from './components/user/Settings/CalendarSettings/index';
 
 // Import Bootstrap and make it globally available
 // @ts-ignore - Bootstrap doesn't have type declarations
@@ -15,9 +15,9 @@ import * as Bootstrap from 'bootstrap';
 
 // Ensure Bootstrap is available on window
 declare global {
-  interface Window {
-    bootstrap: any;
-  }
+    interface Window {
+        bootstrap: any;
+    }
 }
 
 // Make Bootstrap globally available BEFORE any other code runs
@@ -37,7 +37,7 @@ let currentView: View = 'dashboard';
 // ========== HELPER FUNCTIONS (Logic extraction) ==========
 
 const applyTheme = (mode: ThemeMode) => {
-	rootElement.setAttribute('data-bs-theme', mode);
+    rootElement.setAttribute('data-bs-theme', mode);
 };
 
 const setupThemeHandlers = () => {
@@ -80,38 +80,38 @@ const setupLanguageHandlers = () => {
 
 // Function to render all translations
 const renderTranslations = () => {
-	const elements = document.querySelectorAll('[data-i18n]');
-	elements.forEach((element) => {
-		const key = element.getAttribute('data-i18n');
-		if (key) {
-			element.textContent = i18next.t(key);
-		}
-	});
+    const elements = document.querySelectorAll('[data-i18n]');
+    elements.forEach((element) => {
+        const key = element.getAttribute('data-i18n');
+        if (key) {
+            element.textContent = i18next.t(key);
+        }
+    });
 };
 
 // Setup nested dropdown hover behavior
 const setupNestedDropdowns = () => {
-    const settingsDropdownToggle = document.querySelector('.dropdown-menu .dropdown-toggle') as HTMLElement;
-    
+    const settingsDropdownToggle = document.getElementById('settingsDropdownToggle') as HTMLElement;
+
     if (settingsDropdownToggle) {
         // Handle click on Settings to toggle submenu (works for both mobile and desktop)
         settingsDropdownToggle.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
+
             const parentLi = settingsDropdownToggle.closest('li.dropdown') as HTMLElement;
-            const submenu = parentLi?.querySelector('.dropdown-menu') as HTMLElement;
-            
+            const submenu = parentLi?.querySelector(':scope > .dropdown-menu') as HTMLElement;
+
             if (submenu) {
                 const isVisible = submenu.classList.contains('show');
-                
+
                 // Close all other submenus
                 document.querySelectorAll('.dropdown-menu .dropdown-menu.show').forEach(menu => {
                     if (menu !== submenu) {
                         menu.classList.remove('show');
                     }
                 });
-                
+
                 // Toggle this submenu
                 if (isVisible) {
                     submenu.classList.remove('show');
@@ -121,7 +121,7 @@ const setupNestedDropdowns = () => {
             }
         });
     }
-    
+
     // Close submenu when clicking outside
     document.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
@@ -145,7 +145,7 @@ const setupNavigationHandlers = () => {
         if (view === 'calendar') calendarLink?.classList.add('active');
         // Settings doesn't highlight main nav
     };
-    
+
     // Set initial active state
     updateActiveState(currentView);
 
@@ -158,7 +158,7 @@ const setupNavigationHandlers = () => {
         e.preventDefault();
         renderApp('calendar');
     });
-    
+
     settingsLink?.addEventListener('click', (e) => {
         e.preventDefault();
         renderApp('settings');
@@ -168,8 +168,8 @@ const setupNavigationHandlers = () => {
 // ========== RENDER UI COMPONENTS ==========
 const renderApp = (view: View = 'dashboard') => {
     currentView = view;
-	const appElement = document.querySelector<HTMLDivElement>('#app');
-	if (!appElement) return;
+    const appElement = document.querySelector<HTMLDivElement>('#app');
+    if (!appElement) return;
 
     let mainContent = '';
 
@@ -200,7 +200,7 @@ const renderApp = (view: View = 'dashboard') => {
         </main>`;
     }
 
-	appElement.innerHTML = `
+    appElement.innerHTML = `
 		${Navbar()}
 		${mainContent}
 	`;
@@ -229,17 +229,17 @@ const renderApp = (view: View = 'dashboard') => {
 // Initialize theme from localStorage
 const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
 if (savedTheme === 'light' || savedTheme === 'dark') {
-	applyTheme(savedTheme);
+    applyTheme(savedTheme);
 } else {
-	applyTheme('light');
+    applyTheme('light');
 }
 
 // Initialize language from localStorage
 const savedLanguage = localStorage.getItem(LANG_STORAGE_KEY);
 if (savedLanguage === 'en' || savedLanguage === 'bg') {
-	i18next.changeLanguage(savedLanguage);
+    i18next.changeLanguage(savedLanguage);
 } else {
-	i18next.changeLanguage('bg');
+    i18next.changeLanguage('bg');
 }
 
 // Initial Render
