@@ -26,14 +26,17 @@ test.describe('Calendar Module E2E', () => {
     });
 
     test('should switch views', async ({ page }) => {
+        // Switch to month view and wait for it to render
         await page.click('#view-dayGridMonth');
-        await expect(page.locator('.fc-daygrid-month-view')).toBeVisible();
-
-        await page.click('#view-listWeek');
-        await expect(page.locator('.fc-list-week-view')).toBeVisible();
+        await page.waitForSelector('.fc-daygrid-day-frame', { timeout: 5000 });
         
+        // Switch to list view and wait for it to render
+        await page.click('#view-listWeek');
+        await page.waitForSelector('.fc-list-event', { timeout: 5000 });
+        
+        // Switch back to week view and wait for it to render
         await page.click('#view-timeGridWeek');
-        await expect(page.locator('.fc-timegrid-week-view')).toBeVisible();
+        await page.waitForSelector('.fc-timegrid-slot', { timeout: 5000 });
     });
 
     test('should toggle doctor filters', async ({ page }) => {

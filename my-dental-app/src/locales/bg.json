@@ -35,5 +35,21 @@
     "week": "Седмица",
     "month": "Месец",
     "list": "Списък"
+  },
+  "appointment": {
+    "newAppointment": "Ново Запазване",
+    "patientSearch": "Търси Пациент",
+    "newPatient": "Нов Пациент",
+    "patientSearchHint": "Напиши за търсене на съществуващи пациенти или щракни \"Нов Пациент\"",
+    "fullName": "Пълно Име",
+    "phoneNumber": "Телефонен Номер",
+    "assignDoctor": "Назначи Лекар",
+    "selectDoctor": "Изберете лекар...",
+    "date": "Дата",
+    "startTime": "Начално Време",
+    "endTime": "Крайно Време",
+    "reasonNotes": "Причина / Бележки",
+    "cancel": "Отказ",
+    "save": "Запази Запазване"
   }
 }

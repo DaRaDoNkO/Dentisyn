@@ -1,6 +1,5 @@
 import './style.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import i18next from './i18n';
 import { Navbar } from './components/layout/Navbar';
 import { QuickStats } from './components/dashboard/QuickStats';
@@ -8,6 +7,20 @@ import { NextPatient } from './components/dashboard/NextPatient';
 import { PatientQueue } from './components/dashboard/PatientQueue';
 import { renderCalendarHTML } from './components/calendar/CalendarLayout';
 import { initCalendar } from './components/calendar/CalendarLogic';
+
+// Import Bootstrap and make it globally available
+// @ts-ignore - Bootstrap doesn't have type declarations
+import * as Bootstrap from 'bootstrap';
+
+// Ensure Bootstrap is available on window
+declare global {
+  interface Window {
+    bootstrap: any;
+  }
+}
+
+// Make Bootstrap globally available BEFORE any other code runs
+(window as any).bootstrap = Bootstrap;
 
 type ThemeMode = 'light' | 'dark';
 type LanguageMode = 'en' | 'bg';
