@@ -6,7 +6,7 @@ import { QuickStats } from './components/dashboard/QuickStats';
 import { NextPatient } from './components/dashboard/NextPatient';
 import { PatientQueue } from './components/dashboard/PatientQueue';
 import { renderCalendarHTML } from './components/calendar/CalendarLayout';
-import { initCalendar, refreshCalendarSettings } from './components/calendar/CalendarLogic';
+import { initCalendar, refreshCalendarSettings } from './components/calendar/CalendarLogic/index';
 import { renderCalendarSettings, initCalendarSettings, setRefreshCallback } from './components/settings/CalendarSettings/index';
 
 // Import Bootstrap and make it globally available
