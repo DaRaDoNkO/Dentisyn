@@ -28,5 +28,12 @@
     "completed": "Завършен",
     "waiting": "Чакащ",
     "confirmed": "Потвърден"
+  },
+  "calendar": {
+    "drIvanov": "Д-р Иванов",
+    "drRuseva": "Д-р Русева",
+    "week": "Седмица",
+    "month": "Месец",
+    "list": "Списък"
   }
 }

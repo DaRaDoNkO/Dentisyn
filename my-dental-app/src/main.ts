@@ -6,70 +6,63 @@ import { Navbar } from './components/layout/Navbar';
 import { QuickStats } from './components/dashboard/QuickStats';
 import { NextPatient } from './components/dashboard/NextPatient';
 import { PatientQueue } from './components/dashboard/PatientQueue';
+import { renderCalendarHTML } from './components/calendar/CalendarLayout';
+import { initCalendar } from './components/calendar/CalendarLogic';
 
 type ThemeMode = 'light' | 'dark';
 type LanguageMode = 'en' | 'bg';
+type View = 'dashboard' | 'calendar';
 
 const THEME_STORAGE_KEY = 'dentisyn-theme';
 const LANG_STORAGE_KEY = 'dentisyn-language';
 const rootElement = document.documentElement;
 
-// ========== RENDER UI COMPONENTS ==========
-const renderApp = () => {
-	const appElement = document.querySelector<HTMLDivElement>('#app');
-	if (!appElement) return;
+// ========== GLOBAL STATE ==========
+let currentView: View = 'dashboard';
 
-	appElement.innerHTML = `
-		${Navbar()}
-		<main class="container py-4">
-			<div class="row g-4 mb-4">
-				<div class="col-lg-4">
-					${QuickStats()}
-				</div>
-				<div class="col-lg-8">
-					${NextPatient()}
-				</div>
-			</div>
-			${PatientQueue()}
-		</main>
-	`;
-};
+// ========== HELPER FUNCTIONS (Logic extraction) ==========
 
-// Render the app structure first
-renderApp();
-
-// ========== THEME MANAGEMENT ==========
 const applyTheme = (mode: ThemeMode) => {
 	rootElement.setAttribute('data-bs-theme', mode);
 };
 
-// Initialize theme from localStorage
-const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-if (savedTheme === 'light' || savedTheme === 'dark') {
-	applyTheme(savedTheme);
-} else {
-	applyTheme('light');
-}
+const setupThemeHandlers = () => {
+    const toggleButton = document.getElementById('theme-toggle') as HTMLButtonElement | null;
+    const syncToggleLabel = (mode: ThemeMode) => {
+        if (!toggleButton) return;
+        toggleButton.innerHTML = mode === 'dark'
+            ? '<span aria-hidden="true">☀️</span><span>Light</span>'
+            : '<span aria-hidden="true">🌙</span><span>Dark</span>';
+    };
 
-const toggleButton = document.getElementById('theme-toggle') as HTMLButtonElement | null;
+    // Initial sync
+    syncToggleLabel(rootElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'light');
 
-const syncToggleLabel = (mode: ThemeMode) => {
-	if (!toggleButton) return;
-	toggleButton.innerHTML = mode === 'dark'
-		? '<span aria-hidden="true">☀️</span><span>Light</span>'
-		: '<span aria-hidden="true">🌙</span><span>Dark</span>';
+    toggleButton?.addEventListener('click', () => {
+        const nextMode: ThemeMode = rootElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+        applyTheme(nextMode);
+        localStorage.setItem(THEME_STORAGE_KEY, nextMode);
+        syncToggleLabel(nextMode);
+    });
 };
 
-syncToggleLabel(rootElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'light');
+const setupLanguageHandlers = () => {
+    const langToggleButton = document.getElementById('lang-toggle') as HTMLButtonElement | null;
+    const updateLangButtonText = (lang: LanguageMode) => {
+        if (!langToggleButton) return;
+        langToggleButton.textContent = lang === 'bg' ? 'EN' : 'BG';
+    };
 
-toggleButton?.addEventListener('click', () => {
-	const nextMode: ThemeMode = rootElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
-	applyTheme(nextMode);
-	localStorage.setItem(THEME_STORAGE_KEY, nextMode);
-	syncToggleLabel(nextMode);
-});
+    updateLangButtonText(i18next.language as LanguageMode);
 
-// ========== INTERNATIONALIZATION (i18n) ==========
+    langToggleButton?.addEventListener('click', () => {
+        const nextLang: LanguageMode = i18next.language === 'bg' ? 'en' : 'bg';
+        i18next.changeLanguage(nextLang);
+        localStorage.setItem(LANG_STORAGE_KEY, nextLang);
+        updateLangButtonText(nextLang);
+        renderTranslations();
+    });
+};
 
 // Function to render all translations
 const renderTranslations = () => {
@@ -82,6 +75,87 @@ const renderTranslations = () => {
 	});
 };
 
+const setupNavigationHandlers = () => {
+    const dashboardLink = document.querySelector('[data-i18n="nav.dashboard"]') as HTMLAnchorElement;
+    const calendarLink = document.querySelector('[data-i18n="nav.calendar"]') as HTMLAnchorElement;
+
+    // Helper to set active class
+    const updateActiveState = (view: View) => {
+        document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+        if (view === 'dashboard') dashboardLink?.classList.add('active');
+        if (view === 'calendar') calendarLink?.classList.add('active');
+    };
+    
+    // Set initial active state
+    updateActiveState(currentView);
+
+    dashboardLink?.addEventListener('click', (e) => {
+        e.preventDefault();
+        renderApp('dashboard');
+    });
+
+    calendarLink?.addEventListener('click', (e) => {
+        e.preventDefault();
+        renderApp('calendar');
+    });
+};
+
+// ========== RENDER UI COMPONENTS ==========
+const renderApp = (view: View = 'dashboard') => {
+    currentView = view;
+	const appElement = document.querySelector<HTMLDivElement>('#app');
+	if (!appElement) return;
+
+    let mainContent = '';
+
+    if (view === 'dashboard') {
+        mainContent = `
+        <main class="container py-4">
+			<div class="row g-4 mb-4">
+				<div class="col-lg-4">
+					${QuickStats()}
+				</div>
+				<div class="col-lg-8">
+					${NextPatient()}
+				</div>
+			</div>
+			${PatientQueue()}
+		</main>`;
+    } else if (view === 'calendar') {
+        const calendarHTML = renderCalendarHTML();
+        mainContent = `
+        <main class="container py-4">
+            ${calendarHTML}
+        </main>`;
+    }
+
+	appElement.innerHTML = `
+		${Navbar()}
+		${mainContent}
+	`;
+
+    // Re-attach all global handlers since DOM was wiped
+    setupThemeHandlers();
+    setupLanguageHandlers();
+    setupNavigationHandlers();
+    renderTranslations();
+
+    // Specific Module Initialization
+    if (view === 'calendar') {
+        initCalendar();
+    }
+};
+
+// ========== INITIALIZATION ==========
+
+// Initialize theme from localStorage
+const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+if (savedTheme === 'light' || savedTheme === 'dark') {
+	applyTheme(savedTheme);
+} else {
+	applyTheme('light');
+}
+
 // Initialize language from localStorage
 const savedLanguage = localStorage.getItem(LANG_STORAGE_KEY);
 if (savedLanguage === 'en' || savedLanguage === 'bg') {
@@ -90,23 +164,5 @@ if (savedLanguage === 'en' || savedLanguage === 'bg') {
 	i18next.changeLanguage('bg');
 }
 
-// Render translations on page load
-renderTranslations();
-
-// Language toggle button
-const langToggleButton = document.getElementById('lang-toggle') as HTMLButtonElement | null;
-
-const updateLangButtonText = (lang: LanguageMode) => {
-	if (!langToggleButton) return;
-	langToggleButton.textContent = lang === 'bg' ? 'EN' : 'BG';
-};
-
-updateLangButtonText(i18next.language as LanguageMode);
-
-langToggleButton?.addEventListener('click', () => {
-	const nextLang: LanguageMode = i18next.language === 'bg' ? 'en' : 'bg';
-	i18next.changeLanguage(nextLang);
-	localStorage.setItem(LANG_STORAGE_KEY, nextLang);
-	updateLangButtonText(nextLang);
-	renderTranslations();
-});
+// Initial Render
+renderApp('dashboard');

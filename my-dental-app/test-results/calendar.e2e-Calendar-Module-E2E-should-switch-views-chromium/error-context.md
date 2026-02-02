@@ -1,0 +1,181 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "DS DentiSyn" [ref=e5] [cursor=pointer]:
+        - /url: "#"
+        - generic [ref=e6]: DS
+        - generic [ref=e7]: DentiSyn
+      - generic [ref=e8]:
+        - list [ref=e9]:
+          - listitem [ref=e10]:
+            - link "Табло" [ref=e11] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=e12]:
+            - link "Пациенти" [ref=e13] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=e14]:
+            - link "Календар" [ref=e15] [cursor=pointer]:
+              - /url: "#"
+        - list [ref=e16]:
+          - listitem [ref=e17]:
+            - button "EN" [ref=e18] [cursor=pointer]
+          - listitem [ref=e19]:
+            - button "Dark" [ref=e20] [cursor=pointer]:
+              - generic [ref=e21]: 🌙
+              - generic [ref=e22]: Dark
+          - listitem [ref=e23]:
+            - button " User" [ref=e24] [cursor=pointer]:
+              - generic [ref=e25]: 
+              - generic [ref=e26]: User
+  - main [ref=e27]:
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - heading "Календар" [level=5] [ref=e31]
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - generic [ref=e34]:
+              - checkbox "Д-р Иванов" [checked] [ref=e35]
+              - generic [ref=e36]: Д-р Иванов
+            - generic [ref=e37]:
+              - checkbox "Д-р Русева" [checked] [ref=e38]
+              - generic [ref=e39]: Д-р Русева
+          - group [ref=e40]:
+            - button "Седмица" [ref=e41] [cursor=pointer]
+            - button "Месец" [active] [ref=e42] [cursor=pointer]
+            - button "Списък" [ref=e43] [cursor=pointer]
+      - generic [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - generic [ref=e48]:
+              - button "Previous Month" [ref=e49] [cursor=pointer]:
+                - img [ref=e50]: 
+              - button "Next Month" [ref=e51] [cursor=pointer]:
+                - img [ref=e52]: 
+            - button "Today" [disabled]
+          - heading "February 2026" [level=2] [ref=e54]
+        - generic "February 2026" [ref=e55]:
+          - grid [ref=e57]:
+            - rowgroup [ref=e58]:
+              - row "Sunday Monday Tuesday Wednesday Thursday Friday Saturday" [ref=e62]:
+                - columnheader "Sunday" [ref=e63]:
+                  - generic "Sunday" [ref=e65]: Sun
+                - columnheader "Monday" [ref=e66]:
+                  - generic "Monday" [ref=e68]: Mon
+                - columnheader "Tuesday" [ref=e69]:
+                  - generic "Tuesday" [ref=e71]: Tue
+                - columnheader "Wednesday" [ref=e72]:
+                  - generic "Wednesday" [ref=e74]: Wed
+                - columnheader "Thursday" [ref=e75]:
+                  - generic "Thursday" [ref=e77]: Thu
+                - columnheader "Friday" [ref=e78]:
+                  - generic "Friday" [ref=e80]: Fri
+                - columnheader "Saturday" [ref=e81]:
+                  - generic "Saturday" [ref=e83]: Sat
+            - rowgroup [ref=e84]:
+              - generic [ref=e87]:
+                - row "February 1, 2026 February 2, 2026 February 3, 2026 February 4, 2026 February 5, 2026 February 6, 2026 February 7, 2026" [ref=e89]:
+                  - gridcell "February 1, 2026" [ref=e90]:
+                    - generic "February 1, 2026" [ref=e93]: "1"
+                  - gridcell "February 2, 2026" [ref=e95]:
+                    - generic [ref=e96]:
+                      - generic "February 2, 2026" [ref=e98]: "2"
+                      - generic [ref=e99]:
+                        - generic [ref=e101] [cursor=pointer]:
+                          - generic [ref=e103]: 10a
+                          - generic [ref=e104]: Consultation - Ivanov
+                        - generic [ref=e106] [cursor=pointer]:
+                          - generic [ref=e108]: 2p
+                          - generic [ref=e109]: Root Canal - Ruseva
+                  - gridcell "February 3, 2026" [ref=e110]:
+                    - generic [ref=e111]:
+                      - generic "February 3, 2026" [ref=e113]: "3"
+                      - generic [ref=e116] [cursor=pointer]:
+                        - generic [ref=e118]: 9a
+                        - generic [ref=e119]: Checkup - Ivanov
+                  - gridcell "February 4, 2026" [ref=e120]:
+                    - generic "February 4, 2026" [ref=e123]: "4"
+                  - gridcell "February 5, 2026" [ref=e125]:
+                    - generic "February 5, 2026" [ref=e128]: "5"
+                  - gridcell "February 6, 2026" [ref=e130]:
+                    - generic "February 6, 2026" [ref=e133]: "6"
+                  - gridcell "February 7, 2026" [ref=e135]:
+                    - generic "February 7, 2026" [ref=e138]: "7"
+                - row "February 8, 2026 February 9, 2026 February 10, 2026 February 11, 2026 February 12, 2026 February 13, 2026 February 14, 2026" [ref=e140]:
+                  - gridcell "February 8, 2026" [ref=e141]:
+                    - generic "February 8, 2026" [ref=e144]: "8"
+                  - gridcell "February 9, 2026" [ref=e146]:
+                    - generic "February 9, 2026" [ref=e149]: "9"
+                  - gridcell "February 10, 2026" [ref=e151]:
+                    - generic "February 10, 2026" [ref=e154]: "10"
+                  - gridcell "February 11, 2026" [ref=e156]:
+                    - generic "February 11, 2026" [ref=e159]: "11"
+                  - gridcell "February 12, 2026" [ref=e161]:
+                    - generic "February 12, 2026" [ref=e164]: "12"
+                  - gridcell "February 13, 2026" [ref=e166]:
+                    - generic "February 13, 2026" [ref=e169]: "13"
+                  - gridcell "February 14, 2026" [ref=e171]:
+                    - generic "February 14, 2026" [ref=e174]: "14"
+                - row "February 15, 2026 February 16, 2026 February 17, 2026 February 18, 2026 February 19, 2026 February 20, 2026 February 21, 2026" [ref=e176]:
+                  - gridcell "February 15, 2026" [ref=e177]:
+                    - generic "February 15, 2026" [ref=e180]: "15"
+                  - gridcell "February 16, 2026" [ref=e182]:
+                    - generic "February 16, 2026" [ref=e185]: "16"
+                  - gridcell "February 17, 2026" [ref=e187]:
+                    - generic "February 17, 2026" [ref=e190]: "17"
+                  - gridcell "February 18, 2026" [ref=e192]:
+                    - generic "February 18, 2026" [ref=e195]: "18"
+                  - gridcell "February 19, 2026" [ref=e197]:
+                    - generic "February 19, 2026" [ref=e200]: "19"
+                  - gridcell "February 20, 2026" [ref=e202]:
+                    - generic "February 20, 2026" [ref=e205]: "20"
+                  - gridcell "February 21, 2026" [ref=e207]:
+                    - generic "February 21, 2026" [ref=e210]: "21"
+                - row "February 22, 2026 February 23, 2026 February 24, 2026 February 25, 2026 February 26, 2026 February 27, 2026 February 28, 2026" [ref=e212]:
+                  - gridcell "February 22, 2026" [ref=e213]:
+                    - generic "February 22, 2026" [ref=e216]: "22"
+                  - gridcell "February 23, 2026" [ref=e218]:
+                    - generic "February 23, 2026" [ref=e221]: "23"
+                  - gridcell "February 24, 2026" [ref=e223]:
+                    - generic "February 24, 2026" [ref=e226]: "24"
+                  - gridcell "February 25, 2026" [ref=e228]:
+                    - generic "February 25, 2026" [ref=e231]: "25"
+                  - gridcell "February 26, 2026" [ref=e233]:
+                    - generic "February 26, 2026" [ref=e236]: "26"
+                  - gridcell "February 27, 2026" [ref=e238]:
+                    - generic "February 27, 2026" [ref=e241]: "27"
+                  - gridcell "February 28, 2026" [ref=e243]:
+                    - generic "February 28, 2026" [ref=e246]: "28"
+                - row "March 1, 2026 March 2, 2026 March 3, 2026 March 4, 2026 March 5, 2026 March 6, 2026 March 7, 2026" [ref=e248]:
+                  - gridcell "March 1, 2026" [ref=e249]:
+                    - generic "March 1, 2026" [ref=e252]: "1"
+                  - gridcell "March 2, 2026" [ref=e254]:
+                    - generic "March 2, 2026" [ref=e257]: "2"
+                  - gridcell "March 3, 2026" [ref=e259]:
+                    - generic "March 3, 2026" [ref=e262]: "3"
+                  - gridcell "March 4, 2026" [ref=e264]:
+                    - generic "March 4, 2026" [ref=e267]: "4"
+                  - gridcell "March 5, 2026" [ref=e269]:
+                    - generic "March 5, 2026" [ref=e272]: "5"
+                  - gridcell "March 6, 2026" [ref=e274]:
+                    - generic "March 6, 2026" [ref=e277]: "6"
+                  - gridcell "March 7, 2026" [ref=e279]:
+                    - generic "March 7, 2026" [ref=e282]: "7"
+                - row "March 8, 2026 March 9, 2026 March 10, 2026 March 11, 2026 March 12, 2026 March 13, 2026 March 14, 2026" [ref=e284]:
+                  - gridcell "March 8, 2026" [ref=e285]:
+                    - generic "March 8, 2026" [ref=e288]: "8"
+                  - gridcell "March 9, 2026" [ref=e290]:
+                    - generic "March 9, 2026" [ref=e293]: "9"
+                  - gridcell "March 10, 2026" [ref=e295]:
+                    - generic "March 10, 2026" [ref=e298]: "10"
+                  - gridcell "March 11, 2026" [ref=e300]:
+                    - generic "March 11, 2026" [ref=e303]: "11"
+                  - gridcell "March 12, 2026" [ref=e305]:
+                    - generic "March 12, 2026" [ref=e308]: "12"
+                  - gridcell "March 13, 2026" [ref=e310]:
+                    - generic "March 13, 2026" [ref=e313]: "13"
+                  - gridcell "March 14, 2026" [ref=e315]:
+                    - generic "March 14, 2026" [ref=e318]: "14"
+```

@@ -3,6 +3,7 @@ import { Navbar } from '../src/components/layout/Navbar';
 import { QuickStats } from '../src/components/dashboard/QuickStats';
 import { NextPatient } from '../src/components/dashboard/NextPatient';
 import { PatientQueue } from '../src/components/dashboard/PatientQueue';
+import { renderCalendarHTML } from '../src/components/calendar/CalendarLayout';
 
 describe('Component Rendering', () => {
   describe('Navbar Component', () => {
@@ -136,6 +137,32 @@ describe('Component Rendering', () => {
       expect(html).toContain('data-i18n="table.billing"');
       expect(html).toContain('data-i18n="table.checkIn"');
       expect(html).toContain('data-i18n="table.cancel"');
+    });
+  });
+
+  describe('Calendar Module', () => {
+    it('should render HTML string', () => {
+      const html = renderCalendarHTML();
+      expect(typeof html).toBe('string');
+      expect(html.length).toBeGreaterThan(0);
+    });
+
+    it('should contain View Switcher buttons', () => {
+      const html = renderCalendarHTML();
+      expect(html).toContain('id="view-timeGridWeek"');
+      expect(html).toContain('id="view-dayGridMonth"');
+      expect(html).toContain('id="view-listWeek"');
+    });
+
+    it('should contain Doctor Filters', () => {
+      const html = renderCalendarHTML();
+      expect(html).toContain('id="filterIvanov"');
+      expect(html).toContain('id="filterRuseva"');
+    });
+
+    it('should contain Calendar container', () => {
+      const html = renderCalendarHTML();
+      expect(html).toContain('id="calendar"');
     });
   });
 });

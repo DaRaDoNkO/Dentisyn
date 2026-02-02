@@ -28,5 +28,12 @@
     "completed": "Completed",
     "waiting": "Waiting",
     "confirmed": "Confirmed"
+  },
+  "calendar": {
+    "drIvanov": "Dr. Ivanov",
+    "drRuseva": "Dr. Ruseva",
+    "week": "Week",
+    "month": "Month",
+    "list": "List"
   }
 }
