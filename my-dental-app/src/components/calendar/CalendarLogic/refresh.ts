@@ -21,37 +21,6 @@ export const refreshCalendar = () => {
   // Get appointments from repository
   const appointments = appointmentRepository.getAll();
 
-  // Mock events
-  const mockEvents = [
-    {
-      id: '1',
-      title: 'Consultation - Ivanov',
-      start: `${new Date().toISOString().split('T')[0]}T10:00:00`,
-      end: `${new Date().toISOString().split('T')[0]}T10:30:00`,
-      backgroundColor: COLOR_IVANOV,
-      borderColor: COLOR_IVANOV,
-      extendedProps: { doctor: 'dr-ivanov' }
-    },
-    {
-      id: '2',
-      title: 'Root Canal - Ruseva',
-      start: `${new Date().toISOString().split('T')[0]}T14:00:00`,
-      end: `${new Date().toISOString().split('T')[0]}T15:30:00`,
-      backgroundColor: COLOR_RUSEVA,
-      borderColor: COLOR_RUSEVA,
-      extendedProps: { doctor: 'dr-ruseva' }
-    },
-    {
-      id: '3',
-      title: 'Checkup - Ivanov',
-      start: new Date(Date.now() + 86400000).toISOString().split('T')[0] + 'T09:00:00',
-      end: new Date(Date.now() + 86400000).toISOString().split('T')[0] + 'T09:15:00',
-      backgroundColor: COLOR_IVANOV,
-      borderColor: COLOR_IVANOV,
-      extendedProps: { doctor: 'dr-ivanov' }
-    }
-  ];
-
   // Convert stored appointments to calendar events
   const appointmentEvents = appointments.map(appt => ({
     id: appt.id,
@@ -63,13 +32,13 @@ export const refreshCalendar = () => {
     extendedProps: { doctor: appt.doctor, patientName: appt.patientName }
   }));
 
-  const allEvents = [...mockEvents, ...appointmentEvents];
+  const allEvents = appointmentEvents;
 
   // Remove all events and add new ones
   calendarInstance.removeAllEvents();
   calendarInstance.addEventSource(allEvents);
 
-  console.info(`[DEBUG] Calendar refreshed with ${allEvents.length} events (${mockEvents.length} mock + ${appointmentEvents.length} stored)`);
+  console.info(`[DEBUG] Calendar refreshed with ${allEvents.length} events from storage`);
 };
 
 /**

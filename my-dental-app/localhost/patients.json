@@ -1,0 +1,29 @@
+[
+  {
+    "id": "patient-001",
+    "name": "Ivan Petrov",
+    "phone": "+359888123456",
+    "egn": "8001011234",
+    "email": "ivan.petrov@example.com",
+    "address": "Sofia, Bulgaria",
+    "createdAt": "2026-01-15T10:00:00Z"
+  },
+  {
+    "id": "patient-002",
+    "name": "Maria Dimitrova",
+    "phone": "+359888234567",
+    "egn": "9205152345",
+    "email": "maria.dimitrova@example.com",
+    "address": "Plovdiv, Bulgaria",
+    "createdAt": "2026-01-20T14:30:00Z"
+  },
+  {
+    "id": "patient-003",
+    "name": "Georgi Ivanov",
+    "phone": "+359888345678",
+    "egn": "7503213456",
+    "email": "georgi.ivanov@example.com",
+    "address": "Varna, Bulgaria",
+    "createdAt": "2026-01-25T09:15:00Z"
+  }
+]

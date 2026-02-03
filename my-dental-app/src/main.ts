@@ -8,6 +8,7 @@ import { PatientQueue } from './components/dashboard/PatientQueue';
 import { renderCalendarHTML } from './components/calendar/CalendarLayout';
 import { initCalendar, refreshCalendarSettings } from './components/calendar/CalendarLogic/index';
 import { renderCalendarSettings, initCalendarSettings, setRefreshCallback } from './components/user/Settings/CalendarSettings/index';
+import { initializeTestData } from './utils/localhostData';
 
 // Import Bootstrap and make it globally available
 // @ts-ignore - Bootstrap doesn't have type declarations
@@ -225,6 +226,9 @@ const renderApp = (view: View = 'dashboard') => {
 };
 
 // ========== INITIALIZATION ==========
+
+// Initialize test data from localhost folder
+initializeTestData();
 
 // Initialize theme from localStorage
 const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);

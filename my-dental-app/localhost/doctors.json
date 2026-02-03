@@ -1,0 +1,18 @@
+[
+  {
+    "id": "dr-ivanov",
+    "name": "Dr. Ivanov",
+    "specialty": "General Dentistry",
+    "startTime": "08:00",
+    "endTime": "18:00",
+    "color": "#198754"
+  },
+  {
+    "id": "dr-ruseva",
+    "name": "Dr. Ruseva",
+    "specialty": "Orthodontics",
+    "startTime": "09:00",
+    "endTime": "17:00",
+    "color": "#0d6efd"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "appt-001",
+    "patientId": "patient-001",
+    "patientName": "Ivan Petrov",
+    "phone": "+359888123456",
+    "doctor": "dr-ivanov",
+    "startTime": "2026-02-03T10:00:00",
+    "endTime": "2026-02-03T10:30:00",
+    "reason": "Regular Checkup",
+    "status": "Confirmed",
+    "createdAt": "2026-02-01T10:00:00Z"
+  },
+  {
+    "id": "appt-002",
+    "patientId": "patient-002",
+    "patientName": "Maria Dimitrova",
+    "phone": "+359888234567",
+    "doctor": "dr-ruseva",
+    "startTime": "2026-02-03T14:00:00",
+    "endTime": "2026-02-03T15:30:00",
+    "reason": "Root Canal Treatment",
+    "status": "Confirmed",
+    "createdAt": "2026-02-01T11:30:00Z"
+  },
+  {
+    "id": "appt-003",
+    "patientId": "patient-003",
+    "patientName": "Georgi Ivanov",
+    "phone": "+359888345678",
+    "doctor": "dr-ivanov",
+    "startTime": "2026-02-04T09:00:00",
+    "endTime": "2026-02-04T09:15:00",
+    "reason": "Consultation",
+    "status": "Waiting",
+    "createdAt": "2026-02-02T08:00:00Z"
+  }
+]

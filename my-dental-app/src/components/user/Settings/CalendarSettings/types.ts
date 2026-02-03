@@ -1,4 +1,5 @@
 import type { Doctor } from '../../../../types/patient';
+import { getTestDoctors } from '../../../../utils/localhostData';
 
 export interface CalendarSettings {
   timeFormat: '24h' | '12h';
@@ -15,12 +16,20 @@ export interface DoctorSchedule {
 
 export const SETTINGS_KEY = 'dentisyn-calendar-settings';
 
+// Load default doctor schedules from localhost test data
+const loadDefaultDoctorSchedules = (): DoctorSchedule[] => {
+  const testDoctors = getTestDoctors();
+  return testDoctors.map(doctor => ({
+    doctorId: doctor.id as Doctor,
+    doctorName: doctor.name,
+    startTime: doctor.startTime,
+    endTime: doctor.endTime,
+  }));
+};
+
 // Default settings
 export const defaultSettings: CalendarSettings = {
   timeFormat: '24h',
   slotDuration: 30,
-  doctorSchedules: [
-    { doctorId: 'dr-ivanov', doctorName: 'Dr. Ivanov', startTime: '08:00', endTime: '18:00' },
-    { doctorId: 'dr-ruseva', doctorName: 'Dr. Ruseva', startTime: '09:00', endTime: '17:00' },
-  ],
+  doctorSchedules: loadDefaultDoctorSchedules(),
 };

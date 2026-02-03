@@ -36,35 +36,6 @@ export const initCalendar = () => {
 
   // Get appointments from repository
   const appointments = appointmentRepository.getAll();
-  const mockEvents = [
-    {
-      id: '1',
-      title: 'Consultation - Ivanov',
-      start: `${new Date().toISOString().split('T')[0]}T10:00:00`,
-      end: `${new Date().toISOString().split('T')[0]}T10:30:00`,
-      backgroundColor: COLOR_IVANOV,
-      borderColor: COLOR_IVANOV,
-      extendedProps: { doctor: 'dr-ivanov' }
-    },
-    {
-      id: '2',
-      title: 'Root Canal - Ruseva',
-      start: `${new Date().toISOString().split('T')[0]}T14:00:00`,
-      end: `${new Date().toISOString().split('T')[0]}T15:30:00`,
-      backgroundColor: COLOR_RUSEVA,
-      borderColor: COLOR_RUSEVA,
-      extendedProps: { doctor: 'dr-ruseva' }
-    },
-    {
-      id: '3',
-      title: 'Checkup - Ivanov',
-      start: new Date(Date.now() + 86400000).toISOString().split('T')[0] + 'T09:00:00',
-      end: new Date(Date.now() + 86400000).toISOString().split('T')[0] + 'T09:15:00',
-      backgroundColor: COLOR_IVANOV,
-      borderColor: COLOR_IVANOV,
-      extendedProps: { doctor: 'dr-ivanov' }
-    }
-  ];
 
   // Convert stored appointments to calendar events
   const appointmentEvents = appointments.map(appt => ({
@@ -83,7 +54,7 @@ export const initCalendar = () => {
     }
   }));
 
-  const events = [...mockEvents, ...appointmentEvents];
+  const events = appointmentEvents;
 
   // Build business hours from doctor schedules
   const businessHours = settings.doctorSchedules.map(schedule => ({
