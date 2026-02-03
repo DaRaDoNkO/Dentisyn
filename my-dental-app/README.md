@@ -126,13 +126,21 @@ npm run test:e2e # Run Playwright end-to-end tests
 my-dental-app/
 ├── src/
 │   ├── components/           # UI Components (TypeScript modules)
-│   │   ├── appointment/      # Appointment modal logic
+│   │   ├── appointment/      # Appointment modal (refactored into modules)
+│   │   │   ├── AppointmentModal.ts         # Main orchestrator
+│   │   │   ├── renderAppointmentModal.ts   # HTML template
+│   │   │   ├── patientHandlers.ts          # Patient search & ID validation
+│   │   │   ├── appointmentFormHandlers.ts  # Form validation & save logic
+│   │   │   ├── doctorUtils.ts              # Doctor availability
+│   │   │   ├── timeUtils.ts                # Time generation utilities
+│   │   │   └── constants.ts                # Shared constants
 │   │   ├── calendar/         # Calendar view & scheduling
 │   │   │   └── CalendarLogic/ # Event handlers, modals, refresh
 │   │   ├── dashboard/        # Patient queue & stats
 │   │   ├── layout/           # Navbar & shell components
-│   │   └── settings/         # Settings panel & storage
-│   │       └── CalendarSettings/
+│   │   └── user/             # User settings & preferences
+│   │       └── Settings/
+│   │           └── CalendarSettings/
 │   ├── locales/              # i18n translation files
 │   │   ├── en.json           # English translations
 │   │   └── bg.json           # Bulgarian translations
@@ -163,10 +171,12 @@ my-dental-app/
 ### Architecture Highlights
 
 - **Component-Based**: Modular TypeScript classes for UI components
+- **Modular Design**: Large components split into focused, single-responsibility modules
 - **Repository Pattern**: Clean separation of data access logic
 - **Type Safety**: Comprehensive TypeScript types and Zod schemas
 - **i18n Ready**: Centralized translation files for easy localization
 - **Test-Driven**: Co-located tests with comprehensive coverage
+- **Maintainable**: Clear separation of concerns with files under 250 lines
 
 ---
 
@@ -220,6 +230,19 @@ Switch between 12-hour (AM/PM) and 24-hour format in Settings.
 
 ## 🆕 Recent Updates (v0.1.0)
 
+### Code Refactoring & Maintainability (February 2026)
+- ✅ **AppointmentModal Refactored**: Split 778-line monolith into 7 focused modules
+  - `renderAppointmentModal.ts` - HTML template generation
+  - `patientHandlers.ts` - Patient search, selection, and ID validation
+  - `appointmentFormHandlers.ts` - Form validation and save logic
+  - `doctorUtils.ts` - Doctor availability calculations
+  - `timeUtils.ts` - Time generation utilities
+  - `constants.ts` - Shared constants (country codes)
+  - `AppointmentModal.ts` - Main orchestrator (110 lines)
+- ✅ **Improved Testability**: Each module can now be tested independently
+- ✅ **Zero Breaking Changes**: All existing imports continue to work
+- ✅ **Better Organization**: Clear separation of concerns and single responsibility
+
 ### Mobile & Tablet Improvements
 - ✅ Right-aligned navigation items on mobile view
 - ✅ Settings submenu now opens on the right side to prevent off-screen issues
@@ -242,6 +265,7 @@ Switch between 12-hour (AM/PM) and 24-hour format in Settings.
 
 - [ ] Cloud sync with Puter.js integration
 - [ ] Patient medical history tracking
+- [src/components/appointment/REFACTORING_SUMMARY.md](./src/components/appointment/REFACTORING_SUMMARY.md) - AppointmentModal refactoring details
 - [ ] Invoice generation and billing
 - [ ] SMS appointment reminders
 - [ ] Multi-clinic support
