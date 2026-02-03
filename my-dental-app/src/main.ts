@@ -6,7 +6,7 @@ import { QuickStats } from './components/dashboard/QuickStats';
 import { NextPatient } from './components/dashboard/NextPatient';
 import { PatientQueue } from './components/dashboard/PatientQueue';
 import { renderCalendarHTML } from './components/calendar/CalendarLayout';
-import { initCalendar, refreshCalendarSettings } from './components/calendar/CalendarLogic/index';
+import { initCalendar, refreshCalendarSettings, refreshCalendarLocale } from './components/calendar/CalendarLogic/index';
 import { renderCalendarSettings, initCalendarSettings, setRefreshCallback } from './components/user/Settings/CalendarSettings/index';
 import { initializeTestData } from './utils/localhostData';
 
@@ -76,6 +76,11 @@ const setupLanguageHandlers = () => {
         localStorage.setItem(LANG_STORAGE_KEY, nextLang);
         updateLangButtonText(nextLang);
         renderTranslations();
+        
+        // Update calendar locale if calendar is visible
+        if (refreshCalendarLocale) {
+            refreshCalendarLocale();
+        }
     });
 };
 

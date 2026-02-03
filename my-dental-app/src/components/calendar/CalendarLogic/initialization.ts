@@ -4,12 +4,14 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
+import bgLocale from '@fullcalendar/core/locales/bg';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index';
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { showAppointmentModal } from './modal';
 import { showEventDetailsPopup, handleEventDrop } from './eventHandlers';
 import { setCalendarInstance } from './types';
+import i18next from '../../../i18n';
 
 /**
  * Initialize the FullCalendar instance
@@ -73,9 +75,14 @@ export const initCalendar = () => {
 
   let tooltipTimeout: any;
 
+  // Get current language for FullCalendar locale
+  const currentLanguage = i18next.language;
+  const calendarLocale = currentLanguage === 'bg' ? bgLocale : undefined;
+
   const calendar = new Calendar(calendarEl, {
     plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, bootstrap5Plugin],
     themeSystem: 'bootstrap5',
+    locale: calendarLocale,
     initialView: 'timeGridWeek',
     headerToolbar: {
       left: 'prev,next today',
@@ -83,11 +90,11 @@ export const initCalendar = () => {
       right: ''
     },
     buttonText: {
-      today: 'Today',
-      month: 'Month',
-      week: 'Week',
-      day: 'Day',
-      list: 'List'
+      today: i18next.t('calendar.today'),
+      month: i18next.t('calendar.month'),
+      week: i18next.t('calendar.week'),
+      day: i18next.t('calendar.day'),
+      list: i18next.t('calendar.list')
     },
     slotDuration: slotDuration,
     slotLabelFormat: slotLabelFormat as any,

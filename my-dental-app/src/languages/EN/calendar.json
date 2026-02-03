@@ -1,0 +1,14 @@
+{
+  "title": "Calendar",
+  "drIvanov": "Dr. Ivanov",
+  "drRuseva": "Dr. Ruseva",
+  "week": "Week",
+  "month": "Month",
+  "list": "List",
+  "today": "Today",
+  "day": "Day",
+  "prev": "Previous",
+  "next": "Next",
+  "noEvents": "No appointments to display",
+  "allDay": "All day"
+}

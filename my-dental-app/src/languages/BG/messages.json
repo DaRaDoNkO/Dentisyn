@@ -1,0 +1,38 @@
+{
+  "success": {
+    "appointmentCreated": "Часът е запазен успешно!",
+    "appointmentUpdated": "Часът е актуализиран успешно!",
+    "appointmentDeleted": "Часът е изтрит успешно!",
+    "settingsSaved": "Настройките са запазени успешно!",
+    "patientCreated": "Пациентът е създаден успешно!",
+    "patientUpdated": "Пациентът е актуализиран успешно!"
+  },
+  "error": {
+    "generic": "Възникна грешка. Моля, опитайте отново.",
+    "requiredField": "Това поле е задължително",
+    "invalidEmail": "Невалиден имейл адрес",
+    "invalidPhone": "Невалиден телефонен номер",
+    "invalidDate": "Невалидна дата",
+    "invalidTime": "Невалидно време",
+    "appointmentConflict": "Часът вече е зает",
+    "patientNotFound": "Пациентът не е намерен",
+    "doctorNotSelected": "Моля, изберете лекар",
+    "invalidEGN": "Невалидно ЕГН",
+    "invalidLNCh": "Невалиден ЛНЧ (Личен номер)"
+  },
+  "confirm": {
+    "deleteAppointment": "Сигурни ли сте, че искате да изтриете този час?",
+    "cancelAppointment": "Сигурни ли сте, че искате да откажете този час?",
+    "discardChanges": "Отхвърляне на незапазените промени?"
+  },
+  "placeholder": {
+    "searchPatient": "Търси по име, телефон или ЕГН...",
+    "enterFullName": "Въведете пълното име на пациента",
+    "enterPhone": "Въведете телефонен номер",
+    "enterEGN": "Въведете 10-цифрено ЕГН",
+    "enterLNCh": "Въведете личен номер",
+    "selectDate": "Изберете дата",
+    "selectTime": "Изберете час",
+    "enterNotes": "Въведете бележки или причина за посещение..."
+  }
+}

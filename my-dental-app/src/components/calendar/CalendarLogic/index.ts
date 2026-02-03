@@ -10,6 +10,6 @@
 
 
 export { initCalendar } from './initialization';
-export { refreshCalendar, refreshCalendarSettings } from './refresh';
+export { refreshCalendar, refreshCalendarSettings, refreshCalendarLocale } from './refresh';
 export { showEventDetailsPopup } from './eventHandlers';
 export { showAppointmentModal } from './modal';

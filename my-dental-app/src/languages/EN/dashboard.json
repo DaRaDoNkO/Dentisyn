@@ -1,0 +1,10 @@
+{
+  "quickStats": "Quick Stats",
+  "today": "Today",
+  "urgent": "Urgent",
+  "completed": "Completed",
+  "nextPatient": "Next Patient",
+  "reason": "Reason:",
+  "openChart": "Open Chart",
+  "patientQueue": "Patient Queue (Active)"
+}

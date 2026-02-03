@@ -38,7 +38,7 @@ btn.addEventListener('click', () => {
 
 See [src/components/settings/CalendarSettings/](src/components/settings/CalendarSettings/) as reference.
 
-**i18n (English/Bulgarian):** Use `data-i18n` attributes in HTML; translation keys defined in [src/locales/{en,bg}.json](src/locales/en.json). System auto-detects browser language via i18next-browser-languagedetector.
+**i18n (English/Bulgarian):** Use `data-i18n` attributes in HTML; translation keys defined in modular JSON files under [src/languages/{EN,BG}/](src/languages/). System auto-detects browser language via i18next-browser-languagedetector. Translations organized by: navigation, dashboard, calendar, appointment, settings, common, and messages.
 
 **Puter.js Integration (AI Research):** When implementing AI features, create service modules (e.g., src/services/drugService.ts) that call Puter.js for external AI queries. Example:
 ```typescript

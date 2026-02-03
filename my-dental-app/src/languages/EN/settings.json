@@ -1,0 +1,17 @@
+{
+  "calendarSettings": "Calendar Settings",
+  "subtitle": "Configure your calendar preferences and doctor schedules",
+  "badge": "Clinic Preferences",
+  "globalPreferences": "Global Preferences",
+  "timeFormat": "Time Format",
+  "slotDuration": "Appointment Slot Duration",
+  "doctorSchedules": "Doctor Working Hours",
+  "scheduleHint": "Define the working hours for each doctor. This helps the calendar show available time slots.",
+  "save": "Save",
+  "discard": "Discard",
+  "savedSuccess": "Settings saved successfully! Refresh the calendar page to see changes.",
+  "minutes": "minutes",
+  "workingHours": "Working Hours",
+  "from": "From",
+  "to": "To"
+}

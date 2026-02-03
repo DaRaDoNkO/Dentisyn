@@ -1,0 +1,38 @@
+{
+  "success": {
+    "appointmentCreated": "Appointment created successfully!",
+    "appointmentUpdated": "Appointment updated successfully!",
+    "appointmentDeleted": "Appointment deleted successfully!",
+    "settingsSaved": "Settings saved successfully!",
+    "patientCreated": "Patient created successfully!",
+    "patientUpdated": "Patient updated successfully!"
+  },
+  "error": {
+    "generic": "An error occurred. Please try again.",
+    "requiredField": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "invalidPhone": "Invalid phone number",
+    "invalidDate": "Invalid date",
+    "invalidTime": "Invalid time",
+    "appointmentConflict": "Time slot already booked",
+    "patientNotFound": "Patient not found",
+    "doctorNotSelected": "Please select a doctor",
+    "invalidEGN": "Invalid EGN (Bulgarian ID)",
+    "invalidLNCh": "Invalid LNCh (Personal Number)"
+  },
+  "confirm": {
+    "deleteAppointment": "Are you sure you want to delete this appointment?",
+    "cancelAppointment": "Are you sure you want to cancel this appointment?",
+    "discardChanges": "Discard unsaved changes?"
+  },
+  "placeholder": {
+    "searchPatient": "Search by name, phone, or ID...",
+    "enterFullName": "Enter patient's full name",
+    "enterPhone": "Enter phone number",
+    "enterEGN": "Enter 10-digit EGN",
+    "enterLNCh": "Enter personal number",
+    "selectDate": "Select date",
+    "selectTime": "Select time",
+    "enterNotes": "Enter notes or reason for visit..."
+  }
+}

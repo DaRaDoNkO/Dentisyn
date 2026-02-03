@@ -1,0 +1,18 @@
+{
+  "newAppointment": "New Appointment",
+  "patientSearch": "Search Patient",
+  "newPatient": "New Patient",
+  "patientSearchHint": "Type to search existing patients or click \"New Patient\"",
+  "fullName": "Full Name",
+  "phoneNumber": "Phone Number",
+  "assignDoctor": "Assign Doctor",
+  "selectDoctor": "Select a doctor...",
+  "date": "Date",
+  "startTime": "Start Time",
+  "endTime": "End Time",
+  "reasonNotes": "Reason / Notes",
+  "cancel": "Cancel",
+  "save": "Save Appointment",
+  "edit": "Edit Appointment",
+  "delete": "Delete Appointment"
+}

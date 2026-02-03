@@ -1,6 +1,8 @@
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index';
 import { getCalendarInstance } from './types';
+import bgLocale from '@fullcalendar/core/locales/bg';
+import i18next from '../../../i18n';
 
 /**
  * Refresh calendar events from repository
@@ -39,6 +41,26 @@ export const refreshCalendar = () => {
   calendarInstance.addEventSource(allEvents);
 
   console.info(`[DEBUG] Calendar refreshed with ${allEvents.length} events from storage`);
+};
+
+/**
+ * Refresh calendar locale when language changes
+ */
+export const refreshCalendarLocale = () => {
+  const calendarInstance = getCalendarInstance();
+  
+  if (!calendarInstance) {
+    console.warn('[WARNING] Cannot refresh calendar locale - instance not available');
+    return;
+  }
+
+  const currentLanguage = i18next.language;
+  const calendarLocale = currentLanguage === 'bg' ? bgLocale : undefined;
+  
+  // Update locale dynamically
+  calendarInstance.setOption('locale', calendarLocale);
+  
+  console.info(`[DEBUG] Calendar locale updated to: ${currentLanguage}`);
 };
 
 /**
