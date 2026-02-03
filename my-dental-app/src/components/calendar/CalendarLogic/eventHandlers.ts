@@ -121,6 +121,137 @@ export const showEventDetailsPopup = (event: any) => {
 };
 
 /**
+ * Show a confirmation modal for moving an appointment
+ */
+const showMoveConfirmationModal = (onConfirm: () => void, onReject: () => void) => {
+  // Remove any existing confirmation modals
+  const existingModal = document.getElementById('move-confirmation-modal');
+  if (existingModal) existingModal.remove();
+
+  // Create modal container
+  const modal = document.createElement('div');
+  modal.id = 'move-confirmation-modal';
+  modal.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    padding: 24px;
+    z-index: 10001;
+    min-width: 200px;
+    text-align: center;
+    border: 1px solid rgba(0,0,0,0.1);
+  `;
+
+  // Create buttons container
+  const buttonsContainer = document.createElement('div');
+  buttonsContainer.style.cssText = `
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+  `;
+
+  // Approve Button (Green)
+  const approveBtn = document.createElement('button');
+  approveBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
+  approveBtn.style.cssText = `
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    background: #198754;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+  `;
+  approveBtn.onmouseover = () => { approveBtn.style.transform = 'scale(1.1)'; };
+  approveBtn.onmouseout = () => { approveBtn.style.transform = 'scale(1)'; };
+
+  // Reject Button (Red)
+  const rejectBtn = document.createElement('button');
+  rejectBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
+  rejectBtn.style.cssText = `
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    background: #dc3545;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  `;
+  rejectBtn.onmouseover = () => { rejectBtn.style.transform = 'scale(1.1)'; };
+  rejectBtn.onmouseout = () => { rejectBtn.style.transform = 'scale(1)'; };
+
+  // Add click handlers
+  approveBtn.onclick = () => {
+    onConfirm();
+    cleanup();
+  };
+
+  rejectBtn.onclick = () => {
+    onReject();
+    cleanup();
+  };
+
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'move-confirmation-overlay';
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 10000;
+    backdrop-filter: blur(2px);
+  `;
+
+  // Assemble
+  buttonsContainer.appendChild(approveBtn);
+  buttonsContainer.appendChild(rejectBtn);
+
+  const title = document.createElement('h5');
+  title.innerText = 'Confirm Move?';
+  title.style.marginBottom = '20px';
+  title.style.color = '#333';
+
+  modal.appendChild(title);
+  modal.appendChild(buttonsContainer);
+
+  document.body.appendChild(overlay);
+  document.body.appendChild(modal);
+
+  // Cleanup function
+  const cleanup = () => {
+    modal.remove();
+    overlay.remove();
+  };
+
+  // Close on overlay click (treat as reject)
+  overlay.onclick = () => {
+    onReject();
+    cleanup();
+  };
+};
+
+
+/**
  * Handle appointment drag & drop with doctor-specific validation
  */
 export const handleEventDrop = (info: EventDropArg) => {
@@ -180,22 +311,39 @@ export const handleEventDrop = (info: EventDropArg) => {
     return;
   }
 
-  // Valid move - update in repository if it's a stored appointment
+  // Valid move - Ask for confirmation before updating
   if (event.id && event.id.startsWith('appointment-')) {
-    const newStartISO = eventStart.toISOString();
-    const newEndISO = eventEnd.toISOString();
 
-    appointmentRepository.update(event.id, {
-      startTime: newStartISO,
-      endTime: newEndISO
-    });
+    // Define confirm action
+    const onConfirm = () => {
+      const newStartISO = eventStart.toISOString();
+      const newEndISO = eventEnd.toISOString();
 
-    console.info(`[AUDIT] APPOINTMENT_MOVED | ID: ${event.id} | New time: ${eventStartTime}-${eventEndTime}`);
+      appointmentRepository.update(event.id, {
+        startTime: newStartISO,
+        endTime: newEndISO
+      });
 
-    showToast({
-      type: 'success',
-      message: 'Appointment moved successfully!',
-      duration: 3000
-    });
+      console.info(`[AUDIT] APPOINTMENT_MOVED | ID: ${event.id} | New time: ${eventStartTime}-${eventEndTime}`);
+
+      showToast({
+        type: 'success',
+        message: 'Appointment moved successfully!',
+        duration: 3000
+      });
+    };
+
+    // Define reject action
+    const onReject = () => {
+      info.revert();
+      showToast({
+        type: 'info',
+        message: 'Move cancelled',
+        duration: 2000
+      });
+    };
+
+    // Show the confirmation
+    showMoveConfirmationModal(onConfirm, onReject);
   }
 };
