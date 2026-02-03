@@ -392,3 +392,153 @@ a {
     right: auto !important;
   }
 }
+
+/* =========================================
+   9. CALENDAR OVERRIDES
+   ========================================= */
+
+/* General Calendar Styling */
+#calendar {
+  --fc-border-color: rgba(0, 0, 0, 0.12);
+  /* Visible grey for Light Mode */
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: rgba(0, 0, 0, 0.03);
+  --fc-today-bg-color: rgba(56, 189, 248, 0.1);
+  --fc-list-event-hover-bg-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="dark"] #calendar {
+  --fc-border-color: var(--border-dark);
+  /* Subtle white for Dark Mode */
+  --fc-neutral-bg-color: rgba(255, 255, 255, 0.03);
+  --fc-list-event-hover-bg-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Header & Title */
+.fc-toolbar-title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  color: var(--text-main);
+}
+
+.fc-col-header-cell-cushion {
+  color: var(--text-muted);
+  text-decoration: none !important;
+  font-weight: 600;
+  padding: 8px 0 !important;
+}
+
+[data-bs-theme="dark"] .fc-col-header-cell-cushion {
+  color: var(--text-main-dark);
+}
+
+/* Grid Lines */
+.fc-theme-bootstrap5 .fc-scrollgrid {
+  border-color: var(--fc-border-color) !important;
+}
+
+.fc-theme-bootstrap5 td,
+.fc-theme-bootstrap5 th {
+  border-color: var(--fc-border-color) !important;
+}
+
+/* Events */
+.fc-event {
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none !important;
+}
+
+.fc-timegrid-event .fc-event-main {
+  padding: 2px 4px;
+}
+
+/* Popover / Modal Styles if needed */
+.fc-popover {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--card-shadow) !important;
+  backdrop-filter: blur(12px);
+}
+
+.fc-popover-header {
+  background: transparent !important;
+  color: var(--text-main) !important;
+}
+
+.fc-popover-body {
+  color: var(--text-main) !important;
+}
+
+/* List View */
+.fc-list {
+  border-color: var(--border-color) !important;
+}
+
+.fc-list-day-cushion {
+  background-color: var(--bg-body-light) !important;
+}
+
+[data-bs-theme="dark"] .fc-list-day-cushion {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-main-dark) !important;
+}
+
+.fc-list-event:hover td {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+[data-bs-theme="dark"] .fc-list-event:hover td {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.fc-list-day-text,
+.fc-list-day-side-text {
+  text-decoration: none !important;
+  color: var(--text-main);
+}/* =========================================
+   10. MOBILE OPTIMIZATIONS
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    /* Fix 15-min appointment visibility */
+    .fc-timegrid-event-short .fc-event-time {
+        display: none;
+        /* Hide time to save space */
+    }
+
+    .fc-timegrid-event-short .fc-event-title {
+        font-weight: 700;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block !important;
+        /* Ensure title is shown */
+        padding: 0 2px;
+    }
+
+    /* Make the event slightly wider if needed or adjust padding */
+    .fc-timegrid-event-short .fc-event-main {
+        padding: 1px 2px !important;
+    }
+}
+/* Font size reduction for mobile events to prevent truncation */
+@media (max-width: 768px) {
+    .fc-event-title {
+        font-size: 0.7rem !important;
+        /* Smaller text for mobile */
+        line-height: 1.1;
+    }
+
+    .fc-event-time {
+        font-size: 0.65rem !important;
+        /* Even smaller time if visible */
+    }
+
+    /* ensure 15 min events title is also small */
+    .fc-timegrid-event-short .fc-event-title {
+        font-size: 0.75rem !important;
+    }
+}
