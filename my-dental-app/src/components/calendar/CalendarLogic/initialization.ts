@@ -92,6 +92,16 @@ export const initCalendar = () => {
     endTime: schedule.endTime,
   }));
 
+  // Create Tooltip Element if it doesn't exist
+  let tooltip = document.getElementById('calendar-tooltip');
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.id = 'calendar-tooltip';
+    document.body.appendChild(tooltip);
+  }
+
+  let tooltipTimeout: any;
+
   const calendar = new Calendar(calendarEl, {
     plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, bootstrap5Plugin],
     themeSystem: 'bootstrap5',
@@ -99,7 +109,7 @@ export const initCalendar = () => {
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: '' // we controlled this with custom buttons
+      right: ''
     },
     buttonText: {
       today: 'Today',
@@ -108,27 +118,90 @@ export const initCalendar = () => {
       day: 'Day',
       list: 'List'
     },
-    slotDuration: slotDuration, // Apply from settings
-    slotLabelFormat: slotLabelFormat as any, // Apply from settings
-    businessHours: businessHours, // Gray out non-working hours
-    selectConstraint: 'businessHours', // Prevent selecting outside business hours
-    // Remove global eventConstraint - we'll validate per-doctor in eventDrop
+    slotDuration: slotDuration,
+    slotLabelFormat: slotLabelFormat as any,
+    businessHours: businessHours,
+    selectConstraint: 'businessHours',
     editable: true,
     selectable: true,
     height: 'auto',
     events: events,
+
+    // CUSTOM EVENT RENDERING: Name/Reason First, then Time
+    eventContent: (arg) => {
+      const props = arg.event.extendedProps;
+      const patientName = props.patientName || 'Patient';
+      const reason = props.reason || '';
+
+      // Construct title: "Ivanov - Checkup"
+      const displayTitle = reason ? `${patientName} - ${reason}` : arg.event.title;
+      const timeText = arg.timeText;
+
+      let html = `
+        <div class="fc-event-main-frame">
+          <div class="fc-event-title-container">
+            <div class="fc-event-title fc-sticky" style="font-weight: 700;">${displayTitle}</div>
+          </div>
+          <div class="fc-event-time" style="font-size: 0.85em;">${timeText}</div>
+        </div>
+      `;
+
+      return { html: html };
+    },
+
+    eventMouseEnter: (info) => {
+      // Clear any existing timeout to avoid overlapping
+      if (tooltipTimeout) clearTimeout(tooltipTimeout);
+
+      // Set timeout for 1.5 seconds (1500ms)
+      tooltipTimeout = setTimeout(() => {
+        if (!tooltip) return;
+
+        const event = info.event;
+        const doctor = event.extendedProps.doctor === 'dr-ivanov' ? 'Dr. Ivanov' : 'Dr. Ruseva';
+        const reason = event.extendedProps.reason || event.title;
+        const time = `${event.start?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${event.end?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+        tooltip.innerHTML = `
+          <h6>${event.extendedProps.patientName || 'Patient'}</h6>
+          <p><strong>Reason:</strong> ${reason}</p>
+          <p><strong>Doctor:</strong> ${doctor}</p>
+          <p class="mt-1 text-primary"><i class="bi bi-clock"></i> ${time}</p>
+        `;
+
+        // Position Logic - Offset by 20px
+        const rect = info.el.getBoundingClientRect();
+
+        // Simple positioning to the right of the event, or below if too close to edge
+        let top = rect.top;
+        let left = rect.right + 10;
+
+        // Check window bounds
+        if (left + 300 > window.innerWidth) {
+          left = rect.left - 310; // Show on left if no space on right
+        }
+
+        tooltip.style.top = `${top}px`;
+        tooltip.style.left = `${left}px`;
+        tooltip.classList.add('visible');
+
+      }, 500);
+    },
+
+    eventMouseLeave: () => {
+      if (tooltipTimeout) clearTimeout(tooltipTimeout);
+      if (tooltip) tooltip.classList.remove('visible');
+    },
+
     select: (info) => {
-      // Handle time slot selection
       console.info(`[DEBUG] Time slot selected: ${info.startStr}`);
       showAppointmentModal(info.startStr);
     },
     dateClick: (info) => {
-      // Show appointment modal when clicking on a time slot
       console.info(`[DEBUG] Calendar dateClick: ${info.dateStr}`);
       showAppointmentModal(info.dateStr);
     },
     eventClick: (info) => {
-      // Show event details popup
       showEventDetailsPopup(info.event);
     },
     eventDrop: handleEventDrop
@@ -136,7 +209,6 @@ export const initCalendar = () => {
 
   calendar.render();
 
-  // Store calendar instance for refreshing
   setCalendarInstance(calendar);
 
   // --- Wire up Custom Connectors ---

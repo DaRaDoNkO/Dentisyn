@@ -542,3 +542,71 @@ a {
         font-size: 0.75rem !important;
     }
 }
+/* =========================================
+   11. CALENDAR USABILITY IMPROVEMENTS
+   ========================================= */
+
+/* Responsive Text for Events */
+.fc-event-title {
+    font-size: 0.85rem;
+    /* Base size */
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.fc-event-time {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+/* Specific overrides for desktop/tablet to prevent truncation */
+@media (min-width: 769px) {
+    .fc-event-title {
+        font-size: 0.8rem;
+        /* Slightly smaller on dense desktop views */
+    }
+}
+
+/* Custom Tooltip Styling */
+#calendar-tooltip {
+    position: fixed;
+    z-index: 9999;
+    background: var(--card-bg);
+    /* Use theme variable */
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    box-shadow: var(--card-shadow);
+    pointer-events: none;
+    /* Prevent blocking interaction */
+    font-size: 0.9rem;
+    max-width: 300px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    visibility: hidden;
+}
+
+#calendar-tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+#calendar-tooltip h6 {
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+#calendar-tooltip p {
+    margin-bottom: 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* Dark mode specific tooltip adjustments */
+[data-bs-theme="dark"] #calendar-tooltip {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.1);
+}
