@@ -11,6 +11,9 @@ node_modules
 dist
 dist-ssr
 *.local
+Dental_soft_notes.md
+image-1.png
+image.png
 
 # Editor directories and files
 .vscode/*
