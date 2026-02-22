@@ -1,4 +1,21 @@
+import { appointmentRepository } from '../../repositories/appointmentRepository';
+
 export function QuickStats(): string {
+  const appointments = appointmentRepository.getAll();
+  const today = new Date().toISOString().split('T')[0];
+  
+  const todayCount = appointments.filter(a => 
+    a.startTime.startsWith(today)
+  ).length;
+  
+  const urgentCount = appointments.filter(a => 
+    a.startTime.startsWith(today) && a.status === 'Waiting'
+  ).length;
+  
+  const completedCount = appointments.filter(a => 
+    a.status === 'Completed'
+  ).length;
+
   return `
     <div class="card shadow-sm border-0 rounded-4 h-100 overflow-hidden">
       <div class="card-body">
@@ -12,7 +29,7 @@ export function QuickStats(): string {
                 <i class="bi bi-calendar-check"></i>
               </span>
               <span class="text-uppercase text-muted small" data-i18n="dashboard.today"></span>
-              <span class="fs-3 fw-bold text-primary">8</span>
+              <span class="fs-3 fw-bold text-primary">${todayCount}</span>
             </div>
           </div>
           <div class="col">
@@ -21,7 +38,7 @@ export function QuickStats(): string {
                 <i class="bi bi-exclamation-triangle"></i>
               </span>
               <span class="text-uppercase text-muted small" data-i18n="dashboard.urgent"></span>
-              <span class="fs-3 fw-bold text-warning">2</span>
+              <span class="fs-3 fw-bold text-warning">${urgentCount}</span>
             </div>
           </div>
           <div class="col">
@@ -30,7 +47,7 @@ export function QuickStats(): string {
                 <i class="bi bi-check-circle"></i>
               </span>
               <span class="text-uppercase text-muted small" data-i18n="dashboard.completed"></span>
-              <span class="fs-3 fw-bold text-success">3</span>
+              <span class="fs-3 fw-bold text-success">${completedCount}</span>
             </div>
           </div>
         </div>

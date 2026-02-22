@@ -171,6 +171,54 @@ const setupNavigationHandlers = () => {
     });
 };
 
+const setupDashboardHandlers = () => {
+    // View patient button
+    document.querySelectorAll('.view-patient').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const appointmentId = (e.currentTarget as HTMLElement).getAttribute('data-appointment-id');
+            console.info(`[AUDIT] VIEW_PATIENT | Appointment: ${appointmentId} | Time: ${new Date().toISOString()}`);
+            alert(`View patient details for appointment: ${appointmentId}`);
+        });
+    });
+
+    // Billing button
+    document.querySelectorAll('.billing-patient').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const appointmentId = (e.currentTarget as HTMLElement).getAttribute('data-appointment-id');
+            console.info(`[AUDIT] BILLING_OPENED | Appointment: ${appointmentId} | Time: ${new Date().toISOString()}`);
+            alert(`Billing for appointment: ${appointmentId}`);
+        });
+    });
+
+    // Check-in button
+    document.querySelectorAll('.check-in-patient').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const appointmentId = (e.currentTarget as HTMLElement).getAttribute('data-appointment-id');
+            console.info(`[AUDIT] PATIENT_CHECKED_IN | Appointment: ${appointmentId} | Time: ${new Date().toISOString()}`);
+            alert(`Patient checked in for appointment: ${appointmentId}`);
+        });
+    });
+
+    // Cancel appointment button
+    document.querySelectorAll('.cancel-appointment').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const appointmentId = (e.currentTarget as HTMLElement).getAttribute('data-appointment-id');
+            console.info(`[AUDIT] APPOINTMENT_CANCELLED | Appointment: ${appointmentId} | Time: ${new Date().toISOString()}`);
+            alert(`Appointment cancelled: ${appointmentId}`);
+        });
+    });
+
+    // Open chart button
+    const openChartBtn = document.getElementById('openChartBtn') as HTMLButtonElement;
+    if (openChartBtn) {
+        openChartBtn.addEventListener('click', (e) => {
+            const appointmentId = (e.currentTarget as HTMLElement).getAttribute('data-appointment-id');
+            console.info(`[AUDIT] CHART_OPENED | Appointment: ${appointmentId} | Time: ${new Date().toISOString()}`);
+            alert(`Opening patient chart for appointment: ${appointmentId}`);
+        });
+    }
+};
+
 // ========== RENDER UI COMPONENTS ==========
 const renderApp = (view: View = 'dashboard') => {
     currentView = view;
@@ -217,6 +265,11 @@ const renderApp = (view: View = 'dashboard') => {
     setupNavigationHandlers();
     setupNestedDropdowns();
     renderTranslations();
+
+    // Dashboard button handlers
+    if (view === 'dashboard') {
+        setupDashboardHandlers();
+    }
 
     // Specific Module Initialization
     if (view === 'calendar') {
