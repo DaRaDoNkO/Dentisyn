@@ -4,6 +4,7 @@
  */
 
 import type { Patient } from '../../types/patient';
+import { patientRepository } from '../../repositories/patientRepository';
 import { renderAppointmentModal } from './renderAppointmentModal';
 import {
   setupPatientTypeahead,
@@ -15,6 +16,9 @@ import {
   setupDoctorAvailability,
   setupSaveAppointment
 } from './appointmentFormHandlers';
+import {
+  getPendingAppointment
+} from '../../services/pendingAppointmentService';
 
 // Module-level state for selected patient
 let selectedPatient: Patient | null = null;
@@ -49,6 +53,17 @@ export const initAppointmentModal = (onSaveCallback?: () => void) => {
 
   // Create a reference object to share state between modules
   const selectedPatientRef = { current: selectedPatient };
+
+  // If there's a pending appointment context (from "New Appointment" in queue),
+  // pre-populate the selectedPatientRef so the save handler uses the right patient
+  const pending = getPendingAppointment();
+  if (pending) {
+    const existingPatient = patientRepository.getById(pending.patientId);
+    if (existingPatient) {
+      selectedPatientRef.current = existingPatient;
+      selectedPatient = existingPatient;
+    }
+  }
 
   // Setup all handlers
   if (patientNameSearch && typeaheadDropdown && selectedPatientInfo && selectedPatientName && selectedPatientDetails && newPatientForm) {

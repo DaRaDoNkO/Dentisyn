@@ -3,11 +3,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import i18next from './i18n';
 import { Navbar } from './components/layout/Navbar';
 import { QuickStats } from './components/dashboard/QuickStats';
-import { NextPatient } from './components/dashboard/NextPatient';
-import { PatientQueue } from './components/dashboard/PatientQueue';
+import { NextPatient, setNextPatientDoctor, shiftNextPatient } from './components/dashboard/NextPatient';
+import { PatientQueue, setupPatientQueueHandlers } from './components/dashboard/PatientQueue/index';
 import { renderCalendarHTML } from './components/calendar/CalendarLayout';
 import { initCalendar, refreshCalendarSettings, refreshCalendarLocale } from './components/calendar/CalendarLogic/index';
 import { renderCalendarSettings, initCalendarSettings, setRefreshCallback } from './components/user/Settings/CalendarSettings/index';
+import { renderSearchDropdown, setupGlobalSearch } from './components/search/PatientSearch';
 import { initializeTestData } from './utils/localhostData';
 
 // Import Bootstrap and make it globally available
@@ -17,12 +18,12 @@ import * as Bootstrap from 'bootstrap';
 // Ensure Bootstrap is available on window
 declare global {
     interface Window {
-        bootstrap: any;
+        bootstrap: typeof Bootstrap;
     }
 }
 
 // Make Bootstrap globally available BEFORE any other code runs
-(window as any).bootstrap = Bootstrap;
+(window as unknown as Record<string, unknown>).bootstrap = Bootstrap;
 
 type ThemeMode = 'light' | 'dark';
 type LanguageMode = 'en' | 'bg';
@@ -172,51 +173,84 @@ const setupNavigationHandlers = () => {
 };
 
 const setupDashboardHandlers = () => {
-    // View patient button
-    document.querySelectorAll('.view-patient').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const appointmentId = (e.currentTarget as HTMLElement).getAttribute('data-appointment-id');
-            console.info(`[AUDIT] VIEW_PATIENT | Appointment: ${appointmentId} | Time: ${new Date().toISOString()}`);
-            alert(`View patient details for appointment: ${appointmentId}`);
+    // Patient Queue handles its own events
+    setupPatientQueueHandlers();
+
+    // ── NextPatient: doctor filter pills ──
+    document.querySelectorAll('.next-patient-doc-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const doctor = (btn as HTMLElement).dataset.doctor ?? 'all';
+            setNextPatientDoctor(doctor);
+            rerenderNextPatient();
         });
     });
 
-    // Billing button
-    document.querySelectorAll('.billing-patient').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const appointmentId = (e.currentTarget as HTMLElement).getAttribute('data-appointment-id');
-            console.info(`[AUDIT] BILLING_OPENED | Appointment: ${appointmentId} | Time: ${new Date().toISOString()}`);
-            alert(`Billing for appointment: ${appointmentId}`);
-        });
+    // ── NextPatient: arrow navigation ──
+    document.getElementById('nextPatientPrev')?.addEventListener('click', () => {
+        shiftNextPatient(-1);
+        rerenderNextPatient();
+    });
+    document.getElementById('nextPatientNext')?.addEventListener('click', () => {
+        shiftNextPatient(1);
+        rerenderNextPatient();
     });
 
-    // Check-in button
-    document.querySelectorAll('.check-in-patient').forEach(btn => {
+    // ── NextPatient: note expand/collapse ──
+    setupNoteExpandHandlers();
+};
+
+/** Setup expand/collapse handlers for truncated notes in NextPatient cards */
+const setupNoteExpandHandlers = () => {
+    document.querySelectorAll('.note-expand-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const appointmentId = (e.currentTarget as HTMLElement).getAttribute('data-appointment-id');
-            console.info(`[AUDIT] PATIENT_CHECKED_IN | Appointment: ${appointmentId} | Time: ${new Date().toISOString()}`);
-            alert(`Patient checked in for appointment: ${appointmentId}`);
+            e.stopPropagation();
+            const noteId = (btn as HTMLElement).dataset.noteId;
+            const container = document.querySelector(`.next-patient-note[data-note-id="${noteId}"]`);
+            if (!container) return;
+            container.querySelector('.note-truncated')?.classList.add('d-none');
+            container.querySelector('.note-full')?.classList.remove('d-none');
         });
     });
-
-    // Cancel appointment button
-    document.querySelectorAll('.cancel-appointment').forEach(btn => {
+    document.querySelectorAll('.note-collapse-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const appointmentId = (e.currentTarget as HTMLElement).getAttribute('data-appointment-id');
-            console.info(`[AUDIT] APPOINTMENT_CANCELLED | Appointment: ${appointmentId} | Time: ${new Date().toISOString()}`);
-            alert(`Appointment cancelled: ${appointmentId}`);
+            e.stopPropagation();
+            const noteId = (btn as HTMLElement).dataset.noteId;
+            const container = document.querySelector(`.next-patient-note[data-note-id="${noteId}"]`);
+            if (!container) return;
+            container.querySelector('.note-truncated')?.classList.remove('d-none');
+            container.querySelector('.note-full')?.classList.add('d-none');
         });
     });
+};
 
-    // Open chart button
-    const openChartBtn = document.getElementById('openChartBtn') as HTMLButtonElement;
-    if (openChartBtn) {
-        openChartBtn.addEventListener('click', (e) => {
-            const appointmentId = (e.currentTarget as HTMLElement).getAttribute('data-appointment-id');
-            console.info(`[AUDIT] CHART_OPENED | Appointment: ${appointmentId} | Time: ${new Date().toISOString()}`);
-            alert(`Opening patient chart for appointment: ${appointmentId}`);
+/** Re-render the NextPatient section in place and reattach its handlers */
+const rerenderNextPatient = () => {
+    const section = document.getElementById('nextPatientSection');
+    if (!section) return;
+    const parent = section.parentElement;
+    if (!parent) return;
+    const tmp = document.createElement('div');
+    tmp.innerHTML = NextPatient();
+    const newSection = tmp.firstElementChild as HTMLElement;
+    parent.replaceChild(newSection, section);
+    // Reattach only NextPatient handlers
+    document.querySelectorAll('.next-patient-doc-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const doctor = (btn as HTMLElement).dataset.doctor ?? 'all';
+            setNextPatientDoctor(doctor);
+            rerenderNextPatient();
         });
-    }
+    });
+    document.getElementById('nextPatientPrev')?.addEventListener('click', () => {
+        shiftNextPatient(-1);
+        rerenderNextPatient();
+    });
+    document.getElementById('nextPatientNext')?.addEventListener('click', () => {
+        shiftNextPatient(1);
+        rerenderNextPatient();
+    });
+    setupNoteExpandHandlers();
+    renderTranslations();
 };
 
 // ========== RENDER UI COMPONENTS ==========
@@ -257,6 +291,7 @@ const renderApp = (view: View = 'dashboard') => {
     appElement.innerHTML = `
 		${Navbar()}
 		${mainContent}
+		${renderSearchDropdown()}
 	`;
 
     // Re-attach all global handlers since DOM was wiped
@@ -264,6 +299,10 @@ const renderApp = (view: View = 'dashboard') => {
     setupLanguageHandlers();
     setupNavigationHandlers();
     setupNestedDropdowns();
+    setupGlobalSearch(
+        () => currentView,
+        (view) => renderApp(view as View)
+    );
     renderTranslations();
 
     // Dashboard button handlers
@@ -303,6 +342,11 @@ if (savedLanguage === 'en' || savedLanguage === 'bg') {
 } else {
     i18next.changeLanguage('bg');
 }
+
+// Listen for programmatic navigation (e.g. from PatientQueue "New Appointment")
+window.addEventListener('dentisyn:navigate', ((e: CustomEvent<{ view: View }>) => {
+    renderApp(e.detail.view);
+}) as EventListener);
 
 // Initial Render
 renderApp('dashboard');

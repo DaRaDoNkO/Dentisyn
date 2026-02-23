@@ -30,6 +30,11 @@ export function Navbar(): string {
             </li>
           </ul>
           <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="globalSearchBtn" title="Search (Ctrl+K)">
+                <i class="bi bi-search fs-5"></i>
+              </a>
+            </li>
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle d-flex align-items-center gap-2"

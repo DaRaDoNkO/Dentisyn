@@ -11,6 +11,10 @@ import { appointmentRepository } from '../../../repositories/appointmentReposito
 import { showAppointmentModal } from './modal';
 import { showEventDetailsPopup, handleEventDrop } from './eventHandlers';
 import { setCalendarInstance } from './types';
+import {
+  getPendingAppointment,
+  clearPendingAppointment
+} from '../../../services/pendingAppointmentService';
 import i18next from '../../../i18n';
 
 /**
@@ -73,7 +77,7 @@ export const initCalendar = () => {
     document.body.appendChild(tooltip);
   }
 
-  let tooltipTimeout: any;
+  let tooltipTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // Get current language for FullCalendar locale
   const currentLanguage = i18next.language;
@@ -281,4 +285,39 @@ export const initCalendar = () => {
 
   // Attach fallback handler with event delegation
   calendarEl.addEventListener('click', calendarCellClickHandler, true);
+
+  // ── Pending appointment banner ──
+  const pending = getPendingAppointment();
+  if (pending) {
+    // Show a banner above the calendar indicating booking mode
+    const bannerHtml = `
+      <div id="pendingPatientBanner" class="alert alert-info d-flex justify-content-between align-items-center mb-2 rounded-3 shadow-sm">
+        <div>
+          <i class="bi bi-person-plus me-2"></i>
+          <strong>${i18next.t('table.bookingFor', 'Booking for')}:</strong>
+          ${pending.patientName}
+          <span class="text-muted ms-2">${pending.phone}</span>
+          <span class="badge bg-primary ms-2">${i18next.t('table.clickSlotToBook', 'Click a time slot to book')}</span>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-danger" id="cancelPendingBtn">
+          <i class="bi bi-x-lg me-1"></i>${i18next.t('table.cancel', 'Cancel')}
+        </button>
+      </div>`;
+    calendarEl.insertAdjacentHTML('beforebegin', bannerHtml);
+
+    // Cancel pending button
+    document.getElementById('cancelPendingBtn')?.addEventListener('click', () => {
+      clearPendingAppointment();
+      document.getElementById('pendingPatientBanner')?.remove();
+    });
+
+    // Auto-filter to the pending doctor
+    if (pending.doctorId === 'dr-ivanov' && filterRuseva) {
+      filterRuseva.checked = false;
+      filterEvents();
+    } else if (pending.doctorId === 'dr-ruseva' && filterIvanov) {
+      filterIvanov.checked = false;
+      filterEvents();
+    }
+  }
 };

@@ -7,6 +7,8 @@
 import doctorsData from '../../localhost/doctors.json';
 import patientsData from '../../localhost/patients.json';
 import appointmentsData from '../../localhost/appointments.json';
+import { doctorRepository } from '../repositories/doctorRepository';
+import type { DoctorInfo } from '../types/patient';
 
 export interface DoctorData {
   id: string;
@@ -85,6 +87,9 @@ export function initializeTestData(): void {
   const PATIENTS_KEY = 'dentisyn-patients';
   const APPOINTMENTS_KEY = 'dentisyn-appointments';
 
+  // Seed doctors first
+  doctorRepository.seed(doctorsData as DoctorInfo[]);
+
   // Check if localStorage already has data
   const existingPatients = localStorage.getItem(PATIENTS_KEY);
   const existingAppointments = localStorage.getItem(APPOINTMENTS_KEY);
@@ -105,10 +110,15 @@ export function initializeTestData(): void {
     console.info('[INIT] Loaded test patients from localhost folder');
   }
 
-  // Initialize appointments if empty
+  // Initialize appointments if empty — rewrite dates to today so dashboard always works
   if (!existingAppointments || JSON.parse(existingAppointments).length === 0) {
-    const testAppointments = getTestAppointments();
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const testAppointments = getTestAppointments().map(a => ({
+      ...a,
+      startTime: a.startTime.replace(/^\d{4}-\d{2}-\d{2}/, today),
+      endTime: a.endTime.replace(/^\d{4}-\d{2}-\d{2}/, today),
+    }));
     localStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(testAppointments));
-    console.info('[INIT] Loaded test appointments from localhost folder');
+    console.info('[INIT] Loaded test appointments from localhost folder (dates adjusted to today)');
   }
 }

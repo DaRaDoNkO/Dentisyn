@@ -224,10 +224,10 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              <i class="bi bi-x-circle me-1"></i> Cancel
+              <i class="bi bi-x-circle me-1"></i> <span data-i18n="appointment.cancel"></span>
             </button>
             <button type="button" class="btn btn-primary" id="saveAppointmentBtn">
-              <i class="bi bi-check-circle me-1"></i> Save Appointment
+              <i class="bi bi-check-circle me-1"></i> <span data-i18n="appointment.save"></span>
             </button>
           </div>
         </div>

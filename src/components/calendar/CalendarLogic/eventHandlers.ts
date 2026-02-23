@@ -3,11 +3,12 @@ import { showToast } from '../../../utils/toast';
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index';
 import type { Doctor } from '../../../types/patient';
+import type { EventApi } from '@fullcalendar/core';
 
 /**
  * Show event details popup when clicking on an appointment
  */
-export const showEventDetailsPopup = (event: any) => {
+export const showEventDetailsPopup = (event: EventApi) => {
   const { patientName, phone, reason, doctor } = event.extendedProps;
 
   // Remove any existing popups

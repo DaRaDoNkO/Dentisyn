@@ -32,7 +32,11 @@ const en = {
     waiting: enCommon.statusWaiting,
     confirmed: enCommon.statusConfirmed,
     cancelled: enCommon.statusCancelled,
-    noShow: enCommon.statusNoShow
+    noShow: enCommon.statusNoShow,
+    arrived: enCommon.statusArrived,
+    inTreatment: enCommon.statusInTreatment,
+    rescheduled: enCommon.statusRescheduled,
+    left: enCommon.statusLeft
   },
   common: enCommon,
   messages: enMessages
@@ -51,7 +55,11 @@ const bg = {
     waiting: bgCommon.statusWaiting,
     confirmed: bgCommon.statusConfirmed,
     cancelled: bgCommon.statusCancelled,
-    noShow: bgCommon.statusNoShow
+    noShow: bgCommon.statusNoShow,
+    arrived: bgCommon.statusArrived,
+    inTreatment: bgCommon.statusInTreatment,
+    rescheduled: bgCommon.statusRescheduled,
+    left: bgCommon.statusLeft
   },
   common: bgCommon,
   messages: bgMessages

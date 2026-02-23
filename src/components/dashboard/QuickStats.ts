@@ -9,7 +9,7 @@ export function QuickStats(): string {
   ).length;
   
   const urgentCount = appointments.filter(a => 
-    a.startTime.startsWith(today) && a.status === 'Waiting'
+    a.startTime.startsWith(today) && (a.status === 'Waiting' || a.status === 'Arrived')
   ).length;
   
   const completedCount = appointments.filter(a => 
