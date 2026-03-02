@@ -9,6 +9,7 @@ import { renderCalendarHTML } from './components/calendar/CalendarLayout';
 import { initCalendar, refreshCalendarSettings, refreshCalendarLocale } from './components/calendar/CalendarLogic/index';
 import { renderCalendarSettings, initCalendarSettings, setRefreshCallback } from './components/user/Settings/CalendarSettings/index';
 import { renderSearchDropdown, setupGlobalSearch } from './components/search/PatientSearch';
+import { renderPatientTab, initPatientTab } from './components/patient/PatientTab/index';
 import { initializeTestData } from './utils/localhostData';
 
 // Import Bootstrap and make it globally available
@@ -27,7 +28,7 @@ declare global {
 
 type ThemeMode = 'light' | 'dark';
 type LanguageMode = 'en' | 'bg';
-type View = 'dashboard' | 'calendar' | 'settings';
+type View = 'dashboard' | 'calendar' | 'settings' | 'patients';
 
 const THEME_STORAGE_KEY = 'dentisyn-theme';
 const LANG_STORAGE_KEY = 'dentisyn-language';
@@ -143,6 +144,7 @@ const setupNestedDropdowns = () => {
 const setupNavigationHandlers = () => {
     const dashboardLink = document.querySelector('[data-i18n="nav.dashboard"]') as HTMLAnchorElement;
     const calendarLink = document.querySelector('[data-i18n="nav.calendar"]') as HTMLAnchorElement;
+    const patientsLink = document.querySelector('[data-i18n="nav.patients"]') as HTMLAnchorElement;
     const settingsLink = document.getElementById('navCalendarSettings') as HTMLAnchorElement;
 
     // Helper to set active class
@@ -150,6 +152,7 @@ const setupNavigationHandlers = () => {
         document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
         if (view === 'dashboard') dashboardLink?.classList.add('active');
         if (view === 'calendar') calendarLink?.classList.add('active');
+        if (view === 'patients') patientsLink?.classList.add('active');
         // Settings doesn't highlight main nav
     };
 
@@ -164,6 +167,11 @@ const setupNavigationHandlers = () => {
     calendarLink?.addEventListener('click', (e) => {
         e.preventDefault();
         renderApp('calendar');
+    });
+
+    patientsLink?.addEventListener('click', (e) => {
+        e.preventDefault();
+        renderApp('patients');
     });
 
     settingsLink?.addEventListener('click', (e) => {
@@ -286,6 +294,12 @@ const renderApp = (view: View = 'dashboard') => {
         <main class="container py-4">
             ${settingsHTML}
         </main>`;
+    } else if (view === 'patients') {
+        const patientsHTML = renderPatientTab();
+        mainContent = `
+        <main class="container py-4">
+            ${patientsHTML}
+        </main>`;
     }
 
     appElement.innerHTML = `
@@ -319,6 +333,8 @@ const renderApp = (view: View = 'dashboard') => {
         initCalendarSettings();
         // Wire up the refresh callback for settings
         setRefreshCallback(refreshCalendarSettings);
+    } else if (view === 'patients') {
+        initPatientTab();
     }
 };
 

@@ -9,6 +9,7 @@ import enAppointment from './languages/EN/appointment.json';
 import enSettings from './languages/EN/settings.json';
 import enCommon from './languages/EN/common.json';
 import enMessages from './languages/EN/messages.json';
+import enPatient from './languages/EN/patient.json';
 
 // Import Bulgarian translations
 import bgNavigation from './languages/BG/navigation.json';
@@ -18,6 +19,7 @@ import bgAppointment from './languages/BG/appointment.json';
 import bgSettings from './languages/BG/settings.json';
 import bgCommon from './languages/BG/common.json';
 import bgMessages from './languages/BG/messages.json';
+import bgPatient from './languages/BG/patient.json';
 
 // Merge English translations
 const en = {
@@ -39,7 +41,8 @@ const en = {
     left: enCommon.statusLeft
   },
   common: enCommon,
-  messages: enMessages
+  messages: enMessages,
+  patient: enPatient
 };
 
 // Merge Bulgarian translations
@@ -62,7 +65,8 @@ const bg = {
     left: bgCommon.statusLeft
   },
   common: bgCommon,
-  messages: bgMessages
+  messages: bgMessages,
+  patient: bgPatient
 };
 
 i18next

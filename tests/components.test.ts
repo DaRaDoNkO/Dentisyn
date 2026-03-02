@@ -12,6 +12,10 @@ import {
   getPendingAppointment,
   clearPendingAppointment
 } from '../src/services/pendingAppointmentService';
+import { renderPatientTab } from '../src/components/patient/PatientTab/render';
+import { renderNewPatientForm } from '../src/components/patient/NewPatient/render';
+import { renderPatientCarton } from '../src/components/patient/PatientCarton/render';
+import { OBLASTS, HEALTH_REGIONS } from '../src/data/oblasts';
 import type { DelayRecord } from '../src/types/patient';
 
 describe('Component Rendering', () => {
@@ -269,6 +273,127 @@ describe('Component Rendering', () => {
       });
       clearPendingAppointment();
       expect(getPendingAppointment()).toBeNull();
+    });
+  });
+
+  // ─── Part 6: Patient Tab Tests ───────────────────────
+
+  describe('PatientTab Component', () => {
+    it('should render patient tab with sub-tab navigation', () => {
+      const html = renderPatientTab();
+      expect(html).toContain('patientTabContainer');
+      expect(html).toContain('newPatientTab');
+      expect(html).toContain('patientCartonTab');
+    });
+
+    it('should have New Patient tab active by default', () => {
+      const html = renderPatientTab('new');
+      expect(html).toContain('id="newPatientTab"');
+      // The "new" tab button should have "active" class
+      expect(html).toMatch(/class="nav-link active"[\s\S]*?id="newPatientTab"/);
+    });
+
+    it('should support carton sub-tab', () => {
+      const html = renderPatientTab('carton');
+      expect(html).toMatch(/class="nav-link active"[\s\S]*?id="patientCartonTab"/);
+    });
+
+    it('should contain i18n attributes', () => {
+      const html = renderPatientTab();
+      expect(html).toContain('data-i18n="patient.tabTitle"');
+      expect(html).toContain('data-i18n="patient.newPatient"');
+      expect(html).toContain('data-i18n="patient.patientCarton"');
+    });
+  });
+
+  describe('NewPatient Form', () => {
+    it('should render the registration form', () => {
+      const html = renderNewPatientForm();
+      expect(html).toContain('newPatientForm');
+      expect(html).toContain('npFirstName');
+      expect(html).toContain('npFamilyName');
+      expect(html).toContain('npPhone');
+    });
+
+    it('should contain ID type selector with EGN/LNCh/EU/SSN options', () => {
+      const html = renderNewPatientForm();
+      expect(html).toContain('value="EGN"');
+      expect(html).toContain('value="LNCh"');
+      expect(html).toContain('value="EU"');
+      expect(html).toContain('value="SSN"');
+    });
+
+    it('should contain NZOK section with oblast dropdown', () => {
+      const html = renderNewPatientForm();
+      expect(html).toContain('npNzokNumber');
+      expect(html).toContain('npRzokOblast');
+      expect(html).toContain('npHealthRegion');
+    });
+
+    it('should contain patient flag checkboxes', () => {
+      const html = renderNewPatientForm();
+      expect(html).toContain('npUnfavorable');
+      expect(html).toContain('npExemptFee');
+      expect(html).toContain('npPensioner');
+    });
+
+    it('should have date of birth and sex fields', () => {
+      const html = renderNewPatientForm();
+      expect(html).toContain('npDob');
+      expect(html).toContain('npSex');
+    });
+
+    it('should have auto-fill indicators for EGN', () => {
+      const html = renderNewPatientForm();
+      expect(html).toContain('npDobAutoFill');
+      expect(html).toContain('npSexAutoFill');
+    });
+
+    it('should contain family link area', () => {
+      const html = renderNewPatientForm();
+      expect(html).toContain('familyLinkArea');
+    });
+
+    it('should have create patient submit button', () => {
+      const html = renderNewPatientForm();
+      expect(html).toContain('createPatientBtn');
+      expect(html).toContain('data-i18n="patient.createPatient"');
+    });
+  });
+
+  describe('PatientCarton Component', () => {
+    it('should render search state when no patient selected', () => {
+      const html = renderPatientCarton();
+      expect(html).toContain('cartonSearchInput');
+      expect(html).toContain('cartonSearchResults');
+    });
+
+    it('should contain i18n attributes', () => {
+      const html = renderPatientCarton();
+      expect(html).toContain('data-i18n="patient.searchPatient"');
+      expect(html).toContain('data-i18n="patient.selectPatient"');
+    });
+  });
+
+  describe('Bulgarian Oblast Data', () => {
+    it('should have all 28 oblasts', () => {
+      expect(OBLASTS).toHaveLength(28);
+    });
+
+    it('should have all 28 health regions', () => {
+      expect(HEALTH_REGIONS).toHaveLength(28);
+    });
+
+    it('should have Sofia City in oblasts', () => {
+      const sofia = OBLASTS.find(o => o.code === 'SOF');
+      expect(sofia).toBeDefined();
+      expect(sofia?.nameBG).toBe('София-град');
+      expect(sofia?.nameEN).toBe('Sofia City');
+    });
+
+    it('should have unique oblast codes', () => {
+      const codes = OBLASTS.map(o => o.code);
+      expect(new Set(codes).size).toBe(codes.length);
     });
   });
 });
