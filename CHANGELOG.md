@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.0.0...v1.0.1) (2026-03-02)
+
+
+### Bug Fixes
+
+* **calendar:** update type annotations for event handling and slotLabelFormat ([f2d123f](https://github.com/DaRaDoNkO/Dentisyn/commit/f2d123f80d5bf692fbbfc9135f6171908bf630aa))
+
 # 1.0.0 (2026-03-02)
 
 
