@@ -1,8 +1,10 @@
 import { Calendar } from '@fullcalendar/core';
+import type { EventContentArg, EventHoveringArg, DateSelectArg, EventClickArg, FormatterInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
+import type { DateClickArg } from '@fullcalendar/interaction';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import bgLocale from '@fullcalendar/core/locales/bg';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -32,7 +34,7 @@ export const initCalendar = () => {
   const slotDuration = `00:${String(settings.slotDuration).padStart(2, '0')}:00`;
 
   // Determine time label format based on settings
-  const slotLabelFormat = settings.timeFormat === '12h'
+  const slotLabelFormat: FormatterInput = settings.timeFormat === '12h'
     ? { hour: 'numeric', minute: '2-digit', meridiem: 'short' }
     : { hour: '2-digit', minute: '2-digit', hour12: false };
 
@@ -101,7 +103,7 @@ export const initCalendar = () => {
       list: i18next.t('calendar.list')
     },
     slotDuration: slotDuration,
-    slotLabelFormat: slotLabelFormat as any,
+    slotLabelFormat: slotLabelFormat,
     businessHours: businessHours,
     selectConstraint: 'businessHours',
     editable: true,
@@ -110,7 +112,7 @@ export const initCalendar = () => {
     events: events,
 
     // CUSTOM EVENT RENDERING: Name/Reason First, then Time
-    eventContent: (arg) => {
+    eventContent: (arg: EventContentArg) => {
       const props = arg.event.extendedProps;
       const patientName = props.patientName || 'Patient';
       const reason = props.reason || '';
@@ -131,7 +133,7 @@ export const initCalendar = () => {
       return { html: html };
     },
 
-    eventMouseEnter: (info) => {
+    eventMouseEnter: (info: EventHoveringArg) => {
       // Clear any existing timeout to avoid overlapping
       if (tooltipTimeout) clearTimeout(tooltipTimeout);
 
@@ -175,15 +177,15 @@ export const initCalendar = () => {
       if (tooltip) tooltip.classList.remove('visible');
     },
 
-    select: (info) => {
+    select: (info: DateSelectArg) => {
       console.info(`[DEBUG] Time slot selected: ${info.startStr}`);
       showAppointmentModal(info.startStr);
     },
-    dateClick: (info) => {
+    dateClick: (info: DateClickArg) => {
       console.info(`[DEBUG] Calendar dateClick: ${info.dateStr}`);
       showAppointmentModal(info.dateStr);
     },
-    eventClick: (info) => {
+    eventClick: (info: EventClickArg) => {
       showEventDetailsPopup(info.event);
     },
     eventDrop: handleEventDrop
