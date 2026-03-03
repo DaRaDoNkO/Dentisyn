@@ -6,7 +6,6 @@ import {
   renderPeriodonticPlaceholder,
   renderAppointmentHistory
 } from './render';
-import { renderNewPatientForm, initNewPatientForm } from '../NewPatient/index';
 import type { Appointment } from '../../../types/patient';
 
 /**
@@ -17,7 +16,6 @@ export function initPatientCarton(preselectedId?: string): void {
   if (preselectedId) {
     setupCartonTabs();
     setupBackToSearch();
-    setupEditButton();
   } else {
     setupCartonSearch();
   }
@@ -39,14 +37,8 @@ function setupCartonSearch(): void {
     }, 250);
   });
 
+  // Focus on mount
   input.focus();
-  setupNewPatientButton();
-}
-
-function setupNewPatientButton(): void {
-  document.getElementById('cartonCreateNewBtn')?.addEventListener('click', () => {
-    document.dispatchEvent(new CustomEvent('patient:createNew'));
-  });
 }
 
 function renderSearchResults(query: string): void {
@@ -101,68 +93,9 @@ function openCartonForPatient(patientId: string): void {
   container.outerHTML = renderCartonContent(patient);
   setupCartonTabs();
   setupBackToSearch();
-  setupEditButton();
 
   console.info(
     `[AUDIT] OPEN_CARTON | Patient: ${patient.name} | ID: ${patientId} | Time: ${new Date().toISOString()}`
-  );
-}
-
-// ─── Edit Patient ────────────────────────────────────
-
-function setupEditButton(): void {
-  document.getElementById('cartonEditBtn')?.addEventListener('click', () => {
-    const patientIdEl = document.getElementById('cartonPatientId');
-    const patientId = patientIdEl?.dataset.patientId ?? '';
-    if (!patientId) return;
-    openEditForm(patientId);
-  });
-}
-
-function openEditForm(patientId: string): void {
-  const patient = patientRepository.getById(patientId);
-  if (!patient) return;
-
-  const container = document.getElementById('cartonContainer');
-  if (!container) return;
-
-  container.innerHTML = `
-    <div class="card shadow-sm border-0 rounded-4">
-      <div class="card-header bg-transparent border-bottom-0 pt-4 px-4 pb-0">
-        <div class="d-flex align-items-center gap-2 mb-1">
-          <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center
-            justify-content-center" style="width:38px;height:38px">
-            <i class="bi bi-pencil text-primary"></i>
-          </div>
-          <div>
-            <h5 class="mb-0 fw-bold">${patient.name}</h5>
-            <small class="text-muted" data-i18n="patient.editPatientSub">
-              Edit patient information
-            </small>
-          </div>
-        </div>
-      </div>
-      <div class="card-body p-4">
-        ${renderNewPatientForm()}
-      </div>
-    </div>
-  `;
-
-  initNewPatientForm(patientId);
-
-  // One-time listeners: re-open carton after save or cancel
-  const onDone = (e: Event): void => {
-    const ev = e as CustomEvent<{ patientId: string }>;
-    document.removeEventListener('patient:editSaved', onDone);
-    document.removeEventListener('patient:editCancelled', onDone);
-    openCartonForPatient(ev.detail.patientId);
-  };
-
-  document.addEventListener('patient:editSaved', onDone);
-  document.addEventListener('patient:editCancelled', onDone);
-
-  console.info(
-    `[AUDIT] EDIT_CARTON_OPEN | Patient: ${patient.name} | ID: ${patientId} | Time: ${new Date().toISOString()}`
   );
 }
 

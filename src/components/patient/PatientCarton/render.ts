@@ -25,34 +25,22 @@ function renderSearchState(): string {
     <div id="cartonContainer">
       <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-4 text-center">
-          <i class="bi bi-folder2-open text-primary" style="font-size:3rem"></i>
+          <i class="bi bi-search text-muted" style="font-size:3rem"></i>
           <h5 class="mt-3" data-i18n="patient.searchPatient">
             ${t('patient.searchPatient', 'Search for a patient')}
           </h5>
           <p class="text-muted" data-i18n="patient.selectPatient">
             ${t('patient.selectPatient', 'Select a patient to view their carton')}
           </p>
-          <div class="mx-auto" style="max-width:440px">
-            <div class="input-group input-group-lg">
+          <div class="mx-auto" style="max-width:400px">
+            <div class="input-group">
               <span class="input-group-text"><i class="bi bi-search"></i></span>
               <input type="text" class="form-control" id="cartonSearchInput"
-                placeholder="${t('patient.searchPatient', 'Search by name or phone...')}"
+                placeholder="${t('patient.searchPatient', 'Search for a patient')}"
                 autocomplete="off">
             </div>
-            <div id="cartonSearchResults" class="list-group mt-1 text-start"
-              style="max-height:280px;overflow-y:auto"></div>
-
-            <div class="mt-4 pt-3 border-top">
-              <p class="text-muted small mb-2" data-i18n="patient.notFound">
-                ${t('patient.notFound', "Patient not found?")}
-              </p>
-              <button type="button" class="btn btn-primary" id="cartonCreateNewBtn">
-                <i class="bi bi-person-plus me-2"></i>
-                <span data-i18n="patient.newPatient">
-                  ${t('patient.newPatient', 'New Patient')}
-                </span>
-              </button>
-            </div>
+            <div id="cartonSearchResults" class="list-group mt-1"
+              style="max-height:250px;overflow-y:auto"></div>
           </div>
         </div>
       </div>
@@ -137,10 +125,6 @@ function renderDemographicsHeader(p: Patient): string {
           <button class="btn btn-sm btn-outline-secondary" id="cartonBackToSearch">
             <i class="bi bi-arrow-left me-1"></i>
             <span data-i18n="table.search">${t('table.search', 'Search')}</span>
-          </button>
-          <button class="btn btn-sm btn-outline-primary ms-2" id="cartonEditBtn">
-            <i class="bi bi-pencil me-1"></i>
-            <span data-i18n="patient.editPatient">${t('patient.editPatient', 'Edit')}</span>
           </button>
         </div>
 

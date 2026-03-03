@@ -2,6 +2,7 @@ import i18next from '../../../i18n';
 import { patientRepository } from '../../../repositories/patientRepository';
 import { validateEGN, validateLNCh } from '../../../utils/bgUtils';
 import { showToast } from '../../../utils/toast';
+import { toInputDate } from '../../../utils/dateUtils';
 import type { NewPatientFormData, FormValidationErrors, FamilySuggestion } from './types';
 import type { PatientIdType } from '../../../types/patient';
 
@@ -150,7 +151,7 @@ function handleEgnAutoFill(egn: string): void {
   if (result.dob) {
     const dobInput = document.getElementById('npDob') as HTMLInputElement | null;
     if (dobInput) {
-      dobInput.value = formatDateForInput(result.dob);
+      dobInput.value = toInputDate(result.dob);
       document.getElementById('npDobAutoFill')?.classList.remove('d-none');
     }
   }
@@ -187,13 +188,6 @@ function clearIdValidation(): void {
 function clearAutoFillIndicators(): void {
   document.getElementById('npDobAutoFill')?.classList.add('d-none');
   document.getElementById('npSexAutoFill')?.classList.add('d-none');
-}
-
-function formatDateForInput(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
 }
 
 // ─── Family Detection ────────────────────────────────

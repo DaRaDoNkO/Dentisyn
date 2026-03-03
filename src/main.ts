@@ -70,12 +70,19 @@ const setupLanguageHandlers = () => {
         langToggleButton.textContent = lang === 'bg' ? 'EN' : 'BG';
     };
 
+    // Set the HTML lang attribute so browsers render date inputs in the correct locale
+    const applyLang = (lang: LanguageMode) => {
+        document.documentElement.lang = lang === 'bg' ? 'bg' : 'en';
+    };
+
+    applyLang(i18next.language as LanguageMode);
     updateLangButtonText(i18next.language as LanguageMode);
 
     langToggleButton?.addEventListener('click', () => {
         const nextLang: LanguageMode = i18next.language === 'bg' ? 'en' : 'bg';
         i18next.changeLanguage(nextLang);
         localStorage.setItem(LANG_STORAGE_KEY, nextLang);
+        applyLang(nextLang);
         updateLangButtonText(nextLang);
         renderTranslations();
         

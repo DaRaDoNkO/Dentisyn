@@ -2,9 +2,13 @@
  * Appointment modal HTML template renderer
  */
 
+import i18next from '../../i18n';
 import { COUNTRY_CODES } from './constants';
 import { generateTimeOptions } from './timeUtils';
 import { loadCalendarSettings } from '../user/Settings/CalendarSettings/index';
+import { toInputDate } from '../../utils/dateUtils';
+
+const t = (key: string, fb: string): string => i18next.t(key, fb) as string;
 
 /**
  * Render the appointment modal HTML
@@ -39,17 +43,17 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
               <!-- Smart Patient Search (Typeahead) -->
               <div class="mb-3">
                 <label for="patientNameSearch" class="form-label fw-bold" data-i18n="appointment.patientName">
-                  Patient Name
+                  ${t('appointment.patientName', 'Patient Name')}
                 </label>
                 <input
                   type="text"
                   class="form-control"
                   id="patientNameSearch"
-                  placeholder="Type to search or create new patient..."
+                  placeholder="${t('appointment.typeaheadSearchPlaceholder', 'Type to search or create a new patient...')}"
                   autocomplete="off"
                 >
                 <small class="text-muted d-block mt-1" data-i18n="appointment.typeaheadHint">
-                  Start typing to search existing patients
+                  ${t('appointment.typeaheadHint', 'Start typing to search existing patients')}
                 </small>
                 
                 <!-- Typeahead Dropdown -->
@@ -65,7 +69,8 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
                   <small id="selectedPatientDetails" class="text-muted"></small>
                 </div>
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="changePatientBtn">
-                  <i class="bi bi-pencil"></i> Change
+                  <i class="bi bi-pencil"></i>
+                  <span data-i18n="appointment.changePatient">${t('appointment.changePatient', 'Change')}</span>
                 </button>
               </div>
 
@@ -80,19 +85,19 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
                   <div class="row">
                     <!-- First Name -->
                     <div class="col-md-6 mb-3">
-                      <label for="patientFirstName" class="form-label">First Name</label>
+                      <label for="patientFirstName" class="form-label" data-i18n="patient.firstName">${t('patient.firstName', 'First Name')}</label>
                       <input type="text" class="form-control" id="patientFirstName" required>
                     </div>
                     <!-- Last Name -->
                     <div class="col-md-6 mb-3">
-                      <label for="patientLastName" class="form-label">Last Name</label>
+                      <label for="patientLastName" class="form-label" data-i18n="patient.familyName">${t('patient.familyName', 'Family Name')}</label>
                       <input type="text" class="form-control" id="patientLastName" required>
                     </div>
                   </div>
                   
                   <!-- Smart Phone Input (Split: Country Code + Number) -->
                   <div class="mb-3">
-                    <label class="form-label">Phone Number</label>
+                    <label class="form-label" data-i18n="patient.phone">${t('patient.phone', 'Phone')}</label>
                     <div class="input-group">
                       <input
                         type="text"
@@ -116,27 +121,28 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
     (c) => `<option value="${c.code}">${c.country}</option>`
   ).join('')}
                     </datalist>
-                    <small class="text-muted">Numbers only (no spaces or dashes)</small>
+                    <small class="text-muted" data-i18n="appointment.phoneHint">${t('appointment.phoneHint', 'Numbers only (no spaces or dashes)')}</small>
                   </div>
                   
                   <!-- ID Type and Number -->
                   <div class="row">
                     <div class="col-md-4 mb-3">
-                      <label for="patientIDType" class="form-label">ID Type</label>
+                      <label for="patientIDType" class="form-label" data-i18n="patient.idType">${t('patient.idType', 'ID Type')}</label>
                       <select class="form-select" id="patientIDType">
-                        <option value="egn" selected>BG (EGN)</option>
-                        <option value="lnch">LNCh (Resident)</option>
-                        <option value="foreign">Foreign</option>
+                        <option value="EGN" selected data-i18n="patient.egn">${t('patient.egn', 'EGN')}</option>
+                        <option value="LNCh" data-i18n="patient.lnch">${t('patient.lnch', 'LNCh')}</option>
+                        <option value="EU" data-i18n="patient.euCitizen">${t('patient.euCitizen', 'EU Citizen')}</option>
+                        <option value="SSN" data-i18n="patient.ssn">${t('patient.ssn', 'SSN')}</option>
                       </select>
-                      <small class="text-muted">Auto-detects</small>
+                      <small class="text-muted" data-i18n="appointment.autoDetects">${t('appointment.autoDetects', 'Auto-detects')}</small>
                     </div>
                     <div class="col-md-8 mb-3">
-                      <label for="patientIDNumber" class="form-label">ID Number</label>
+                      <label for="patientIDNumber" class="form-label" data-i18n="patient.idNumber">${t('patient.idNumber', 'ID Number')}</label>
                       <input 
                         type="text" 
                         class="form-control" 
                         id="patientIDNumber" 
-                        placeholder="Enter EGN, LNCh, or Passport"
+                        placeholder="${t('appointment.idPlaceholder', 'Enter EGN, LNCh or Passport number')}"
                         maxlength="20"
                       >
                       <small id="idValidationFeedback" class="text-muted"></small>
@@ -146,18 +152,18 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
                   <!-- Date of Birth and Sex (auto-filled for EGN) -->
                   <div class="row">
                     <div class="col-md-6 mb-3">
-                      <label for="patientDOB" class="form-label">Date of Birth</label>
+                      <label for="patientDOB" class="form-label" data-i18n="patient.dateOfBirth">${t('patient.dateOfBirth', 'Date of Birth')}</label>
                       <input type="date" class="form-control" id="patientDOB">
-                      <small class="text-muted">Auto-filled for EGN</small>
+                      <small class="text-muted" data-i18n="appointment.autoFilledForEgn">${t('appointment.autoFilledForEgn', 'Auto-filled for EGN')}</small>
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label for="patientSex" class="form-label">Sex</label>
+                      <label for="patientSex" class="form-label" data-i18n="patient.sex">${t('patient.sex', 'Sex')}</label>
                       <select class="form-select" id="patientSex">
-                        <option value="">Select...</option>
-                        <option value="m">Male</option>
-                        <option value="f">Female</option>
+                        <option value="" data-i18n="appointment.selectSex">${t('appointment.selectSex', 'Select...')}</option>
+                        <option value="m" data-i18n="patient.male">${t('patient.male', 'Male')}</option>
+                        <option value="f" data-i18n="patient.female">${t('patient.female', 'Female')}</option>
                       </select>
-                      <small class="text-muted">Auto-filled for EGN</small>
+                      <small class="text-muted" data-i18n="appointment.autoFilledForEgn">${t('appointment.autoFilledForEgn', 'Auto-filled for EGN')}</small>
                     </div>
                   </div>
                 </div>
@@ -166,17 +172,17 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
               <!-- Date & Time (MOVED UP) -->
               <div class="row">
                 <div class="col-md-6 mb-3">
-                  <label for="appointmentDate" class="form-label fw-bold">Date</label>
+                  <label for="appointmentDate" class="form-label fw-bold" data-i18n="appointment.date">${t('appointment.date', 'Date')}</label>
                   <input 
                     type="date" 
                     class="form-control" 
                     id="appointmentDate" 
-                    value="${clickedDate.toISOString().split('T')[0]}"
+                    value="${toInputDate(clickedDate)}"
                     required
                   >
                 </div>
                 <div class="col-md-3 mb-3">
-                  <label for="appointmentStartTime" class="form-label fw-bold">Start Time</label>
+                  <label for="appointmentStartTime" class="form-label fw-bold" data-i18n="appointment.startTime">${t('appointment.startTime', 'Start Time')}</label>
                   <select class="form-select" id="appointmentStartTime" required>
                     ${timeOptions.split('\n').map(opt => {
     const match = opt.match(/value="([^"]+)"/);
@@ -186,7 +192,7 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
                   </select>
                 </div>
                 <div class="col-md-3 mb-3">
-                  <label for="appointmentEndTime" class="form-label fw-bold">End Time</label>
+                  <label for="appointmentEndTime" class="form-label fw-bold" data-i18n="appointment.endTime">${t('appointment.endTime', 'End Time')}</label>
                   <select class="form-select" id="appointmentEndTime" required>
                     ${timeOptions.split('\n').map(opt => {
     const match = opt.match(/value="([^"]+)"/);
@@ -199,26 +205,26 @@ export const renderAppointmentModal = (clickedDateISO: string): string => {
 
               <!-- Doctor Selection (MOVED AFTER TIME) -->
               <div class="mb-3">
-                <label for="doctorSelect" class="form-label fw-bold" data-i18n="appointment.assignDoctor">Assign Doctor</label>
+                <label for="doctorSelect" class="form-label fw-bold" data-i18n="appointment.assignDoctor">${t('appointment.assignDoctor', 'Assign Doctor')}</label>
                 <select class="form-select" id="doctorSelect" required>
-                  <option value="" disabled selected>Select time first...</option>
+                  <option value="" disabled selected data-i18n="appointment.selectTimeFirst">${t('appointment.selectTimeFirst', 'Select time first...')}</option>
                 </select>
-                <small class="text-muted" id="doctorAvailabilityHint">Available doctors will appear based on selected time</small>
+                <small class="text-muted" id="doctorAvailabilityHint" data-i18n="appointment.doctorHint">${t('appointment.doctorHint', 'Available doctors will appear based on selected time')}</small>
               </div>
 
               <!-- Reason/Notes (OPTIONAL) -->
               <div class="mb-3">
                 <label for="appointmentReason" class="form-label">
-                  Reason / Notes 
-                  <span class="badge bg-secondary ms-2">Optional</span>
+                  <span data-i18n="appointment.reasonNotes">${t('appointment.reasonNotes', 'Reason / Notes')}</span>
+                  <span class="badge bg-secondary ms-2" data-i18n="appointment.optional">${t('appointment.optional', 'Optional')}</span>
                 </label>
                 <textarea 
                   class="form-control" 
                   id="appointmentReason" 
                   rows="3" 
-                  placeholder="e.g., Regular checkup, Cleaning, Root canal..."
+                  placeholder="${t('appointment.reasonPlaceholder', 'e.g., Regular checkup, Cleaning, Root canal...')}"
                 ></textarea>
-                <small class="text-muted">Leave blank if not specified</small>
+                <small class="text-muted" data-i18n="appointment.leaveBlank">${t('appointment.leaveBlank', 'Leave blank if not specified')}</small>
               </div>
             </form>
           </div>

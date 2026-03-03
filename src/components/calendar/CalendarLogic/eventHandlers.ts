@@ -2,6 +2,7 @@ import type { EventDropArg } from '@fullcalendar/core';
 import { showToast } from '../../../utils/toast';
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index';
+import { formatTime } from '../../../utils/dateUtils';
 import type { Doctor } from '../../../types/patient';
 import type { EventApi } from '@fullcalendar/core';
 
@@ -33,8 +34,8 @@ export const showEventDetailsPopup = (event: EventApi) => {
   `;
 
   const doctorName = doctor === 'dr-ivanov' ? 'Dr. Ivanov' : 'Dr. Ruseva';
-  const startTime = event.start ? event.start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'N/A';
-  const endTime = event.end ? event.end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'N/A';
+  const startTime = event.start ? formatTime(event.start) : 'N/A';
+  const endTime = event.end ? formatTime(event.end) : 'N/A';
 
   popup.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">

@@ -2,6 +2,7 @@ import { patientRepository } from '../../repositories/patientRepository';
 import { appointmentRepository } from '../../repositories/appointmentRepository';
 import { getPunctualityIcon } from '../../services/patientStatsService';
 import i18next from '../../i18n';
+import { formatDate, formatTime } from '../../utils/dateUtils';
 import type { Patient } from '../../types/patient';
 
 /**
@@ -225,8 +226,8 @@ function showPatientAppointmentsPopover(patientId: string): void {
       a.status === 'NoShow' ? 'text-danger fw-bold' : '';
     return `
       <tr class="${statusClass}">
-        <td class="small">${dt.toLocaleDateString()}</td>
-        <td class="small">${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+        <td class="small">${formatDate(dt)}</td>
+        <td class="small">${formatTime(dt)}</td>
         <td class="small">${a.reason || '-'}</td>
         <td class="small">${a.status}</td>
       </tr>`;

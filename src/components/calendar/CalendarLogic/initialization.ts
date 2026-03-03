@@ -8,6 +8,7 @@ import type { DateClickArg } from '@fullcalendar/interaction';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import bgLocale from '@fullcalendar/core/locales/bg';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { formatTime } from '../../../utils/dateUtils';
 import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index';
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { showAppointmentModal } from './modal';
@@ -144,7 +145,7 @@ export const initCalendar = () => {
         const event = info.event;
         const doctor = event.extendedProps.doctor === 'dr-ivanov' ? 'Dr. Ivanov' : 'Dr. Ruseva';
         const reason = event.extendedProps.reason || event.title;
-        const time = `${event.start?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${event.end?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        const time = `${formatTime(event.start ?? new Date())} - ${formatTime(event.end ?? new Date())}`;
 
         tooltip.innerHTML = `
           <h6>${event.extendedProps.patientName || 'Patient'}</h6>

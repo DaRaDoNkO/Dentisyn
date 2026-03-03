@@ -1,6 +1,7 @@
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { doctorRepository } from '../../../repositories/doctorRepository';
 import i18next from '../../../i18n';
+import { formatDate, formatTime } from '../../../utils/dateUtils';
 import type { Appointment, RescheduleRecord, DoctorInfo } from '../../../types/patient';
 import { showToast } from '../../../utils/toast';
 
@@ -84,9 +85,9 @@ function renderRescheduleModal(appointment: Appointment): string {
             <small class="text-muted" data-i18n="table.originalAppointment"></small>
             <div class="fw-semibold">${appointment.patientName}</div>
             <div class="small text-muted">
-              ${startDt.toLocaleDateString()} ${startDt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              ${formatDate(startDt)} ${formatTime(startDt)}
               &ndash;
-              ${endDt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              ${formatTime(endDt)}
               <span class="badge bg-secondary ms-1">${durationMin} min</span>
             </div>
           </div>
