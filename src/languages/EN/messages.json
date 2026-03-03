@@ -34,5 +34,16 @@
     "selectDate": "Select date",
     "selectTime": "Select time",
     "enterNotes": "Enter notes or reason for visit..."
+  },
+  "toast": {
+    "appointmentMoved": "Appointment moved successfully!",
+    "moveCancelled": "Move cancelled",
+    "doctorScheduleNotFound": "Doctor schedule not found. Please check settings.",
+    "invalidEventTime": "Invalid event time. Please try again.",
+    "outsideWorkingHours": "Cannot move appointment outside {{doctorName}}'s working hours ({{start}} - {{end}}).",
+    "editComingSoon": "Edit functionality coming soon! For now, delete and recreate the appointment.",
+    "appointmentUpdated": "Appointment updated successfully!",
+    "appointmentDeleted": "Appointment deleted successfully!",
+    "deleteConfirm": "Are you sure you want to delete this appointment?"
   }
 }

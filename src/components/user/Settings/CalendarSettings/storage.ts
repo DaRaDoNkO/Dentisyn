@@ -9,8 +9,13 @@ export const loadCalendarSettings = (): CalendarSettings => {
     const saved = localStorage.getItem(SETTINGS_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      console.info('[DEBUG] Loaded calendar settings from localStorage:', parsed);
-      return parsed;
+      // Merge with defaults for any new fields added after initial save
+      const merged: CalendarSettings = {
+        ...defaultSettings,
+        ...parsed,
+      };
+      console.info('[DEBUG] Loaded calendar settings from localStorage:', merged);
+      return merged;
     }
   } catch (error) {
     console.error('[ERROR] Failed to load calendar settings:', error);

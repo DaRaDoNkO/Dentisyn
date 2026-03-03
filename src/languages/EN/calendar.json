@@ -10,5 +10,17 @@
   "prev": "Previous",
   "next": "Next",
   "noEvents": "No appointments to display",
-  "allDay": "All day"
+  "allDay": "All day",
+  "appointmentDetails": "Appointment Details",
+  "patient": "Patient",
+  "phone": "Phone",
+  "doctor": "Doctor",
+  "time": "Time",
+  "reasonNotes": "Reason / Notes",
+  "editAppointment": "Edit Appointment",
+  "deleteAppointment": "Delete Appointment",
+  "confirmMove": "Confirm Move?",
+  "reason": "Reason",
+  "tooltipDoctor": "Doctor",
+  "tooltipReason": "Reason"
 }

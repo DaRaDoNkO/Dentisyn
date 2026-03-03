@@ -10,5 +10,17 @@
   "prev": "Предишен",
   "next": "Следващ",
   "noEvents": "Няма запазени часове за показване",
-  "allDay": "Цял ден"
+  "allDay": "Цял ден",
+  "appointmentDetails": "Детайли за Часа",
+  "patient": "Пациент",
+  "phone": "Телефон",
+  "doctor": "Лекар",
+  "time": "Час",
+  "reasonNotes": "Причина / Бележки",
+  "editAppointment": "Редактирай Час",
+  "deleteAppointment": "Изтрий Час",
+  "confirmMove": "Потвърди Преместване?",
+  "reason": "Причина",
+  "tooltipDoctor": "Лекар",
+  "tooltipReason": "Причина"
 }

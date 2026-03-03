@@ -2,6 +2,7 @@ import i18next from '../../../i18n';
 import { patientRepository } from '../../../repositories/patientRepository';
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { getPunctualityIcon } from '../../../services/patientStatsService';
+import { formatDate, formatTime } from '../../../utils/dateUtils';
 import type { Patient, Appointment } from '../../../types/patient';
 
 const t = (key: string, fb: string) => i18next.t(key, fb);
@@ -96,11 +97,11 @@ function renderDemographicsHeader(p: Patient): string {
   const punctuality = getPunctualityIcon(p.id);
   const idLabel = p.idType ? t(`patient.${p.idType.toLowerCase()}`, p.idType) : '';
   const dobFormatted = p.dateOfBirth
-    ? new Date(p.dateOfBirth).toLocaleDateString(i18next.language)
+    ? formatDate(p.dateOfBirth)
     : '';
   const sexLabel = p.sex ? t(`patient.${p.sex}`, p.sex) : '';
   const registered = p.createdAt
-    ? new Date(p.createdAt).toLocaleDateString(i18next.language)
+    ? formatDate(p.createdAt)
     : '';
 
   return `
@@ -240,10 +241,8 @@ export function renderAppointmentHistory(appointments: Appointment[]): string {
   }
 
   const rows = appointments.map(a => {
-    const date = new Date(a.startTime).toLocaleDateString(i18next.language);
-    const time = new Date(a.startTime).toLocaleTimeString(i18next.language, {
-      hour: '2-digit', minute: '2-digit'
-    });
+    const date = formatDate(a.startTime);
+    const time = formatTime(a.startTime);
     const statusKey = `status.${a.status.charAt(0).toLowerCase() + a.status.slice(1)}`;
     const statusLabel = i18next.t(statusKey, a.status);
 

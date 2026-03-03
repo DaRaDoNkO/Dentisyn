@@ -1,4 +1,5 @@
 import type { CalendarSettings, DoctorSchedule } from './types';
+import type { DateFormatPattern } from '../../../../utils/dateUtils';
 import { defaultSettings } from './types';
 import { loadCalendarSettings, saveCalendarSettings } from './storage';
 
@@ -28,6 +29,12 @@ export const initCalendarSettings = () => {
     e.preventDefault();
     console.info('[DEBUG] Saving calendar settings...');
 
+    // Get date format
+    const dateFormatInput = form.querySelector(
+      '#dateFormat'
+    ) as HTMLSelectElement;
+    const dateFormat = (dateFormatInput?.value || 'dd.MM.yyyy') as DateFormatPattern;
+
     // Get time format
     const timeFormatInput = form.querySelector(
       'input[name="timeFormat"]:checked'
@@ -39,6 +46,19 @@ export const initCalendarSettings = () => {
       '#slotDuration'
     ) as HTMLSelectElement;
     const slotDuration = parseInt(slotDurationInput?.value || '30') as 15 | 30 | 60;
+
+    // Get week start day
+    const weekStartInput = form.querySelector(
+      'input[name="weekStartDay"]:checked'
+    ) as HTMLInputElement;
+    const weekStartDay = parseInt(weekStartInput?.value || '1') as 0 | 1;
+
+    // Get hidden days
+    const hiddenDays: number[] = [];
+    const hideSaturday = document.getElementById('hideSaturday') as HTMLInputElement;
+    const hideSunday = document.getElementById('hideSunday') as HTMLInputElement;
+    if (hideSaturday?.checked) hiddenDays.push(6);
+    if (hideSunday?.checked) hiddenDays.push(0);
 
     // Get doctor schedules
     const doctorSchedules: DoctorSchedule[] = [];
@@ -65,7 +85,10 @@ export const initCalendarSettings = () => {
     // Build settings object
     const settings: CalendarSettings = {
       timeFormat,
+      dateFormat,
       slotDuration,
+      weekStartDay,
+      hiddenDays,
       doctorSchedules,
     };
 

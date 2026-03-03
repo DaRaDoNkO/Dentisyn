@@ -2,6 +2,7 @@ import type { Appointment, PatientStatus, PatientAction } from '../../../types/p
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { doctorRepository } from '../../../repositories/doctorRepository';
 import { getNextActions } from './statusWorkflow';
+import { formatTime } from '../../../utils/dateUtils';
 import type { QueueFilterState } from './types';
 
 // ── Module-level filter state ──
@@ -10,13 +11,10 @@ let filterState: QueueFilterState = { selectedDoctor: 'all' };
 export function getFilterState(): QueueFilterState { return filterState; }
 export function setFilterState(s: QueueFilterState): void { filterState = s; }
 
-// ── Time formatting ──
+// ── Time formatting (using centralized util) ──
 
 function fmt(iso: string): string {
-  try {
-    const d = new Date(iso);
-    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-  } catch { return iso; }
+  return formatTime(iso) || iso;
 }
 
 // ── Status badge ──

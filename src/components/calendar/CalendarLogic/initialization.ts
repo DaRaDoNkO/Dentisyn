@@ -39,9 +39,17 @@ export const initCalendar = () => {
     ? { hour: 'numeric', minute: '2-digit', meridiem: 'short' }
     : { hour: '2-digit', minute: '2-digit', hour12: false };
 
-  // Doctor Colors
-  const COLOR_IVANOV = '#198754'; // Green
-  const COLOR_RUSEVA = '#0d6efd'; // Blue
+  // Doctor Colors — softer, more modern palette
+  const COLOR_IVANOV = '#16a34a'; // Green-600
+  const COLOR_RUSEVA = '#2563eb'; // Blue-600
+
+  // Compute visible time range from doctor schedules (pad by 1h)
+  const allStartHours = settings.doctorSchedules.map(s => parseInt(s.startTime.split(':')[0], 10));
+  const allEndHours = settings.doctorSchedules.map(s => parseInt(s.endTime.split(':')[0], 10));
+  const earliestHour = Math.max(0, Math.min(...allStartHours) - 1);
+  const latestHour = Math.min(24, Math.max(...allEndHours) + 1);
+  const slotMinTime = `${String(earliestHour).padStart(2, '0')}:00:00`;
+  const slotMaxTime = `${String(latestHour).padStart(2, '0')}:00:00`;
 
   // Get appointments from repository
   const appointments = appointmentRepository.getAll();
@@ -65,9 +73,10 @@ export const initCalendar = () => {
 
   const events = appointmentEvents;
 
-  // Build business hours from doctor schedules
+  // Build business hours from doctor schedules (only work-days not hidden)
+  const workDays = [0, 1, 2, 3, 4, 5, 6].filter(d => !settings.hiddenDays.includes(d));
   const businessHours = settings.doctorSchedules.map(schedule => ({
-    daysOfWeek: [1, 2, 3, 4, 5], // Monday-Friday
+    daysOfWeek: workDays,
     startTime: schedule.startTime,
     endTime: schedule.endTime,
   }));
@@ -86,10 +95,16 @@ export const initCalendar = () => {
   const currentLanguage = i18next.language;
   const calendarLocale = currentLanguage === 'bg' ? bgLocale : undefined;
 
+  // Translation helper
+  const t = (key: string, fallback: string, opts?: Record<string, unknown>): string =>
+    i18next.t(key, { defaultValue: fallback, ...opts }) as string;
+
   const calendar = new Calendar(calendarEl, {
     plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, bootstrap5Plugin],
     themeSystem: 'bootstrap5',
     locale: calendarLocale,
+    firstDay: settings.weekStartDay,
+    hiddenDays: settings.hiddenDays,
     initialView: 'timeGridWeek',
     headerToolbar: {
       left: 'prev,next today',
@@ -105,11 +120,15 @@ export const initCalendar = () => {
     },
     slotDuration: slotDuration,
     slotLabelFormat: slotLabelFormat,
+    slotMinTime: slotMinTime,
+    slotMaxTime: slotMaxTime,
     businessHours: businessHours,
     selectConstraint: 'businessHours',
     editable: true,
     selectable: true,
     height: 'auto',
+    nowIndicator: true,
+    dayMaxEvents: true,
     events: events,
 
     // CUSTOM EVENT RENDERING: Name/Reason First, then Time
@@ -143,14 +162,16 @@ export const initCalendar = () => {
         if (!tooltip) return;
 
         const event = info.event;
-        const doctor = event.extendedProps.doctor === 'dr-ivanov' ? 'Dr. Ivanov' : 'Dr. Ruseva';
+        const doctor = event.extendedProps.doctor === 'dr-ivanov'
+          ? t('calendar.drIvanov', 'Dr. Ivanov')
+          : t('calendar.drRuseva', 'Dr. Ruseva');
         const reason = event.extendedProps.reason || event.title;
         const time = `${formatTime(event.start ?? new Date())} - ${formatTime(event.end ?? new Date())}`;
 
         tooltip.innerHTML = `
-          <h6>${event.extendedProps.patientName || 'Patient'}</h6>
-          <p><strong>Reason:</strong> ${reason}</p>
-          <p><strong>Doctor:</strong> ${doctor}</p>
+          <h6>${event.extendedProps.patientName || t('calendar.patient', 'Patient')}</h6>
+          <p><strong>${t('calendar.tooltipReason', 'Reason')}:</strong> ${reason}</p>
+          <p><strong>${t('calendar.tooltipDoctor', 'Doctor')}:</strong> ${doctor}</p>
           <p class="mt-1 text-primary"><i class="bi bi-clock"></i> ${time}</p>
         `;
 
@@ -253,7 +274,7 @@ export const initCalendar = () => {
     } else {
       // Build business hours from active doctors only
       const filteredBusinessHours = activeDoctorSchedules.map(schedule => ({
-        daysOfWeek: [1, 2, 3, 4, 5], // Monday-Friday
+        daysOfWeek: workDays,
         startTime: schedule.startTime,
         endTime: schedule.endTime,
       }));

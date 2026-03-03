@@ -1,5 +1,6 @@
 import { appointmentRepository } from '../../repositories/appointmentRepository';
 import { doctorRepository } from '../../repositories/doctorRepository';
+import { formatTime } from '../../utils/dateUtils';
 import type { Appointment, DoctorId } from '../../types/patient';
 
 // ── Module-level state ──
@@ -14,15 +15,6 @@ export function setNextPatientDoctor(id: DoctorId | 'all'): void {
 
 export function shiftNextPatient(delta: number): void {
   sliderOffset = Math.max(0, sliderOffset + delta);
-}
-
-function formatTime(isoString: string): string {
-  try {
-    const d = new Date(isoString);
-    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-  } catch {
-    return isoString;
-  }
 }
 
 function getFilteredAppointments(): Appointment[] {

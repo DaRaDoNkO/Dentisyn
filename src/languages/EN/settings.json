@@ -4,6 +4,8 @@
   "badge": "Clinic Preferences",
   "globalPreferences": "Global Preferences",
   "timeFormat": "Time Format",
+  "dateFormat": "Date Format",
+  "dateFormatHint": "Controls how dates appear throughout the application",
   "slotDuration": "Appointment Slot Duration",
   "doctorSchedules": "Doctor Working Hours",
   "scheduleHint": "Define the working hours for each doctor. This helps the calendar show available time slots.",
@@ -13,5 +15,12 @@
   "minutes": "minutes",
   "workingHours": "Working Hours",
   "from": "From",
-  "to": "To"
+  "to": "To",
+  "weekStartDay": "Week Start Day",
+  "weekStartHint": "Choose which day the calendar week begins on",
+  "monday": "Monday",
+  "sunday": "Sunday",
+  "hiddenDays": "Hidden Days",
+  "hiddenDaysHint": "Choose which days to hide from the calendar view",
+  "saturday": "Saturday"
 }

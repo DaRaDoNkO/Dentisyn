@@ -1,4 +1,5 @@
 import { loadCalendarSettings } from './storage';
+import { DATE_FORMAT_OPTIONS } from '../../../../utils/dateUtils';
 
 /**
  * Render Calendar Settings Page
@@ -30,6 +31,19 @@ export const renderCalendarSettings = (): string => {
             <h5 class="mb-0" data-i18n="settings.globalPreferences">Global Preferences</h5>
           </div>
           <div class="card-body">
+            <!-- Date Format -->
+            <div class="mb-4">
+              <label for="dateFormat" class="form-label fw-bold" data-i18n="settings.dateFormat">Date Format</label>
+              <select class="form-select calendar-settings-select" id="dateFormat" name="dateFormat">
+                ${DATE_FORMAT_OPTIONS.map(o =>
+                  `<option value="${o.value}" ${settings.dateFormat === o.value ? 'selected' : ''}>${o.label}</option>`
+                ).join('')}
+              </select>
+              <small class="form-text text-muted" data-i18n="settings.dateFormatHint">
+                Controls how dates appear throughout the application
+              </small>
+            </div>
+
             <!-- Time Format -->
             <div class="mb-4">
               <label class="form-label fw-bold" data-i18n="settings.timeFormat">Time Format</label>
@@ -62,7 +76,7 @@ export const renderCalendarSettings = (): string => {
             </div>
 
             <!-- Slot Duration -->
-            <div class="mb-3">
+            <div class="mb-4">
               <label for="slotDuration" class="form-label fw-bold" data-i18n="settings.slotDuration">
                 Appointment Slot Duration
               </label>
@@ -74,6 +88,34 @@ export const renderCalendarSettings = (): string => {
               <small class="form-text text-muted">
                 This determines how the calendar divides time slots
               </small>
+            </div>
+
+            <!-- Week Start Day -->
+            <div class="mb-4">
+              <label class="form-label fw-bold" data-i18n="settings.weekStartDay">Week Start Day</label>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="weekStartDay" id="weekStartMonday" value="1" ${settings.weekStartDay === 1 ? 'checked' : ''}>
+                <label class="form-check-label" for="weekStartMonday" data-i18n="settings.monday">Monday</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="weekStartDay" id="weekStartSunday" value="0" ${settings.weekStartDay === 0 ? 'checked' : ''}>
+                <label class="form-check-label" for="weekStartSunday" data-i18n="settings.sunday">Sunday</label>
+              </div>
+              <small class="form-text text-muted" data-i18n="settings.weekStartHint">Choose which day the calendar week begins on</small>
+            </div>
+
+            <!-- Hidden Days -->
+            <div class="mb-3">
+              <label class="form-label fw-bold" data-i18n="settings.hiddenDays">Hidden Days</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="hideSaturday" value="6" ${settings.hiddenDays.includes(6) ? 'checked' : ''}>
+                <label class="form-check-label" for="hideSaturday" data-i18n="settings.saturday">Saturday</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="hideSunday" value="0" ${settings.hiddenDays.includes(0) ? 'checked' : ''}>
+                <label class="form-check-label" for="hideSunday" data-i18n="settings.sunday">Sunday</label>
+              </div>
+              <small class="form-text text-muted" data-i18n="settings.hiddenDaysHint">Choose which days to hide from the calendar view</small>
             </div>
           </div>
         </div>
