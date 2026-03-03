@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.0.1...v1.1.0) (2026-03-03)
+
+
+### Features
+
+* enhance appointment modal with internationalization and date utilities ([a5651f9](https://github.com/DaRaDoNkO/Dentisyn/commit/a5651f984dc9ac1fbe3be06b7ffb7448786b6fb7))
+
 ## [1.0.1](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.0.0...v1.0.1) (2026-03-02)
 
 
