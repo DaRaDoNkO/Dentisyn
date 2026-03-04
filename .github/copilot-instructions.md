@@ -153,6 +153,7 @@ Run: `npx playwright test` (requires dev server running).
 - **150-line file limit:** Refactor immediately if exceeded.
 - **Phase 1 = LocalStorage only:** No external databases, APIs, or backends.
 - **Testing:** Write Vitest tests in [tests/](tests/components.test.ts). Verify HTML output correctness and i18n attribute presence (see navbar tests as reference).
+- **No Hardcoded User-Facing Strings:** Every user-visible string (labels, messages, default lists, placeholder text, etc.) **must** go through i18n translation files under [src/languages/{EN,BG}/](src/languages/). Never embed raw Bulgarian or English text directly in `.ts` files. For default data arrays (e.g., rejection reasons, status labels), store the i18n keys in code and resolve them at runtime via `i18next.t()`. This ensures all UI text is translatable and maintainable from a single source.
 
 See [src/types/patient.ts](src/types/patient.ts) for current type definitions.
 

@@ -6,6 +6,7 @@ import { appointmentRepository } from '../../../repositories/appointmentReposito
  * Implements the full check-in workflow
  */
 const STATUS_ACTIONS: Record<PatientStatus, PatientAction[]> = {
+  Pending:      ['Confirm', 'Reject', 'Reschedule', 'Cancel'],
   Confirmed:    ['Arrived', 'Delay', 'Reschedule'],
   Arrived:      ['CheckIn', 'Reschedule', 'Cancel'],
   Waiting:      ['CheckIn', 'Reschedule', 'Cancel'],
@@ -15,6 +16,7 @@ const STATUS_ACTIONS: Record<PatientStatus, PatientAction[]> = {
   Cancelled:    ['Reschedule'],
   NoShow:       ['Reschedule'],
   Rescheduled:  [],
+  Rejected:     ['Reschedule'],
 };
 
 /**
@@ -28,6 +30,8 @@ export function getNextActions(status: PatientStatus): PatientAction[] {
  * Status → next status when an action is performed
  */
 const ACTION_TRANSITIONS: Partial<Record<PatientAction, PatientStatus>> = {
+  Confirm:    'Confirmed',
+  Reject:     'Rejected',
   Arrived:    'Waiting',
   CheckIn:    'InTreatment',
   CheckOut:   'Completed',
@@ -61,6 +65,11 @@ export function transitionStatus(
   // If arriving, record the actual arrival time
   if (action === 'Arrived') {
     updates.actualArrivalTime = new Date().toISOString();
+  }
+
+  // If confirming, record the confirmation time
+  if (action === 'Confirm') {
+    updates.confirmedAt = new Date().toISOString();
   }
 
   const updated = appointmentRepository.update(appointmentId, updates);

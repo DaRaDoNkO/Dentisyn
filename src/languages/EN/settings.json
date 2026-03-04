@@ -15,5 +15,9 @@
   "minutes": "minutes",
   "workingHours": "Working Hours",
   "from": "From",
-  "to": "To"
+  "to": "To",
+  "rejectionReasons": "Rejection Reasons",
+  "rejectionReasonsHint": "Manage predefined reasons for rejecting appointments. Click to remove.",
+  "addRejectionReason": "Add new reason...",
+  "addBtn": "Add"
 }

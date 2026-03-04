@@ -21,6 +21,7 @@ import { initializeTooltip, showTooltip, hideTooltip } from './utils/tooltips';
 import { setupDoctorFilters } from './utils/filters';
 import { setupViewSwitcher } from './utils/viewSwitcher';
 import { setupPendingBanner } from './utils/pendingBanner';
+import { showUnconfirmedPanel } from './popups/unconfirmedPanel';
 
 /**
  * Initialize the FullCalendar instance with all settings and event handlers
@@ -67,7 +68,8 @@ export const initCalendar = () => {
         patientName: appt.patientName,
         patientId: appt.patientId,
         phone: appt.phone,
-        reason: appt.reason
+        reason: appt.reason,
+        status: appt.status
       }
     };
   });
@@ -123,12 +125,19 @@ export const initCalendar = () => {
       const displayTitle = props.reason
         ? `${props.patientName} - ${props.reason}`
         : arg.event.title;
+      const isPending = props.status === 'Pending';
+      const pendingStripe = isPending
+        ? 'border-left: 3px solid #dc3545; padding-left: 4px;'
+        : '';
+      const pendingIcon = isPending
+        ? '<i class="bi bi-exclamation-circle" style="color:#dc3545;font-size:10px;margin-right:3px;"></i>'
+        : '';
       
       return {
         html: `
-          <div class="fc-event-main-frame">
+          <div class="fc-event-main-frame" style="${pendingStripe}">
             <div class="fc-event-title-container">
-              <div class="fc-event-title fc-sticky" style="font-weight: 700;">${displayTitle}</div>
+              <div class="fc-event-title fc-sticky" style="font-weight: 700;">${pendingIcon}${displayTitle}</div>
             </div>
             <div class="fc-event-time" style="font-size: 0.85em;">${arg.timeText}</div>
           </div>
@@ -194,4 +203,19 @@ export const initCalendar = () => {
 
   // Setup pending appointment banner
   setupPendingBanner(calendarEl, filterUpdate);
+
+  // Setup unconfirmed panel button
+  const unconfirmedBtn = document.getElementById('unconfirmedPanelBtn');
+  if (unconfirmedBtn) {
+    // Update count badge
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const pendingCount = appointments.filter(a => a.status === 'Pending' && new Date(a.startTime) >= startOfToday).length;
+    const countBadge = document.getElementById('unconfirmedCount');
+    if (countBadge) {
+      countBadge.textContent = String(pendingCount);
+      countBadge.style.display = pendingCount > 0 ? 'inline' : 'none';
+    }
+    unconfirmedBtn.addEventListener('click', () => showUnconfirmedPanel());
+  }
 };

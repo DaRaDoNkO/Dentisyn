@@ -4,6 +4,7 @@ import { setFilterState } from './render';
 import { showDelayModal } from './delayModal';
 import { showRescheduleModal } from './rescheduleModal';
 import { showBillingModal } from './billingModal';
+import { showRejectModal } from '../../calendar/CalendarLogic/popups/rejectModal';
 import { refreshPunctualityScore } from '../../../services/patientStatsService';
 import { setPendingAppointment } from '../../../services/pendingAppointmentService';
 import i18next from '../../../i18n';
@@ -116,11 +117,15 @@ function initTooltips(): void {
  */
 function handleAction(action: PatientAction, appointmentId: string): void {
   switch (action) {
+    case 'Confirm':
     case 'Arrived':
     case 'CheckIn':
     case 'CheckOut':
     case 'Cancel':
       handleStatusTransition(action, appointmentId);
+      break;
+    case 'Reject':
+      handleReject(appointmentId);
       break;
     case 'Delay':
       handleDelay(appointmentId);
@@ -218,6 +223,27 @@ function handleNewAppointment(appointmentId: string): void {
   window.dispatchEvent(new CustomEvent('dentisyn:navigate', {
     detail: { view: 'calendar' }
   }));
+}
+
+// ── Reject modal ──
+
+function handleReject(appointmentId: string): void {
+  const appt = appointmentRepository.getById(appointmentId);
+  if (!appt) return;
+
+  showRejectModal(
+    appt.patientName,
+    (reason: string) => {
+      appointmentRepository.update(appointmentId, {
+        status: 'Rejected',
+        rejectionReason: reason,
+      });
+      console.info(
+        `[AUDIT] APPOINTMENT_REJECTED | ID: ${appointmentId} | Reason: ${reason} | Time: ${new Date().toISOString()}`
+      );
+      rerenderPatientQueue();
+    }
+  );
 }
 
 // ── View ──

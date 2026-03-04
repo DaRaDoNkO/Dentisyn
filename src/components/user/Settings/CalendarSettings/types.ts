@@ -1,6 +1,7 @@
 import type { Doctor } from '../../../../types/patient';
 import type { DateFormatPattern } from '../../../../utils/dateUtils';
 import { getTestDoctors } from '../../../../utils/localhostData';
+import i18next from '../../../../i18n';
 
 export interface CalendarSettings {
   timeFormat: '24h' | '12h';
@@ -9,6 +10,7 @@ export interface CalendarSettings {
   weekStartDay: 0 | 1; // 0 = Sunday, 1 = Monday
   hiddenDays: number[]; // e.g. [0, 6] for Sunday & Saturday
   doctorSchedules: DoctorSchedule[];
+  rejectionReasons: string[];
 }
 
 export interface DoctorSchedule {
@@ -39,4 +41,18 @@ export const defaultSettings: CalendarSettings = {
   weekStartDay: 1, // Monday default
   hiddenDays: [0, 6], // Hide Saturday & Sunday by default
   doctorSchedules: loadDefaultDoctorSchedules(),
+  rejectionReasons: [],
 };
+
+/** i18n keys for the default rejection reasons */
+const DEFAULT_REJECTION_KEYS = [
+  'calendar.rejectionReasonPatientCancel',
+  'calendar.rejectionReasonScheduleConflict',
+  'calendar.rejectionReasonInsurance',
+  'calendar.rejectionReasonEmergency',
+  'calendar.rejectionReasonDoctorUnavailable',
+];
+
+/** Get default rejection reasons translated from i18n */
+export const getDefaultRejectionReasons = (): string[] =>
+  DEFAULT_REJECTION_KEYS.map(key => i18next.t(key) as string);

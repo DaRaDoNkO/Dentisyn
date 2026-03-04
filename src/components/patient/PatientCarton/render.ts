@@ -246,13 +246,27 @@ export function renderAppointmentHistory(appointments: Appointment[]): string {
     const statusKey = `status.${a.status.charAt(0).toLowerCase() + a.status.slice(1)}`;
     const statusLabel = i18next.t(statusKey, a.status);
 
+    // Color badge based on status
+    const statusColorMap: Record<string, string> = {
+      Pending: 'warning', Confirmed: 'info', Arrived: 'primary',
+      Waiting: 'warning', InTreatment: 'purple', Completed: 'success',
+      Left: 'secondary', Cancelled: 'danger', NoShow: 'dark',
+      Rescheduled: 'secondary', Rejected: 'danger',
+    };
+    const badgeBg = statusColorMap[a.status] || 'secondary';
+
+    // Show rejection reason if applicable
+    const rejectionNote = a.status === 'Rejected' && a.rejectionReason
+      ? `<br><small class="text-danger"><i class="bi bi-info-circle me-1"></i>${a.rejectionReason}</small>`
+      : '';
+
     return `
       <tr>
         <td>${date}</td>
         <td>${time}</td>
         <td>${a.doctor}</td>
         <td>${a.reason || '—'}</td>
-        <td><span class="badge bg-secondary">${statusLabel}</span></td>
+        <td><span class="badge bg-${badgeBg}">${statusLabel}</span>${rejectionNote}</td>
       </tr>
     `;
   }).join('');

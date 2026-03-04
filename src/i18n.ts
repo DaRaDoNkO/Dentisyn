@@ -30,15 +30,17 @@ const en = {
   settings: enSettings,
   table: enCommon,
   status: {
+    pending: enCommon.statusPending,
+    confirmed: enCommon.statusConfirmed,
     completed: enCommon.statusCompleted,
     waiting: enCommon.statusWaiting,
-    confirmed: enCommon.statusConfirmed,
     cancelled: enCommon.statusCancelled,
     noShow: enCommon.statusNoShow,
     arrived: enCommon.statusArrived,
     inTreatment: enCommon.statusInTreatment,
     rescheduled: enCommon.statusRescheduled,
-    left: enCommon.statusLeft
+    left: enCommon.statusLeft,
+    rejected: enCommon.statusRejected
   },
   common: enCommon,
   messages: enMessages,
@@ -54,15 +56,17 @@ const bg = {
   settings: bgSettings,
   table: bgCommon,
   status: {
+    pending: bgCommon.statusPending,
+    confirmed: bgCommon.statusConfirmed,
     completed: bgCommon.statusCompleted,
     waiting: bgCommon.statusWaiting,
-    confirmed: bgCommon.statusConfirmed,
     cancelled: bgCommon.statusCancelled,
     noShow: bgCommon.statusNoShow,
     arrived: bgCommon.statusArrived,
     inTreatment: bgCommon.statusInTreatment,
     rescheduled: bgCommon.statusRescheduled,
-    left: bgCommon.statusLeft
+    left: bgCommon.statusLeft,
+    rejected: bgCommon.statusRejected
   },
   common: bgCommon,
   messages: bgMessages,

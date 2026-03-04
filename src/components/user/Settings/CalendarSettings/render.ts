@@ -1,5 +1,8 @@
 import { loadCalendarSettings } from './storage';
 import { DATE_FORMAT_OPTIONS } from '../../../../utils/dateUtils';
+import i18next from '../../../../i18n';
+
+const t = (key: string, fb: string) => i18next.t(key, fb);
 
 /**
  * Render Calendar Settings Page
@@ -149,6 +152,36 @@ export const renderCalendarSettings = (): string => {
         </div>
 
         <!-- Action Buttons -->
+        <!-- Rejection Reasons Card -->
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-header calendar-settings-card-header">
+            <h5 class="mb-0" data-i18n="settings.rejectionReasons">${t('settings.rejectionReasons', 'Rejection Reasons')}</h5>
+          </div>
+          <div class="card-body">
+            <p class="text-muted mb-3" data-i18n="settings.rejectionReasonsHint">
+              ${t('settings.rejectionReasonsHint', 'Manage predefined reasons for rejecting appointments. Click to remove.')}
+            </p>
+            <div id="rejectionReasonsChips" class="d-flex flex-wrap gap-2 mb-3">
+              ${settings.rejectionReasons.map((reason, i) => `
+                <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 px-3 py-2 rejection-chip"
+                  style="font-size:0.85rem;cursor:pointer;" data-index="${i}">
+                  ${reason}
+                  <i class="bi bi-x-circle ms-1 text-danger"></i>
+                </span>
+              `).join('')}
+            </div>
+            <div class="input-group" style="max-width: 400px;">
+              <input type="text" class="form-control" id="newRejectionReasonInput"
+                placeholder="${t('settings.addRejectionReason', 'Add new reason...')}">
+              <button type="button" class="btn btn-outline-primary" id="addRejectionReasonBtn">
+                <i class="bi bi-plus-lg me-1"></i>${t('settings.addBtn', 'Add')}
+              </button>
+            </div>
+            <input type="hidden" id="rejectionReasonsData" value='${JSON.stringify(settings.rejectionReasons)}'>
+          </div>
+        </div>
+
+        <!-- Save / Reset Buttons -->
         <div class="calendar-settings-actions d-flex flex-column flex-sm-row gap-2">
           <button type="submit" class="btn btn-primary btn-sm px-4" id="saveSettingsBtn">
             <i class="bi bi-check-circle me-2"></i>

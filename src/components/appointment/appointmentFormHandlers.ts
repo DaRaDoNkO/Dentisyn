@@ -197,7 +197,7 @@ export function setupSaveAppointment(
       startTime: startDateTime,
       endTime: endDateTime,
       reason,
-      status: 'Confirmed',
+      status: 'Pending',
     });
 
     console.info(

@@ -5,6 +5,12 @@ export const renderCalendarHTML = (): string => {
       <div class="card-header d-flex flex-wrap justify-content-between align-items-center py-3" style="border-bottom: 1px solid rgba(0,0,0,0.06); background: transparent;">
         <div class="d-flex align-items-center gap-3">
             <h5 class="mb-0 fw-bold" data-i18n="nav.calendar">Calendar</h5>
+            <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" id="unconfirmedPanelBtn"
+              style="border-radius: 20px; padding: 4px 14px; font-size: 0.82rem;">
+              <i class="bi bi-exclamation-circle"></i>
+              <span data-i18n="calendar.unconfirmedBtn">Unconfirmed</span>
+              <span class="badge bg-danger ms-1" id="unconfirmedCount" style="font-size:0.7rem;min-width:20px;">0</span>
+            </button>
         </div>
         
         <div class="d-flex flex-wrap text-nowrap gap-2 align-items-center">

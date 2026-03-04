@@ -21,6 +21,7 @@ function fmt(iso: string): string {
 
 function badge(status: PatientStatus): string {
   const map: Record<PatientStatus, { bg: string; icon: string; key: string }> = {
+    Pending:     { bg: 'warning', icon: 'bi-clock',                  key: 'status.pending' },
     Completed:   { bg: 'success', icon: 'bi-check-circle-fill',      key: 'status.completed' },
     Left:        { bg: 'secondary', icon: 'bi-box-arrow-right',      key: 'status.left' },
     Waiting:     { bg: 'warning', icon: 'bi-hourglass-split',        key: 'status.waiting' },
@@ -30,6 +31,7 @@ function badge(status: PatientStatus): string {
     Cancelled:   { bg: 'danger',  icon: 'bi-x-circle-fill',          key: 'status.cancelled' },
     NoShow:      { bg: 'dark',    icon: 'bi-person-x',               key: 'status.noShow' },
     Rescheduled: { bg: 'secondary', icon: 'bi-arrow-repeat',         key: 'status.rescheduled' },
+    Rejected:    { bg: 'danger',  icon: 'bi-x-circle',               key: 'status.rejected' },
   };
   const m = map[status] ?? map.Confirmed;
   const bgClass = m.bg === 'purple'
@@ -44,6 +46,8 @@ function badge(status: PatientStatus): string {
 // ── Action buttons ──
 
 const BTN_CFG: Record<PatientAction, { cls: string; icon: string; i18n: string }> = {
+  Confirm:        { cls: 'btn-success',           icon: 'bi-check-circle',       i18n: 'table.confirm' },
+  Reject:         { cls: 'btn-outline-danger',    icon: 'bi-x-circle',           i18n: 'table.reject' },
   Arrived:        { cls: 'btn-success',           icon: 'bi-box-arrow-in-right', i18n: 'table.arrived' },
   Delay:          { cls: 'btn-outline-warning',   icon: 'bi-clock-history',      i18n: 'table.delay' },
   Reschedule:     { cls: 'btn-outline-info',      icon: 'bi-arrow-repeat',       i18n: 'table.reschedule' },
@@ -106,10 +110,13 @@ export function PatientQueue(): string {
 
   const rows = todayAppts.map(appt => {
     const docName = doctorRepository.getDisplayName(appt.doctor);
+    const pendingDot = appt.status === 'Pending'
+      ? '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#dc3545;margin-right:6px;vertical-align:middle;" title="Unconfirmed"></span>'
+      : '';
     return `
     <tr class="queue-row" data-appointment-id="${appt.id}" data-doctor="${appt.doctor}">
       <td>
-        <span class="patient-name-link" role="button" data-patient-id="${appt.patientId}"
+        ${pendingDot}<span class="patient-name-link" role="button" data-patient-id="${appt.patientId}"
           data-bs-toggle="tooltip" data-bs-placement="top" title="${appt.reason || ''}"
           style="cursor:pointer;text-decoration:underline dotted">
           ${appt.patientName}

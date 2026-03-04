@@ -185,7 +185,7 @@ export const showDuplicatePasteModal = (
       startTime: startDateTime,
       endTime: endDateTime,
       reason,
-      status: 'Confirmed',
+      status: 'Pending',
     });
 
     popup.remove();

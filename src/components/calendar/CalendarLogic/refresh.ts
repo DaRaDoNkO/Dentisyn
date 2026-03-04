@@ -1,6 +1,7 @@
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index';
 import { getCalendarInstance } from './types';
+import { CALENDAR_CONFIG } from './config/constants';
 import bgLocale from '@fullcalendar/core/locales/bg';
 import i18next from '../../../i18n';
 
@@ -17,30 +18,38 @@ export const refreshCalendar = () => {
 
   console.info(`[DEBUG] Refreshing calendar with new appointments`);
 
-  const COLOR_IVANOV = '#198754';
-  const COLOR_RUSEVA = '#0d6efd';
-
   // Get appointments from repository
   const appointments = appointmentRepository.getAll();
 
-  // Convert stored appointments to calendar events
-  const appointmentEvents = appointments.map(appt => ({
-    id: appt.id,
-    title: `${appt.reason} - ${appt.patientName}`,
-    start: appt.startTime,
-    end: appt.endTime,
-    backgroundColor: appt.doctor === 'dr-ivanov' ? COLOR_IVANOV : COLOR_RUSEVA,
-    borderColor: appt.doctor === 'dr-ivanov' ? COLOR_IVANOV : COLOR_RUSEVA,
-    extendedProps: { doctor: appt.doctor, patientName: appt.patientName }
-  }));
-
-  const allEvents = appointmentEvents;
+  // Convert stored appointments to calendar events (match initCalendar format)
+  const appointmentEvents = appointments.map(appt => {
+    const doctorColor = CALENDAR_CONFIG.DOCTOR_COLORS[appt.doctor as keyof typeof CALENDAR_CONFIG.DOCTOR_COLORS] || '#999999';
+    return {
+      id: appt.id,
+      title: `${appt.reason} - ${appt.patientName}`,
+      start: appt.startTime,
+      end: appt.endTime,
+      backgroundColor: doctorColor,
+      borderColor: doctorColor,
+      extendedProps: {
+        doctor: appt.doctor,
+        patientName: appt.patientName,
+        patientId: appt.patientId,
+        phone: appt.phone,
+        reason: appt.reason,
+        status: appt.status,
+      }
+    };
+  });
 
   // Remove all events and add new ones
   calendarInstance.removeAllEvents();
-  calendarInstance.addEventSource(allEvents);
+  calendarInstance.addEventSource(appointmentEvents);
 
-  console.info(`[DEBUG] Calendar refreshed with ${allEvents.length} events from storage`);
+  // Update unconfirmed badge count
+  updateUnconfirmedBadge(appointments);
+
+  console.info(`[DEBUG] Calendar refreshed with ${appointmentEvents.length} events from storage`);
 };
 
 /**
@@ -98,4 +107,22 @@ export const refreshCalendarSettings = () => {
   calendarInstance.setOption('businessHours', businessHours);
 
   console.info('[DEBUG] Calendar settings refreshed successfully');
+};
+
+/**
+ * Update the unconfirmed appointments badge count in the calendar header
+ */
+const updateUnconfirmedBadge = (appointments?: ReturnType<typeof appointmentRepository.getAll>): void => {
+  const countBadge = document.getElementById('unconfirmedCount');
+  if (!countBadge) return;
+
+  const allAppts = appointments ?? appointmentRepository.getAll();
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const pendingCount = allAppts.filter(
+    a => a.status === 'Pending' && new Date(a.startTime) >= startOfToday
+  ).length;
+
+  countBadge.textContent = String(pendingCount);
+  countBadge.style.display = pendingCount > 0 ? 'inline' : 'none';
 };

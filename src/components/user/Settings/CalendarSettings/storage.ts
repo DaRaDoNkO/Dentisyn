@@ -1,5 +1,5 @@
 import type { CalendarSettings } from './types';
-import { SETTINGS_KEY, defaultSettings } from './types';
+import { SETTINGS_KEY, defaultSettings, getDefaultRejectionReasons } from './types';
 
 /**
  * Load calendar settings from localStorage
@@ -17,6 +17,9 @@ export const loadCalendarSettings = (): CalendarSettings => {
         hiddenDays: Array.isArray(parsed.hiddenDays) ? parsed.hiddenDays : defaultSettings.hiddenDays,
         weekStartDay: typeof parsed.weekStartDay === 'number' ? parsed.weekStartDay : defaultSettings.weekStartDay,
         doctorSchedules: Array.isArray(parsed.doctorSchedules) ? parsed.doctorSchedules : defaultSettings.doctorSchedules,
+        rejectionReasons: Array.isArray(parsed.rejectionReasons) && parsed.rejectionReasons.length > 0
+          ? parsed.rejectionReasons
+          : getDefaultRejectionReasons(),
       };
       console.info('[DEBUG] Loaded calendar settings from localStorage:', merged);
       return merged;

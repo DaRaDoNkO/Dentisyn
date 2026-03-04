@@ -1,6 +1,7 @@
 // ──────────────────────────── Status & Action Types ────────────────────────────
 
 export type PatientStatus =
+  | 'Pending'
   | 'Confirmed'
   | 'Arrived'
   | 'Waiting'
@@ -9,9 +10,11 @@ export type PatientStatus =
   | 'Left'
   | 'Cancelled'
   | 'NoShow'
-  | 'Rescheduled';
+  | 'Rescheduled'
+  | 'Rejected';
 
 export type PatientAction =
+  | 'Confirm' | 'Reject'
   | 'Arrived' | 'Delay' | 'Reschedule'
   | 'CheckIn' | 'CheckOut'
   | 'Bill' | 'NewAppointment'
@@ -102,6 +105,8 @@ export interface Appointment {
   actualArrivalTime?: string;
   rescheduleHistory?: RescheduleRecord[];
   cancellationReason?: string;
+  rejectionReason?: string;
+  confirmedAt?: string;
   cancelledWithin24h?: boolean;
   rescheduledBy?: 'doctor' | 'patient';
   paymentStatus?: PaymentStatus;
