@@ -11,7 +11,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index';
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { showAppointmentModal } from './modal';
-import { showEventDetailsPopup, handleEventDrop } from './eventHandlers';
+import { showEventDetailsPopup, handleEventDrop, handleEventResize } from './eventHandlers';
 import { setCalendarInstance } from './types';
 import i18next from '../../../i18n';
 import { CALENDAR_CONFIG } from './config/constants';
@@ -102,6 +102,7 @@ export const initCalendar = () => {
       list: i18next.t('calendar.list')
     },
     slotDuration,
+    snapDuration: '00:15:00',
     slotLabelFormat,
     slotMinTime,
     slotMaxTime,
@@ -144,7 +145,8 @@ export const initCalendar = () => {
       showAppointmentModal(info.dateStr);
     },
     eventClick: (info) => showEventDetailsPopup(info.event),
-    eventDrop: handleEventDrop
+    eventDrop: handleEventDrop,
+    eventResize: handleEventResize
   });
 
   calendar.render();

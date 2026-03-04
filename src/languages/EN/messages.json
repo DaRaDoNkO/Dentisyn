@@ -38,6 +38,8 @@
   "toast": {
     "appointmentMoved": "Appointment moved successfully!",
     "moveCancelled": "Move cancelled",
+    "appointmentResized": "Appointment duration updated successfully!",
+    "resizeCancelled": "Duration change cancelled",
     "doctorScheduleNotFound": "Doctor schedule not found. Please check settings.",
     "invalidEventTime": "Invalid event time. Please try again.",
     "outsideWorkingHours": "Cannot move appointment outside {{doctorName}}'s working hours ({{start}} - {{end}}).",

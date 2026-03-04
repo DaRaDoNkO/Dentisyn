@@ -7,7 +7,7 @@ const t = (key: string, fallback: string, opts?: Record<string, unknown>): strin
 /**
  * Show a confirmation modal for moving an appointment
  */
-export const showMoveConfirmationModal = (onConfirm: () => void, onReject: () => void) => {
+export const showMoveConfirmationModal = (onConfirm: () => void, onReject: () => void, titleText?: string) => {
   // Remove any existing confirmation modals
   const existingModal = document.getElementById('move-confirmation-modal');
   if (existingModal) existingModal.remove();
@@ -104,7 +104,7 @@ export const showMoveConfirmationModal = (onConfirm: () => void, onReject: () =>
   buttonsContainer.appendChild(rejectBtn);
 
   const title = document.createElement('h5');
-  title.innerText = t('calendar.confirmMove', 'Confirm Move?');
+  title.innerText = titleText || t('calendar.confirmMove', 'Confirm Move?');
   title.style.marginBottom = '20px';
   title.style.color = colors.isDark ? '#e2e8f0' : '#333';
 

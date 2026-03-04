@@ -20,6 +20,7 @@
   "editAppointment": "Edit Appointment",
   "deleteAppointment": "Delete Appointment",
   "confirmMove": "Confirm Move?",
+  "confirmResize": "Confirm Duration Change?",
   "reason": "Reason",
   "tooltipDoctor": "Doctor",
   "tooltipReason": "Reason"

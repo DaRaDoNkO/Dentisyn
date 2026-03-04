@@ -38,6 +38,8 @@
   "toast": {
     "appointmentMoved": "Часът е преместен успешно!",
     "moveCancelled": "Преместването е отменено",
+    "appointmentResized": "Продължителността на часа е обновена успешно!",
+    "resizeCancelled": "Промяната на продължителността е отменена",
     "doctorScheduleNotFound": "Графикът на лекаря не е намерен. Проверете настройките.",
     "invalidEventTime": "Невалидно време. Моля, опитайте отново.",
     "outsideWorkingHours": "Не може да се премести часът извън работното време на {{doctorName}} ({{start}} - {{end}}).",

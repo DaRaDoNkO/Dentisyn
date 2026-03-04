@@ -10,3 +10,4 @@
 
 export { showEventDetailsPopup } from './popups/eventDetailsPopup';
 export { handleEventDrop } from './dropHandler';
+export { handleEventResize } from './resizeHandler';
