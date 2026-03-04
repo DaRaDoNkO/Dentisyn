@@ -1,3 +1,11 @@
+# [1.2.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.1.0...v1.2.0) (2026-03-03)
+
+
+### Features
+
+* **calendar:** add event details popup and associated logic ([3051141](https://github.com/DaRaDoNkO/Dentisyn/commit/3051141b6201cccbc45453db84ec2768866da63b))
+* **calendar:** enhance calendar functionality and settings ([b757e6d](https://github.com/DaRaDoNkO/Dentisyn/commit/b757e6d8dec60d8572c6018d8cce1474d1d70157))
+
 # [1.1.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.0.1...v1.1.0) (2026-03-03)
 
 
