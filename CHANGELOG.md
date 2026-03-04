@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.4.0...v1.5.0) (2026-03-04)
+
+
+### Features
+
+* **duplicate:** implement appointment duplication feature with modal and clipboard management ([010f098](https://github.com/DaRaDoNkO/Dentisyn/commit/010f09869a7699c3eb6285c4763ed2f2d66a0d71))
+
 # [1.4.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.3.0...v1.4.0) (2026-03-04)
 
 
