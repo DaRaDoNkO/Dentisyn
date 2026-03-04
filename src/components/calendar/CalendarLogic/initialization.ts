@@ -28,6 +28,9 @@ export const initCalendar = () => {
   if (!calendarEl) return;
 
   const settings = loadCalendarSettings();
+  // Defensive: ensure critical arrays are never undefined
+  if (!Array.isArray(settings.hiddenDays)) settings.hiddenDays = [0, 6];
+  if (!Array.isArray(settings.doctorSchedules)) settings.doctorSchedules = [];
   console.info('[DEBUG] Loaded calendar settings:', settings);
 
   // Calculate slot duration

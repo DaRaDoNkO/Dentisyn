@@ -69,11 +69,25 @@ export const initCalendarSettings = () => {
       }
     });
 
+    // Get week start day from form (if present) or preserve current
+    const weekStartInput = form.querySelector('#weekStartDay') as HTMLSelectElement;
+    const weekStartDay = weekStartInput
+      ? (parseInt(weekStartInput.value, 10) as 0 | 1)
+      : currentSettings.weekStartDay;
+
+    // Collect hidden days from checkboxes (if present) or preserve current
+    const hiddenDaysCheckboxes = form.querySelectorAll<HTMLInputElement>('input[name="hiddenDays"]:checked');
+    const hiddenDays = hiddenDaysCheckboxes.length > 0 || form.querySelector('input[name="hiddenDays"]')
+      ? Array.from(hiddenDaysCheckboxes).map(cb => parseInt(cb.value, 10))
+      : currentSettings.hiddenDays;
+
     // Build settings object
     const settings: CalendarSettings = {
       timeFormat,
       dateFormat,
       slotDuration,
+      weekStartDay,
+      hiddenDays,
       doctorSchedules,
     };
 

@@ -6,6 +6,8 @@ export interface CalendarSettings {
   timeFormat: '24h' | '12h';
   dateFormat: DateFormatPattern;
   slotDuration: 15 | 30 | 60;
+  weekStartDay: 0 | 1; // 0 = Sunday, 1 = Monday
+  hiddenDays: number[]; // e.g. [0, 6] for Sunday & Saturday
   doctorSchedules: DoctorSchedule[];
 }
 
@@ -34,5 +36,7 @@ export const defaultSettings: CalendarSettings = {
   timeFormat: '24h',
   dateFormat: 'dd.MM.yyyy',
   slotDuration: 30,
+  weekStartDay: 1, // Monday default
+  hiddenDays: [0, 6], // Hide Saturday & Sunday by default
   doctorSchedules: loadDefaultDoctorSchedules(),
 };

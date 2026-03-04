@@ -13,6 +13,10 @@ export const loadCalendarSettings = (): CalendarSettings => {
       const merged: CalendarSettings = {
         ...defaultSettings,
         ...parsed,
+        // Ensure critical fields always have valid values (guards against null/undefined from older saves)
+        hiddenDays: Array.isArray(parsed.hiddenDays) ? parsed.hiddenDays : defaultSettings.hiddenDays,
+        weekStartDay: typeof parsed.weekStartDay === 'number' ? parsed.weekStartDay : defaultSettings.weekStartDay,
+        doctorSchedules: Array.isArray(parsed.doctorSchedules) ? parsed.doctorSchedules : defaultSettings.doctorSchedules,
       };
       console.info('[DEBUG] Loaded calendar settings from localStorage:', merged);
       return merged;
