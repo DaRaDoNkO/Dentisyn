@@ -48,6 +48,8 @@
     "appointmentDeleted": "Appointment deleted successfully!",
     "deleteConfirm": "Are you sure you want to delete this appointment?",
     "appointmentDuplicated": "Appointment duplicated successfully!",
-    "duplicateCancelled": "Duplication cancelled"
+    "duplicateCancelled": "Duplication cancelled",
+    "patientCartonComingSoon": "Patient carton — coming soon",
+    "patientViewComingSoon": "Patient view — coming soon"
   }
 }

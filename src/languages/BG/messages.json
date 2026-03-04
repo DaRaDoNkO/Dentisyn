@@ -48,6 +48,8 @@
     "appointmentDeleted": "Часът е изтрит успешно!",
     "deleteConfirm": "Сигурни ли сте, че искате да изтриете този час?",
     "appointmentDuplicated": "Часът е дублиран успешно!",
-    "duplicateCancelled": "Дублирането е отменено"
+    "duplicateCancelled": "Дублирането е отменено",
+    "patientCartonComingSoon": "Пациентския картон — скоро",
+    "patientViewComingSoon": "Преглед на пациента — скоро"
   }
 }

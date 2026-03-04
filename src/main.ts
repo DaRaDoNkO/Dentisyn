@@ -104,6 +104,16 @@ const renderTranslations = () => {
     });
 };
 
+// Named handler so it can be removed before re-adding on each renderApp()
+const closeSubmenusOnOutsideClick = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-menu .dropdown-menu.show').forEach(menu => {
+            menu.classList.remove('show');
+        });
+    }
+};
+
 // Setup nested dropdown hover behavior
 const setupNestedDropdowns = () => {
     const settingsDropdownToggle = document.getElementById('settingsDropdownToggle') as HTMLElement;
@@ -115,7 +125,7 @@ const setupNestedDropdowns = () => {
             e.stopPropagation();
 
             const parentLi = settingsDropdownToggle.closest('li.dropdown') as HTMLElement;
-            const submenu = parentLi?.querySelector(':scope > .dropdown-menu') as HTMLElement;
+            const submenu = parentLi?.querySelector('ul.dropdown-menu') as HTMLElement;
 
             if (submenu) {
                 const isVisible = submenu.classList.contains('show');
@@ -137,15 +147,9 @@ const setupNestedDropdowns = () => {
         });
     }
 
-    // Close submenu when clicking outside
-    document.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement;
-        if (!target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown-menu .dropdown-menu.show').forEach(menu => {
-                menu.classList.remove('show');
-            });
-        }
-    });
+    // Remove previous listener before adding to prevent accumulation across renderApp() calls
+    document.removeEventListener('click', closeSubmenusOnOutsideClick);
+    document.addEventListener('click', closeSubmenusOnOutsideClick);
 };
 
 const setupNavigationHandlers = () => {

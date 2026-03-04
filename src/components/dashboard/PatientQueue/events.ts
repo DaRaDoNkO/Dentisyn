@@ -82,7 +82,7 @@ export function setupPatientQueueHandlers(): void {
       console.info(
         `[AUDIT] OPEN_CARTON | Patient: ${patientId} | Time: ${new Date().toISOString()}`
       );
-      toast('Patient carton — coming soon');
+      toast(i18next.t('messages.toast.patientCartonComingSoon', 'Patient carton — coming soon'));
     });
   });
 
@@ -226,5 +226,5 @@ function handleView(appointmentId: string): void {
   console.info(
     `[AUDIT] VIEW_PATIENT | Appointment: ${appointmentId} | Time: ${new Date().toISOString()}`
   );
-  toast('Patient view — coming soon');
+  toast(i18next.t('messages.toast.patientViewComingSoon', 'Patient view — coming soon'));
 }
