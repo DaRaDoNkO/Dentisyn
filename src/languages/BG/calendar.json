@@ -21,6 +21,12 @@
   "deleteAppointment": "Изтрий Час",
   "confirmMove": "Потвърди Преместване?",
   "confirmResize": "Потвърди Промяна на Продължителност?",
+  "duplicateBtn": "Дублирай",
+  "duplicateAppointment": "Дублиране на Час",
+  "duplicateClickToPlace": "Кликнете върху слот за поставяне",
+  "duplicateToCancel": "за отказ",
+  "duplicateSave": "Създай Час",
+  "newNotes": "Бележки за посещението",
   "reason": "Причина",
   "tooltipDoctor": "Лекар",
   "tooltipReason": "Причина"

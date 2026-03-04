@@ -12,6 +12,8 @@ import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { showAppointmentModal } from './modal';
 import { showEventDetailsPopup, handleEventDrop, handleEventResize } from './eventHandlers';
+import { isDuplicating, getDuplicateClipboard } from './duplicateService';
+import { showDuplicatePasteModal } from './popups/duplicatePasteModal';
 import { setCalendarInstance } from './types';
 import i18next from '../../../i18n';
 import { CALENDAR_CONFIG } from './config/constants';
@@ -137,10 +139,25 @@ export const initCalendar = () => {
     eventMouseEnter: showTooltip,
     eventMouseLeave: hideTooltip,
     select: (info: DateSelectArg) => {
+      if (isDuplicating()) {
+        const payload = getDuplicateClipboard();
+        if (payload) {
+          calendar.unselect();
+          showDuplicatePasteModal(info.startStr, payload);
+          return;
+        }
+      }
       console.info(`[DEBUG] Time slot selected: ${info.startStr}`);
       showAppointmentModal(info.startStr);
     },
     dateClick: (info: DateClickArg) => {
+      if (isDuplicating()) {
+        const payload = getDuplicateClipboard();
+        if (payload) {
+          showDuplicatePasteModal(info.dateStr, payload);
+          return;
+        }
+      }
       console.info(`[DEBUG] Calendar dateClick: ${info.dateStr}`);
       showAppointmentModal(info.dateStr);
     },
@@ -157,8 +174,11 @@ export const initCalendar = () => {
   const filterUpdate = setupDoctorFilters(calendar, workDays);
   filterUpdate(); // Initial apply
 
-  // Click handler for calendar cells
+  // Click handler for calendar cells (fallback for clicks FullCalendar misses)
   calendarEl.addEventListener('click', (e: MouseEvent) => {
+    // Skip fallback when in duplicate mode — dateClick/select handlers already cover it
+    if (isDuplicating()) return;
+
     const target = e.target as HTMLElement;
     if (target.closest('.fc-timegrid-slot') || target.closest('.fc-daygrid-day') || target.closest('.fc-col-time-frame')) {
       const cellElement = target.closest('[data-time]') || target.closest('[data-date]') || target.closest('.fc-daygrid-day');

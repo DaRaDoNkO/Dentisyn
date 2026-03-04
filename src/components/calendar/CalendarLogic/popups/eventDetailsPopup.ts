@@ -6,6 +6,7 @@ import { getThemeColors, getPopupCSS, getOverlayCSS, getLabelCSS, getTitleCSS, g
 import { refreshCalendar } from '../refresh';
 import i18next from '../../../../i18n';
 import { showEditAppointmentPopup } from './editPopup';
+import { startDuplicate } from '../duplicateService';
 
 const t = (key: string, fallback: string, opts?: Record<string, unknown>): string =>
   i18next.t(key, { defaultValue: fallback, ...opts }) as string;
@@ -92,6 +93,10 @@ export const showEventDetailsPopup = (event: EventApi) => {
         <i class="bi bi-trash"></i>
         ${t('calendar.deleteAppointment', 'Delete')}
       </button>
+      <button id="duplicateEventBtn" class="btn btn-outline-primary btn-sm" style="display: flex; align-items: center; gap: 6px;">
+        <i class="bi bi-clipboard-plus"></i>
+        ${t('calendar.duplicateBtn', 'Duplicate')}
+      </button>
       <button id="editEventBtn" class="btn btn-primary btn-sm" style="display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none;">
         <i class="bi bi-pencil"></i>
         ${t('calendar.editAppointment', 'Edit Appointment')}
@@ -135,6 +140,24 @@ export const showEventDetailsPopup = (event: EventApi) => {
   document.getElementById('editEventBtn')?.addEventListener('click', () => {
     closePopup();
     showEditAppointmentPopup(event);
+  });
+
+  // Duplicate handler — copy appointment to clipboard
+  document.getElementById('duplicateEventBtn')?.addEventListener('click', () => {
+    const durationMs = (event.end && event.start)
+      ? event.end.getTime() - event.start.getTime()
+      : 30 * 60 * 1000; // default 30 min
+
+    startDuplicate({
+      patientId: event.extendedProps.patientId || '',
+      patientName: patientName || '',
+      phone: phone || '',
+      doctor: doctor || 'dr-ivanov',
+      reason: reason || '',
+      durationMs,
+    });
+
+    closePopup();
   });
 
   console.info(`[DEBUG] Showing event details for appointment: ${event.id}`);

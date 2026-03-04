@@ -11,3 +11,5 @@
 export { showEventDetailsPopup } from './popups/eventDetailsPopup';
 export { handleEventDrop } from './dropHandler';
 export { handleEventResize } from './resizeHandler';
+export { isDuplicating, cancelDuplicate, startDuplicate } from './duplicateService';
+export { showDuplicatePasteModal } from './popups/duplicatePasteModal';

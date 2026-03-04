@@ -46,6 +46,8 @@
     "editComingSoon": "Edit functionality coming soon! For now, delete and recreate the appointment.",
     "appointmentUpdated": "Appointment updated successfully!",
     "appointmentDeleted": "Appointment deleted successfully!",
-    "deleteConfirm": "Are you sure you want to delete this appointment?"
+    "deleteConfirm": "Are you sure you want to delete this appointment?",
+    "appointmentDuplicated": "Appointment duplicated successfully!",
+    "duplicateCancelled": "Duplication cancelled"
   }
 }

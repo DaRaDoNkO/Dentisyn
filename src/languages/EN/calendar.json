@@ -21,6 +21,12 @@
   "deleteAppointment": "Delete Appointment",
   "confirmMove": "Confirm Move?",
   "confirmResize": "Confirm Duration Change?",
+  "duplicateBtn": "Duplicate",
+  "duplicateAppointment": "Duplicate Appointment",
+  "duplicateClickToPlace": "Click a time slot to place",
+  "duplicateToCancel": "to cancel",
+  "duplicateSave": "Create Appointment",
+  "newNotes": "Notes for this visit",
   "reason": "Reason",
   "tooltipDoctor": "Doctor",
   "tooltipReason": "Reason"
