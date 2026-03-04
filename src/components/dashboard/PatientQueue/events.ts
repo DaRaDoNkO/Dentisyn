@@ -9,6 +9,7 @@ import { refreshPunctualityScore } from '../../../services/patientStatsService';
 import { setPendingAppointment } from '../../../services/pendingAppointmentService';
 import i18next from '../../../i18n';
 import { showToast } from '../../../utils/toast';
+import { showConfirmDialog } from '../../../utils/modalService';
 import type { ToastType } from '../../../utils/toast';
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import type { PatientAction, DoctorId } from '../../../types/patient';
@@ -151,25 +152,35 @@ function handleAction(action: PatientAction, appointmentId: string): void {
 
 function handleStatusTransition(action: PatientAction, appointmentId: string): void {
   if (action === 'Cancel') {
-    const confirmMsg = i18next.t('messages.confirm.cancelAppointment', 'Are you sure you want to cancel this appointment?');
-    if (!confirm(confirmMsg)) return;
-    const appt = appointmentRepository.getById(appointmentId);
-    if (appt) {
-      const now = new Date();
-      const apptTime = new Date(appt.startTime);
-      const hoursUntil = (apptTime.getTime() - now.getTime()) / (1000 * 60 * 60);
-      appointmentRepository.update(appointmentId, {
-        status: 'Cancelled',
-        cancelledWithin24h: hoursUntil < 24,
-        cancellationReason: 'Cancelled from dashboard',
-      });
-      console.info(
-        `[AUDIT] APPOINTMENT_CANCELLED | ID: ${appointmentId} ` +
-        `| Within24h: ${hoursUntil < 24} | Time: ${new Date().toISOString()}`
-      );
-      // Refresh punctuality — cancelling within 24h may mark patient as unreliable
-      refreshPunctualityScore(appt.patientId);
-    }
+    const confirmMsg = i18next.t('messages.confirm.cancelAppointment', 'Are you sure you want to cancel this appointment?') as string;
+    showConfirmDialog({
+      title: i18next.t('common.cancel', 'Cancel') as string,
+      body: confirmMsg,
+      variant: 'danger',
+      confirmLabel: i18next.t('common.cancel', 'Cancel') as string,
+      confirmIcon: 'bi-x-circle',
+    }).then((confirmed) => {
+      if (!confirmed) return;
+      const appt = appointmentRepository.getById(appointmentId);
+      if (appt) {
+        const now = new Date();
+        const apptTime = new Date(appt.startTime);
+        const hoursUntil = (apptTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+        appointmentRepository.update(appointmentId, {
+          status: 'Cancelled',
+          cancelledWithin24h: hoursUntil < 24,
+          cancellationReason: 'Cancelled from dashboard',
+        });
+        console.info(
+          `[AUDIT] APPOINTMENT_CANCELLED | ID: ${appointmentId} ` +
+          `| Within24h: ${hoursUntil < 24} | Time: ${new Date().toISOString()}`
+        );
+        // Refresh punctuality — cancelling within 24h may mark patient as unreliable
+        refreshPunctualityScore(appt.patientId);
+      }
+      rerenderPatientQueue();
+    });
+    return;
   } else {
     transitionStatus(appointmentId, action);
   }

@@ -19,5 +19,21 @@
   "rejectionReasons": "Rejection Reasons",
   "rejectionReasonsHint": "Manage predefined reasons for rejecting appointments. Click to remove.",
   "addRejectionReason": "Add new reason...",
-  "addBtn": "Add"
+  "addBtn": "Add",
+  "unsavedChangesTitle": "Unsaved Changes",
+  "unsavedChangesMessage": "You have unsaved changes. Would you like to save them before leaving?",
+  "changesListLabel": "Changes made:",
+  "changeTimeFormat": "Time Format: {{old}} → {{new}}",
+  "changeDateFormat": "Date Format: {{old}} → {{new}}",
+  "changeSlotDuration": "Slot Duration: {{old}} min → {{new}} min",
+  "changeDoctorStart": "{{doctor}} Start Time: {{old}} → {{new}}",
+  "changeDoctorEnd": "{{doctor}} End Time: {{old}} → {{new}}",
+  "changeRejectionReasons": "Rejection Reasons updated",
+  "saveAndLeave": "Save & Leave",
+  "discardAndLeave": "Discard & Leave",
+  "stayOnPage": "Stay",
+  "confirmSaveTitle": "Confirm Save",
+  "confirmSaveMessage": "Are you sure you want to save these changes?",
+  "resetConfirmTitle": "Reset to Defaults",
+  "resetConfirmMessage": "Are you sure you want to reset all settings to default values? This action cannot be undone."
 }

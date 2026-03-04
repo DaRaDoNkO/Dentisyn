@@ -19,5 +19,21 @@
   "rejectionReasons": "Причини за Отказ",
   "rejectionReasonsHint": "Управлявайте предварително зададени причини за отказ. Кликнете за премахване.",
   "addRejectionReason": "Добави нова причина...",
-  "addBtn": "Добави"
+  "addBtn": "Добави",
+  "unsavedChangesTitle": "Незапазени Промени",
+  "unsavedChangesMessage": "Имате незапазени промени. Желаете ли да ги запазите преди да напуснете?",
+  "changesListLabel": "Направени промени:",
+  "changeTimeFormat": "Формат на часа: {{old}} → {{new}}",
+  "changeDateFormat": "Формат на датата: {{old}} → {{new}}",
+  "changeSlotDuration": "Продължителност: {{old}} мин → {{new}} мин",
+  "changeDoctorStart": "{{doctor}} Начало: {{old}} → {{new}}",
+  "changeDoctorEnd": "{{doctor}} Край: {{old}} → {{new}}",
+  "changeRejectionReasons": "Причини за отказ са обновени",
+  "saveAndLeave": "Запази и Напусни",
+  "discardAndLeave": "Отхвърли и Напусни",
+  "stayOnPage": "Остани",
+  "confirmSaveTitle": "Потвърждение за Запазване",
+  "confirmSaveMessage": "Сигурни ли сте, че искате да запазите тези промени?",
+  "resetConfirmTitle": "Връщане към Настройки по подразбиране",
+  "resetConfirmMessage": "Сигурни ли сте, че искате да върнете всички настройки към стойностите по подразбиране? Това действие не може да бъде отменено."
 }

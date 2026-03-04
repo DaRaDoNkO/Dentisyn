@@ -200,5 +200,67 @@ export const renderCalendarSettings = (): string => {
         <span data-i18n="settings.savedSuccess">Settings saved successfully! Refresh the calendar page to see changes.</span>
       </div>
     </div>
+
+    <!-- Unsaved Changes Confirmation Modal -->
+    <div class="modal fade" id="unsavedChangesModal" tabindex="-1" aria-labelledby="unsavedChangesModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-warning bg-warning bg-opacity-10">
+            <h5 class="modal-title" id="unsavedChangesModalLabel">
+              <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+              <span data-i18n="settings.unsavedChangesTitle">Unsaved Changes</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p data-i18n="settings.unsavedChangesMessage">You have unsaved changes. Would you like to save them before leaving?</p>
+            <div id="unsavedChangesList"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" id="unsavedDiscardBtn">
+              <i class="bi bi-x-circle me-1"></i>
+              <span data-i18n="settings.discardAndLeave">Discard & Leave</span>
+            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="unsavedStayBtn">
+              <i class="bi bi-arrow-left me-1"></i>
+              <span data-i18n="settings.stayOnPage">Stay</span>
+            </button>
+            <button type="button" class="btn btn-primary" id="unsavedSaveBtn">
+              <i class="bi bi-check-circle me-1"></i>
+              <span data-i18n="settings.saveAndLeave">Save & Leave</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Confirmation Modal -->
+    <div class="modal fade" id="saveConfirmModal" tabindex="-1" aria-labelledby="saveConfirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-primary bg-primary bg-opacity-10">
+            <h5 class="modal-title" id="saveConfirmModalLabel">
+              <i class="bi bi-save-fill text-primary me-2"></i>
+              <span data-i18n="settings.confirmSaveTitle">Confirm Save</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p data-i18n="settings.confirmSaveMessage">Are you sure you want to save these changes?</p>
+            <div id="saveConfirmChangesList"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-1"></i>
+              <span data-i18n="settings.discard">Discard</span>
+            </button>
+            <button type="button" class="btn btn-primary" id="confirmSaveBtn">
+              <i class="bi bi-check-circle me-1"></i>
+              <span data-i18n="settings.save">Save</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   `;
 };

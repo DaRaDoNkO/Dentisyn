@@ -6,4 +6,4 @@
 export type { CalendarSettings, DoctorSchedule } from './types';
 export { loadCalendarSettings, saveCalendarSettings } from './storage';
 export { renderCalendarSettings } from './render';
-export { initCalendarSettings, setRefreshCallback } from './events';
+export { initCalendarSettings, setRefreshCallback, checkUnsavedChanges } from './events';

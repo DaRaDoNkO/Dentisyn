@@ -9,6 +9,7 @@ import { patientRepository } from '../../repositories/patientRepository';
 import { appointmentRepository } from '../../repositories/appointmentRepository';
 import { getAvailableDoctors } from './doctorUtils';
 import { loadCalendarSettings } from '../user/Settings/CalendarSettings/index';
+import { showAlertDialog } from '../../utils/modalService';
 
 const t = (key: string, fb: string, opts?: Record<string, unknown>): string =>
   i18next.t(key, { defaultValue: fb, ...opts }) as string;
@@ -78,7 +79,7 @@ export function setupSaveAppointment(
   typeaheadDropdown: HTMLElement,
   onSaveCallback?: () => void
 ) {
-  const handleSaveAppointment = () => {
+  const handleSaveAppointment = async () => {
     console.info('[DEBUG] Save appointment button clicked');
 
     // ── Step 1: Collect & validate patient data (do NOT create yet) ──────────
@@ -92,7 +93,11 @@ export function setupSaveAppointment(
       const phoneNumberInput = document.getElementById('patientPhoneNumber') as HTMLInputElement;
 
       if (!firstNameInput || !lastNameInput || !countryCodeInput || !phoneNumberInput) {
-        alert('Patient form fields not found');
+        await showAlertDialog({
+          title: t('appointment.validationError', 'Validation Error'),
+          body: t('appointment.errorFieldsNotFound', 'Patient form fields not found. Please try again.'),
+          variant: 'warning',
+        });
         return;
       }
 
@@ -102,7 +107,11 @@ export function setupSaveAppointment(
       const phoneNumber = phoneNumberInput.value.trim();
 
       if (!firstName || !lastName || !phoneNumber) {
-        alert('Please enter patient first name, last name, and phone number');
+        await showAlertDialog({
+          title: t('appointment.validationError', 'Validation Error'),
+          body: t('appointment.errorNamePhoneRequired', 'Please enter patient first name, last name, and phone number.'),
+          variant: 'warning',
+        });
         return;
       }
 
@@ -111,7 +120,11 @@ export function setupSaveAppointment(
 
       const duplicate = patientRepository.exists(fullName, fullPhone);
       if (duplicate) {
-        alert('A patient with this name or phone number already exists!');
+        await showAlertDialog({
+          title: t('appointment.validationError', 'Validation Error'),
+          body: t('appointment.errorDuplicatePatient', 'A patient with this name or phone number already exists!'),
+          variant: 'danger',
+        });
         return;
       }
 
@@ -121,7 +134,11 @@ export function setupSaveAppointment(
       existingPatient = selectedPatientRef.current;
       console.info('[DEBUG] Using existing patient:', existingPatient.id);
     } else {
-      alert('Please search for an existing patient or create a new one!');
+      await showAlertDialog({
+        title: t('appointment.validationError', 'Validation Error'),
+        body: t('appointment.errorSelectPatient', 'Please search for an existing patient or create a new one!'),
+        variant: 'warning',
+      });
       return;
     }
 
@@ -133,7 +150,11 @@ export function setupSaveAppointment(
     const reasonEl = document.getElementById('appointmentReason') as HTMLTextAreaElement;
 
     if (!doctorEl || !dateEl || !startTimeEl || !endTimeEl || !reasonEl) {
-      alert('Some form fields are missing. Please refresh the page.');
+      await showAlertDialog({
+        title: t('appointment.validationError', 'Validation Error'),
+        body: t('appointment.errorFormMissing', 'Some form fields are missing. Please refresh the page.'),
+        variant: 'warning',
+      });
       return;
     }
 
@@ -144,7 +165,11 @@ export function setupSaveAppointment(
     const reason = reasonEl.value.trim() || 'No reason specified'; // Optional field
 
     if (!doctor || !date || !startTime || !endTime) {
-      alert('Please fill in all required fields (Doctor, Date, Times)');
+      await showAlertDialog({
+        title: t('appointment.validationError', 'Validation Error'),
+        body: t('appointment.errorRequiredFields', 'Please fill in all required fields (Doctor, Date, Times).'),
+        variant: 'warning',
+      });
       return;
     }
 
@@ -160,12 +185,16 @@ export function setupSaveAppointment(
         ? `${doctorSchedule.startTime} - ${doctorSchedule.endTime}`
         : 'unknown';
 
-      alert(
-        `Cannot create appointment: ${doctorName} is not available at this time.\n\n` +
-        `Working hours: ${workingHours}\n` +
-        `Selected time: ${startTime} - ${endTime}\n\n` +
-        `Please select a different time or doctor.`
-      );
+      await showAlertDialog({
+        title: t('appointment.validationError', 'Validation Error'),
+        body: t('appointment.errorDoctorUnavailable', 'Cannot create appointment: {{doctor}} is not available at this time.', { doctor: doctorName }),
+        details: `
+          <p class="mb-1">${t('appointment.errorDoctorHours', 'Working hours: {{hours}}', { hours: workingHours })}</p>
+          <p class="mb-1">${t('appointment.errorSelectedTime', 'Selected time: {{time}}', { time: `${startTime} - ${endTime}` })}</p>
+          <p class="mb-0">${t('appointment.errorChooseDifferent', 'Please select a different time or doctor.')}</p>
+        `,
+        variant: 'danger',
+      });
       return;
     }
 

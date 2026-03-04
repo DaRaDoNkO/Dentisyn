@@ -7,7 +7,7 @@ import { NextPatient, setNextPatientDoctor, shiftNextPatient } from './component
 import { PatientQueue, setupPatientQueueHandlers } from './components/dashboard/PatientQueue/index';
 import { renderCalendarHTML } from './components/calendar/CalendarLayout';
 import { initCalendar, refreshCalendarSettings, refreshCalendarLocale } from './components/calendar/CalendarLogic/index';
-import { renderCalendarSettings, initCalendarSettings, setRefreshCallback } from './components/user/Settings/CalendarSettings/index';
+import { renderCalendarSettings, initCalendarSettings, setRefreshCallback, checkUnsavedChanges } from './components/user/Settings/CalendarSettings/index';
 import { renderSearchDropdown, setupGlobalSearch } from './components/search/PatientSearch';
 import { renderPatientTab, initPatientTab } from './components/patient/PatientTab/index';
 import { initializeTestData } from './utils/localhostData';
@@ -152,6 +152,18 @@ const setupNestedDropdowns = () => {
     document.addEventListener('click', closeSubmenusOnOutsideClick);
 };
 
+/**
+ * Navigate to a view with unsaved-changes guard when leaving settings.
+ */
+const navigateWithGuard = async (targetView: View): Promise<void> => {
+    if (currentView === 'settings' && targetView !== 'settings') {
+        const result = await checkUnsavedChanges();
+        if (result === 'stay') return; // user chose to stay
+        // 'save' or 'discard' — proceed to the new view
+    }
+    renderApp(targetView);
+};
+
 const setupNavigationHandlers = () => {
     const dashboardLink = document.querySelector('[data-i18n="nav.dashboard"]') as HTMLAnchorElement;
     const calendarLink = document.querySelector('[data-i18n="nav.calendar"]') as HTMLAnchorElement;
@@ -172,22 +184,22 @@ const setupNavigationHandlers = () => {
 
     dashboardLink?.addEventListener('click', (e) => {
         e.preventDefault();
-        renderApp('dashboard');
+        navigateWithGuard('dashboard');
     });
 
     calendarLink?.addEventListener('click', (e) => {
         e.preventDefault();
-        renderApp('calendar');
+        navigateWithGuard('calendar');
     });
 
     patientsLink?.addEventListener('click', (e) => {
         e.preventDefault();
-        renderApp('patients');
+        navigateWithGuard('patients');
     });
 
     settingsLink?.addEventListener('click', (e) => {
         e.preventDefault();
-        renderApp('settings');
+        navigateWithGuard('settings');
     });
 };
 
@@ -372,7 +384,7 @@ if (savedLanguage === 'en' || savedLanguage === 'bg') {
 
 // Listen for programmatic navigation (e.g. from PatientQueue "New Appointment")
 window.addEventListener('dentisyn:navigate', ((e: CustomEvent<{ view: View }>) => {
-    renderApp(e.detail.view);
+    navigateWithGuard(e.detail.view);
 }) as EventListener);
 
 // Initial Render

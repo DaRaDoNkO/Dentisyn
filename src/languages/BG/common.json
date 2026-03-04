@@ -86,5 +86,6 @@
   "noResults": "Няма намерени резултати",
   "newPatient": "Нов пациент",
   "upcoming": "предстоящи",
-  "noAppointments": "Няма запазени часове"
+  "noAppointments": "Няма запазени часове",
+  "ok": "ОК"
 }

@@ -43,5 +43,16 @@
   "selectTimeBoth": "Please select start and end time first",
   "noDoctorsAvailable": "No doctors available at this time",
   "noDoctorsHint": "No doctors work during the selected time. Please choose a different time slot.",
-  "doctorsAvailable": "{{count}} doctor(s) available for this time slot"
+  "doctorsAvailable": "{{count}} doctor(s) available for this time slot",
+  "errorFieldsNotFound": "Patient form fields not found. Please try again.",
+  "errorNamePhoneRequired": "Please enter patient first name, last name, and phone number.",
+  "errorDuplicatePatient": "A patient with this name or phone number already exists!",
+  "errorSelectPatient": "Please search for an existing patient or create a new one!",
+  "errorFormMissing": "Some form fields are missing. Please refresh the page.",
+  "errorRequiredFields": "Please fill in all required fields (Doctor, Date, Times).",
+  "errorDoctorUnavailable": "Cannot create appointment: {{doctor}} is not available at this time.",
+  "errorDoctorHours": "Working hours: {{hours}}",
+  "errorSelectedTime": "Selected time: {{time}}",
+  "errorChooseDifferent": "Please select a different time or doctor.",
+  "validationError": "Validation Error"
 }
