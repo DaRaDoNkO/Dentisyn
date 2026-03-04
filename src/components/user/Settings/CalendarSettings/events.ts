@@ -47,19 +47,6 @@ export const initCalendarSettings = () => {
     ) as HTMLSelectElement;
     const slotDuration = parseInt(slotDurationInput?.value || '30') as 15 | 30 | 60;
 
-    // Get week start day
-    const weekStartInput = form.querySelector(
-      'input[name="weekStartDay"]:checked'
-    ) as HTMLInputElement;
-    const weekStartDay = parseInt(weekStartInput?.value || '1') as 0 | 1;
-
-    // Get hidden days
-    const hiddenDays: number[] = [];
-    const hideSaturday = document.getElementById('hideSaturday') as HTMLInputElement;
-    const hideSunday = document.getElementById('hideSunday') as HTMLInputElement;
-    if (hideSaturday?.checked) hiddenDays.push(6);
-    if (hideSunday?.checked) hiddenDays.push(0);
-
     // Get doctor schedules
     const doctorSchedules: DoctorSchedule[] = [];
     const currentSettings = loadCalendarSettings();
@@ -87,8 +74,6 @@ export const initCalendarSettings = () => {
       timeFormat,
       dateFormat,
       slotDuration,
-      weekStartDay,
-      hiddenDays,
       doctorSchedules,
     };
 

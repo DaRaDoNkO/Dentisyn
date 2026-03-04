@@ -15,12 +15,5 @@
   "minutes": "minutes",
   "workingHours": "Working Hours",
   "from": "From",
-  "to": "To",
-  "weekStartDay": "Week Start Day",
-  "weekStartHint": "Choose which day the calendar week begins on",
-  "monday": "Monday",
-  "sunday": "Sunday",
-  "hiddenDays": "Hidden Days",
-  "hiddenDaysHint": "Choose which days to hide from the calendar view",
-  "saturday": "Saturday"
+  "to": "To"
 }
