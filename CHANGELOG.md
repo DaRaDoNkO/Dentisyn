@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.2.0...v1.3.0) (2026-03-04)
+
+
+### Bug Fixes
+
+* **tests:** correct test duration values in results.json ([292d40f](https://github.com/DaRaDoNkO/Dentisyn/commit/292d40f5afcf71c597836a28dad9350e3bb5f7f1))
+
+
+### Features
+
+* **calendar:** enhance calendar settings with week start day and hidden days configuration ([d70eb42](https://github.com/DaRaDoNkO/Dentisyn/commit/d70eb425d23e18c853b06df5d8835056e208b26d))
+
 # [1.2.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.1.0...v1.2.0) (2026-03-03)
 
 
