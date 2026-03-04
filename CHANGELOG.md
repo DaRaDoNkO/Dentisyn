@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.5.0...v1.6.0) (2026-03-04)
+
+
+### Features
+
+* **toast:** update toast messages for patient carton and view with i18n support ([05ca123](https://github.com/DaRaDoNkO/Dentisyn/commit/05ca123c32041eecb0b84827d35ac717dda6cd5f))
+
 # [1.5.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.4.0...v1.5.0) (2026-03-04)
 
 
