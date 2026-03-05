@@ -39,6 +39,29 @@ export function wireEventDetailsActions(
     showEditAppointmentPopup(event);
   });
 
+  document.getElementById('openPatientCartonLink')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const patientId = event.extendedProps.patientId;
+    if (!patientId) return;
+    closePopup();
+    window.dispatchEvent(new CustomEvent('dentisyn:navigate', { detail: { view: 'patients' } }));
+    setTimeout(() => {
+      import('../../../patient/PatientTab/events').then(({ openPatientCarton }) => {
+        openPatientCarton(patientId);
+      });
+    }, 50);
+  });
+
+  document.getElementById('patientHistoryBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const patientId = event.extendedProps.patientId;
+    if (!patientId) return;
+    closePopup();
+    import('./patientHistoryPanel').then(({ showPatientHistoryPanel }) => {
+      showPatientHistoryPanel(patientId);
+    });
+  });
+
   document.getElementById('rejectEventBtn')?.addEventListener('click', () => {
     showRejectModal(patientName || 'N/A', (reason: string) => {
       appointmentRepository.update(event.id, { status: 'Rejected', rejectionReason: reason });

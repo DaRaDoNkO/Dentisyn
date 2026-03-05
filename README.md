@@ -230,6 +230,11 @@ Switch between 12-hour (AM/PM) and 24-hour format in Settings.
 
 ## 🆕 Recent Updates (v0.1.0)
 
+### Calendar & Patient Integration (March 2026)
+- ✅ **Interactive Event Tooltips**: Clicking patient names in calendar popups navigates directly to their detailed Patient Carton.
+- ✅ **Quick Appointment History**: A dedicated history button next to the patient's name instantly loads a high-fidelity **slide-in panel from the right side of the screen**, showing past and upcoming appointments in a timeline interface with enhanced typography, visual feedback, and color-coded status elements.
+- ✅ **Upgraded Unconfirmed Tab**: Redesigned layout grouping patient names, phone numbers, and doctors around the confirmation button for faster triaging.
+
 ### Code Refactoring & Maintainability (February 2026)
 - ✅ **AppointmentModal Refactored**: Split 778-line monolith into 7 focused modules
   - `renderAppointmentModal.ts` - HTML template generation

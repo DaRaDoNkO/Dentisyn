@@ -1,7 +1,7 @@
 [
   {
     "id": "dr-ivanov",
-    "name": "Dr. Ivanov",
+    "name": "Dr. Иванов",
     "specialty": "General Dentistry",
     "startTime": "08:00",
     "endTime": "18:00",
@@ -9,7 +9,7 @@
   },
   {
     "id": "dr-ruseva",
-    "name": "Dr. Ruseva",
+    "name": "Dr. Русева",
     "specialty": "Orthodontics",
     "startTime": "09:00",
     "endTime": "17:00",

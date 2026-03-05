@@ -42,7 +42,11 @@ export const showEventDetailsPopup = (event: EventApi) => {
     </div>
     <div style="${getFieldContainerCSS()}">
       <div><label style="${labelStyle}">${t('calendar.patient', 'Patient')}</label>
-        <div style="font-size:16px;color:${colors.textColor};font-weight:600;">${patientName || 'N/A'}</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <a href="#" id="openPatientCartonLink" style="font-size:16px;color:var(--bs-primary);font-weight:600;text-decoration:none;cursor:pointer;">${patientName || 'N/A'}</a>
+          <button id="patientHistoryBtn" title="${t('calendar.appointmentHistory', 'Appointment history')}" style="border:none;background:transparent;cursor:pointer;color:var(--bs-primary);font-size:18px;display:flex;align-items:center;padding:0;"><i class="bi bi-clock-history"></i></button>
+        </div>
+      </div>
       <div><label style="${labelStyle}">${t('calendar.phone', 'Phone')}</label>
         <div style="font-size:14px;color:${colors.textColor};"><i class="bi bi-telephone" style="margin-right:6px;color:${colors.labelColor};"></i>${phone || 'N/A'}</div></div>
       <div><label style="${labelStyle}">${t('calendar.doctor', 'Doctor')}</label>

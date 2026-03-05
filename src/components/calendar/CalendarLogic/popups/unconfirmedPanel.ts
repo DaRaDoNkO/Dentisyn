@@ -96,17 +96,20 @@ export const showUnconfirmedPanel = (): void => {
 
       card.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
-          <div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
             <div style="font-weight:600;color:${colors.textColor};font-size:14px;">
               <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#dc3545;margin-right:6px;vertical-align:middle;"></span>
               ${appt.patientName}
             </div>
+            ${appt.phone ? `<small style="color:${colors.labelColor};"><i class="bi bi-telephone me-1"></i>${appt.phone}</small>` : ''}
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+            <button class="confirm-from-panel btn btn-sm btn-success" data-id="${appt.id}"
+              style="font-size:12px;padding:4px 12px;border-radius:8px;white-space:nowrap;">
+              <i class="bi bi-check-circle me-1"></i>${t('calendar.confirmAppointment', 'Confirm')}
+            </button>
             <small style="color:${colors.labelColor};">${docName}</small>
           </div>
-          <button class="confirm-from-panel btn btn-sm btn-success" data-id="${appt.id}"
-            style="font-size:12px;padding:4px 12px;border-radius:8px;white-space:nowrap;">
-            <i class="bi bi-check-circle me-1"></i>${t('calendar.confirmAppointment', 'Confirm')}
-          </button>
         </div>
         <div style="display:flex;gap:16px;font-size:12px;color:${colors.labelColor};">
           <span><i class="bi bi-calendar3 me-1"></i>${formatDate(appt.startTime)}</span>
