@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.7.0...v1.8.0) (2026-03-05)
+
+
+### Features
+
+* Add new components and functionality for patient management and appointment scheduling ([baaf2d4](https://github.com/DaRaDoNkO/Dentisyn/commit/baaf2d4e09e66bb3de2bcfc41a5515bd00fe5576))
+
 # [1.7.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.6.0...v1.7.0) (2026-03-04)
 
 
