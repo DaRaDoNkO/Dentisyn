@@ -9,9 +9,7 @@ import i18next from '../../../../i18n';
 const t = (key: string, fallback: string, opts?: Record<string, unknown>): string =>
   i18next.t(key, { defaultValue: fallback, ...opts }) as string;
 
-/**
- * Show inline edit form for an existing appointment
- */
+/** Show inline edit form for an existing appointment */
 export const showEditAppointmentPopup = (event: EventApi) => {
   const appointment = appointmentRepository.getById(event.id);
   if (!appointment) return;
