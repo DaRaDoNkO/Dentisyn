@@ -1,3 +1,11 @@
+# [1.7.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.6.0...v1.7.0) (2026-03-04)
+
+
+### Features
+
+* implement confirmation dialogs for appointment cancellation and settings changes ([5ad1ba1](https://github.com/DaRaDoNkO/Dentisyn/commit/5ad1ba106691421578d5a4b49fe40f23fb0d58bb))
+* Implement rejection reasons management and update appointment workflows ([3bd3483](https://github.com/DaRaDoNkO/Dentisyn/commit/3bd348318d99b4a86b5fe40f25c23b1b1d04766c))
+
 # [1.6.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.5.0...v1.6.0) (2026-03-04)
 
 
