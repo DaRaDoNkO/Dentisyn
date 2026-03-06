@@ -4,6 +4,8 @@ import { showToast } from '../../../../utils/toast';
 import { appointmentRepository } from '../../../../repositories/appointmentRepository';
 import { getThemeColors, getPopupCSS, getOverlayCSS, getLabelCSS, getTitleCSS, getHeaderCSS, getCloseButtonCSS, getFieldContainerCSS, getInputCSS } from '../../../../utils/popupStyles';
 import { refreshCalendar } from '../refresh';
+import { loadCalendarSettings } from '../../../user/Settings/CalendarSettings/storage';
+import { generateTimeOptions } from '../../../appointment/timeUtils';
 import i18next from '../../../../i18n';
 
 const t = (key: string, fallback: string, opts?: Record<string, unknown>): string =>
@@ -21,6 +23,17 @@ export const showEditAppointmentPopup = (event: EventApi) => {
   const popup = document.createElement('div');
   popup.id = 'event-details-popup';
   popup.style.cssText = getPopupCSS(colors) + '; min-width: 400px; max-width: 520px;';
+
+  const settings = loadCalendarSettings();
+  const is24h = settings.timeFormat === '24h';
+  const timeOptionsHtml = generateTimeOptions(8, 20, 15, is24h);
+  
+  const selectOpts = (selected: string) =>
+    timeOptionsHtml.split('\n').map(opt => {
+      const match = opt.match(/value="([^"]+)"/);
+      const value = match ? match[1] : '';
+      return opt.replace('<option', `<option${value === selected ? ' selected' : ''}`);
+    }).join('\n');
 
   const startDate = appointment.startTime.split('T')[0];
   const startTimeVal = appointment.startTime.includes('T')
@@ -72,23 +85,37 @@ export const showEditAppointmentPopup = (event: EventApi) => {
       <div style="display: flex; gap: 12px;">
         <div style="flex: 1;">
           <label style="${labelStyle}">
-            ${t('appointment.startTime', 'Start Time')}
+            <span>${t('appointment.startTime', 'Start Time')}</span><span style="color:#dc3545;margin-left:4px;">*</span>
           </label>
-          <input type="time" id="editStartTime" value="${startTimeVal}" style="${inputStyle}">
+          <select id="editStartTime" style="${inputStyle}">${selectOpts(startTimeVal)}</select>
         </div>
         <div style="flex: 1;">
           <label style="${labelStyle}">
-            ${t('appointment.endTime', 'End Time')}
+            <span>${t('appointment.endTime', 'End Time')}</span><span style="color:#dc3545;margin-left:4px;">*</span>
           </label>
-          <input type="time" id="editEndTime" value="${endTimeVal}" style="${inputStyle}">
+          <select id="editEndTime" style="${inputStyle}">${selectOpts(endTimeVal)}</select>
         </div>
       </div>
 
+      ${settings.isReasonVisible ? `
       <div>
         <label style="${labelStyle}">
-          ${t('calendar.reasonNotes', 'Reason / Notes')}
+          <span>${t('appointment.reasonNotes', 'Reason')}</span>
+          ${settings.isReasonRequired ? '<span style="color:#dc3545;margin-left:4px;">*</span>' : `<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#6c757d;color:#fff;margin-left:8px;">${t('appointment.optional', 'Optional')}</span>`}
         </label>
-        <textarea id="editReason" rows="2" style="${inputStyle} resize: vertical;">${appointment.reason || ''}</textarea>
+        <input type="text" id="editReason" list="editReasonsList" value="${appointment.reason || ''}" style="${inputStyle}" placeholder="${t('appointment.reasonPlaceholder', 'e.g., Regular checkup...')}">
+        <datalist id="editReasonsList">
+          ${settings.appointmentReasons.map(r => `<option value="${r}">`).join('')}
+        </datalist>
+      </div>
+      ` : ''}
+
+      <div>
+        <label style="${labelStyle}">
+          <span>${t('appointment.notes', 'Notes')}</span>
+          ${settings.isNotesRequired ? '<span style="color:#dc3545;margin-left:4px;">*</span>' : `<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#6c757d;color:#fff;margin-left:8px;">${t('appointment.optional', 'Optional')}</span>`}
+        </label>
+        <textarea id="editNotes" rows="2" style="${inputStyle} resize: vertical;" placeholder="${t('appointment.notesPlaceholder', 'Additional notes...')}">${appointment.notes || ''}</textarea>
       </div>
     </div>
 
@@ -122,17 +149,21 @@ export const showEditAppointmentPopup = (event: EventApi) => {
   document.getElementById('saveEditBtn')?.addEventListener('click', () => {
     const newDoctor = (document.getElementById('editDoctor') as HTMLSelectElement).value as Doctor;
     const newDate = (document.getElementById('editDate') as HTMLInputElement).value;
-    const newStart = (document.getElementById('editStartTime') as HTMLInputElement).value;
-    const newEnd = (document.getElementById('editEndTime') as HTMLInputElement).value;
-    const newReason = (document.getElementById('editReason') as HTMLTextAreaElement).value.trim();
-
+      const newStart = (document.getElementById('editStartTime') as HTMLSelectElement).value;
+      const newEnd = (document.getElementById('editEndTime') as HTMLSelectElement).value;
+      
+      const editReasonInput = document.getElementById('editReason') as HTMLInputElement | null;
+      const newReason = editReasonInput ? editReasonInput.value.trim() : '';
+      const editNotesInput = document.getElementById('editNotes') as HTMLTextAreaElement | null;
+      const newNotes = editNotesInput ? editNotesInput.value.trim() : '';
     if (!newDate || !newStart || !newEnd) return;
 
     appointmentRepository.update(event.id, {
       doctor: newDoctor,
       startTime: `${newDate}T${newStart}:00`,
       endTime: `${newDate}T${newEnd}:00`,
-      reason: newReason || appointment.reason,
+      reason: newReason,
+      notes: newNotes,
     });
 
     closeEdit();
