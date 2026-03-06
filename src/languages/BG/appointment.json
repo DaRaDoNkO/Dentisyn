@@ -54,5 +54,14 @@
   "errorDoctorHours": "Работно време: {{hours}}",
   "errorSelectedTime": "Избрано време: {{time}}",
   "errorChooseDifferent": "Моля, изберете различно време или лекар.",
-  "validationError": "Грешка при валидация"
+  "validationError": "Грешка при валидация",
+  "errorReasonRequired": "Причината е задължителна за този час.",
+  "errorNotesRequired": "Бележките са задължителни за този час.",
+  "reasonRoutineCheckup": "Рутинен преглед",
+  "reasonCleaning": "Почистване на зъбен камък",
+  "reasonRootCanal": "Кореново лечение",
+  "reasonExtraction": "Екстракция (Вадене)",
+  "reasonConsultation": "Консултация",
+  "notes": "Бележки",
+  "notesPlaceholder": "Допълнителни бележки за часа..."
 }

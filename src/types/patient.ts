@@ -98,6 +98,7 @@ export interface Appointment {
   startTime: string;
   endTime: string;
   reason: string;
+  notes?: string;
   status: PatientStatus;
   createdAt: string;
   /* Extended fields */

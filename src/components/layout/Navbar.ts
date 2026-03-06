@@ -1,3 +1,5 @@
+import './navbar.css';
+
 export function Navbar(): string {
   return `
     <nav class="navbar navbar-expand-lg bg-body border-bottom shadow-sm py-3">

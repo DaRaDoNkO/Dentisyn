@@ -7,8 +7,10 @@ import interactionPlugin from '@fullcalendar/interaction';
 import type { DateClickArg } from '@fullcalendar/interaction';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import bgLocale from '@fullcalendar/core/locales/bg';
+import enGbLocale from '@fullcalendar/core/locales/en-gb';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index';
+import { getDateFormat } from '../../../utils/dateUtils';
 import { appointmentRepository } from '../../../repositories/appointmentRepository';
 import { showAppointmentModal } from './modal';
 import { showEventDetailsPopup, handleEventDrop, handleEventResize } from './eventHandlers';
@@ -61,14 +63,16 @@ export const initCalendar = () => {
       title: `${appt.reason} - ${appt.patientName}`,
       start: appt.startTime,
       end: appt.endTime,
-      backgroundColor: doctorColor,
-      borderColor: doctorColor,
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
       extendedProps: {
+        doctorColor,
         doctor: appt.doctor,
         patientName: appt.patientName,
         patientId: appt.patientId,
         phone: appt.phone,
         reason: appt.reason,
+        notes: appt.notes,
         status: appt.status
       }
     };
@@ -85,9 +89,16 @@ export const initCalendar = () => {
   // Initialize tooltip
   initializeTooltip();
 
-  // Get calendar locale
+  // Get calendar locale based on selected language and date format settings
   const currentLanguage = i18next.language;
-  const calendarLocale = currentLanguage === 'bg' ? bgLocale : undefined;
+  const isUSFormat = getDateFormat() === 'MM/dd/yyyy';
+
+  let calendarLocale;
+  if (currentLanguage === 'bg') {
+    calendarLocale = bgLocale;
+  } else {
+    calendarLocale = isUSFormat ? undefined : enGbLocale;
+  }
 
   // Create calendar with all configuration
   const calendar = new Calendar(calendarEl, {
@@ -111,35 +122,61 @@ export const initCalendar = () => {
     slotMinTime,
     slotMaxTime,
     businessHours,
+    eventTimeFormat: slotLabelFormat,
     selectConstraint: 'businessHours',
     editable: true,
     selectable: true,
     height: 'auto',
     nowIndicator: true,
     dayMaxEvents: true,
+    
+    // Custom day header formatting
+    dayHeaderContent: (arg: any) => {
+      const dateObj = arg.date;
+      const lang = i18next.language === 'bg' ? 'bg-BG' : 'en-GB';
+      const dayName = new Intl.DateTimeFormat(lang, { weekday: 'short' }).format(dateObj).toUpperCase();
+      const dateNum = dateObj.getDate();
+      
+      const isToday = arg.isToday;
+      const todayCircle = isToday 
+        ? `background: var(--bs-primary); color: white; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 4px 10px rgba(99,102,241,0.35);` 
+        : `width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: var(--text-main);`;
+      
+      return {
+        html: `
+          <div style="display: flex; flex-direction: column; align-items: center; padding: 6px 0; gap: 4px;">
+            <span style="font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px; color: ${isToday ? 'var(--bs-primary)' : 'var(--text-muted)'};">${dayName}</span>
+            <span style="font-size: 1.25rem; font-weight: 700; ${todayCircle}">${dateNum}</span>
+          </div>
+        `
+      };
+    },
+
     events: appointmentEvents,
 
     // Event rendering
     eventContent: (arg: EventContentArg) => {
       const props = arg.event.extendedProps;
-      const displayTitle = props.reason
-        ? `${props.patientName} - ${props.reason}`
-        : arg.event.title;
-      const isPending = props.status === 'Pending';
-      const pendingStripe = isPending
-        ? 'border-left: 3px solid #dc3545; padding-left: 4px;'
-        : '';
-      const pendingIcon = isPending
-        ? '<i class="bi bi-exclamation-circle" style="color:#dc3545;font-size:10px;margin-right:3px;"></i>'
-        : '';
+      const docColor = props.doctorColor || '#6366f1';
       
+      const isPending = props.status === 'Pending';
+      // If pending, combine the doctor's translucent color with stripes for a unified look
+      const backgroundStyle = isPending 
+        ? `background: repeating-linear-gradient(-45deg, ${docColor}20, ${docColor}20 5px, ${docColor}40 5px, ${docColor}40 10px);` 
+        : `background-color: ${docColor}30;`;
+
+      const reasonDisplay = props.reason ? `<div class="custom-event-reason" style="font-size: 0.72rem; opacity: 0.8; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;"><i class="bi bi-chat-left-text me-1"></i>${props.reason}</div>` : '';
+
       return {
         html: `
-          <div class="fc-event-main-frame" style="${pendingStripe}">
-            <div class="fc-event-title-container">
-              <div class="fc-event-title fc-sticky" style="font-weight: 700;">${pendingIcon}${displayTitle}</div>
+          <div class="custom-calendar-event" style="border-left: 4px solid ${docColor}; ${backgroundStyle}">
+            <div class="custom-event-time" style="font-size: 0.75rem; font-weight: 500; opacity: 0.8; margin-bottom: 2px;">
+              ${arg.timeText}
             </div>
-            <div class="fc-event-time" style="font-size: 0.85em;">${arg.timeText}</div>
+            <div style="font-size: 0.82rem; font-weight: 700; line-height: 1.2; display: flex; align-items: center; gap: 4px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+              <span style="overflow: hidden; text-overflow: ellipsis;">${props.patientName || 'N/A'}</span>
+            </div>
+            ${reasonDisplay}
           </div>
         `
       };

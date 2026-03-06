@@ -1,0 +1,35 @@
+/* =========================================
+   COMPONENT: STATS & ICONS
+   ========================================= */
+
+.stat-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: var(--bg-body-light);
+  /* Fallback */
+  position: relative;
+  z-index: 1;
+}
+
+/* Add a glow behind icons */
+.stat-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0.15;
+  z-index: -1;
+}
+
+.queue-status {
+  padding: 0.5rem 1rem;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}

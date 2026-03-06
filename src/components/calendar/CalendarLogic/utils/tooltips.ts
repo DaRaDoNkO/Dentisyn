@@ -38,11 +38,13 @@ export const showTooltip = (info: EventHoveringArg): void => {
       ? t('calendar.drIvanov', 'Dr. Ivanov')
       : t('calendar.drRuseva', 'Dr. Ruseva');
     const reason = event.extendedProps.reason || event.title;
+    const notes = event.extendedProps.notes;
     const time = `${formatTime(event.start ?? new Date())} - ${formatTime(event.end ?? new Date())}`;
 
     tooltipElement.innerHTML = `
       <h6>${event.extendedProps.patientName || t('calendar.patient', 'Patient')}</h6>
       <p><strong>${t('calendar.tooltipReason', 'Reason')}:</strong> ${reason}</p>
+      ${notes ? `<p><strong>${t('calendar.tooltipNotes', 'Notes')}:</strong> ${notes}</p>` : ''}
       <p><strong>${t('calendar.tooltipDoctor', 'Doctor')}:</strong> ${doctor}</p>
       <p class="mt-1 text-primary"><i class="bi bi-clock"></i> ${time}</p>
     `;

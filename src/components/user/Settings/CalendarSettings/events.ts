@@ -5,6 +5,7 @@ import i18next from '../../../../i18n';
 import { captureSnapshot, detectChanges, buildChangesHTML } from './changeTracker';
 import { performSave } from './saveHandler';
 import { initRejectionReasonsUI } from './rejectionReasonsUI';
+import { initAppointmentReasonsUI } from './appointmentReasonsUI';
 
 export { setRefreshCallback } from './saveHandler';
 export { checkUnsavedChanges } from './unsavedChanges';
@@ -21,6 +22,7 @@ export const initCalendarSettings = () => {
 
   captureSnapshot();
   initRejectionReasonsUI();
+  initAppointmentReasonsUI();
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();

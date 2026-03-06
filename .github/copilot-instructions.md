@@ -34,6 +34,7 @@ btn.addEventListener('click', () => {
 - `storage.ts` — localStorage operations
 - `render.ts` — HTML string generation
 - `events.ts` — Event handlers and initialization
+- `*.css` — Colocated component styles (imported in the entry `.ts` file)
 - `index.ts` — Barrel exports
 
 See [src/components/settings/CalendarSettings/](src/components/settings/CalendarSettings/) as reference.
@@ -59,7 +60,14 @@ export async function checkDrugInteractions(drugName: string): Promise<string> {
 ```
 Call services from components via onclick handlers.
 
-**Styling:** Bootstrap 5 utilities only; override global styles in [src/style.css](src/style.css).
+**Styling:** Bootstrap 5 utilities + colocated CSS modules. Global design tokens, theme config, and shared component styles (cards, buttons, inputs) live in [src/style.css](src/style.css). Component-specific CSS is colocated next to its component and imported in the component's entry `.ts` file:
+- `src/components/calendar/calendar.css` — FullCalendar overrides, mobile, tooltip
+- `src/components/layout/navbar.css` — Navigation & dropdowns
+- `src/components/dashboard/dashboard.css` — Stat icons, queue status badges
+- `src/components/dashboard/PatientQueue/patientQueue.css` — Queue pills, action buttons
+- `src/components/user/Settings/settings.css` — Settings card headers/icons
+
+When adding new component styles, create a `.css` file in the component's folder and `import './component.css'` from its entry TS file. Never add component-specific styles to the global `style.css`.
 
 **Storage Keys:** Prefix with `dentisyn-` (e.g., `dentisyn-theme`, `dentisyn-language`).
 
@@ -67,11 +75,13 @@ Call services from components via onclick handlers.
 
 ## Project Structure
 
-- [src/components/dashboard/](src/components/dashboard/) — QuickStats, NextPatient, PatientQueue widgets
-- [src/components/layout/](src/components/layout/) — Navbar
-- [src/components/calendar/](src/components/calendar/) — CalendarLayout (render), CalendarLogic (events)
+- [src/style.css](src/style.css) — Global tokens, theme, base resets, cards, buttons/inputs (~210 lines)
+- [src/components/dashboard/](src/components/dashboard/) — QuickStats, NextPatient, PatientQueue widgets + `dashboard.css`
+- [src/components/dashboard/PatientQueue/](src/components/dashboard/PatientQueue/) — Queue render, events, status workflow + `patientQueue.css`
+- [src/components/layout/](src/components/layout/) — Navbar + `navbar.css`
+- [src/components/calendar/](src/components/calendar/) — CalendarLayout (render), CalendarLogic (events) + `calendar.css`
 - [src/components/appointment/](src/components/appointment/) — AppointmentModal (patient search, scheduling)
-- [src/components/settings/CalendarSettings/](src/components/settings/CalendarSettings/) — types, storage, render, events (modular structure)
+- [src/components/user/Settings/](src/components/user/Settings/) — CalendarSettings, DoctorSettings + `settings.css`
 - [src/repositories/](src/repositories/) — localStorage queries using Repository Pattern (patientRepository, appointmentRepository)
 - [src/utils/](src/utils/) — Utility functions (bgUtils for EGN/LNCh validation)
 - [src/types/](src/types/) — TypeScript type definitions (patient.ts)

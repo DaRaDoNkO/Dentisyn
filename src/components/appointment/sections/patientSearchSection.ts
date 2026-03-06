@@ -6,9 +6,7 @@ const t = (key: string, fb: string): string => i18next.t(key, fb) as string;
 export function renderPatientSearchSection(): string {
   return `
     <div class="mb-3">
-      <label for="patientNameSearch" class="form-label fw-bold" data-i18n="appointment.patientName">
-        ${t('appointment.patientName', 'Patient Name')}
-      </label>
+      <label for="patientNameSearch" class="form-label fw-bold"><span data-i18n="appointment.patientName">${t('appointment.patientName', 'Patient Name')}</span><span class="text-danger ms-1">*</span></label>
       <input
         type="text" class="form-control" id="patientNameSearch"
         placeholder="${t('appointment.typeaheadSearchPlaceholder', 'Type to search or create a new patient...')}"

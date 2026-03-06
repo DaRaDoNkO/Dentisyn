@@ -20,6 +20,12 @@ export const loadCalendarSettings = (): CalendarSettings => {
         rejectionReasons: Array.isArray(parsed.rejectionReasons) && parsed.rejectionReasons.length > 0
           ? parsed.rejectionReasons
           : getDefaultRejectionReasons(),
+        appointmentReasons: Array.isArray(parsed.appointmentReasons) && parsed.appointmentReasons.length > 0
+          ? parsed.appointmentReasons
+          : defaultSettings.appointmentReasons,
+        isReasonRequired: typeof parsed.isReasonRequired === 'boolean' ? parsed.isReasonRequired : defaultSettings.isReasonRequired,
+        isReasonVisible: typeof parsed.isReasonVisible === 'boolean' ? parsed.isReasonVisible : defaultSettings.isReasonVisible,
+        isNotesRequired: typeof parsed.isNotesRequired === 'boolean' ? parsed.isNotesRequired : defaultSettings.isNotesRequired,
       };
       console.info('[DEBUG] Loaded calendar settings from localStorage:', merged);
       return merged;

@@ -1,3 +1,5 @@
+import './patientQueue.css';
+
 export type { StatusAction } from './types';
 export { PatientQueue } from './render';
 export { setupPatientQueueHandlers, rerenderPatientQueue } from './events';

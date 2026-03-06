@@ -49,7 +49,16 @@ export const readFormValues = (): CalendarSettings | null => {
     ? JSON.parse(rejInput.value || '[]')
     : originalSnapshot.rejectionReasons;
 
-  return { timeFormat, dateFormat, slotDuration, weekStartDay, hiddenDays, doctorSchedules, rejectionReasons };
+  const apptInput = document.getElementById('appointmentReasonsData') as HTMLInputElement | null;
+  const appointmentReasons: string[] = apptInput
+    ? JSON.parse(apptInput.value || '[]')
+    : originalSnapshot.appointmentReasons;
+
+  const isReasonVisible = (document.getElementById('isReasonVisible') as HTMLInputElement)?.checked ?? originalSnapshot.isReasonVisible;
+  const isReasonRequired = (document.getElementById('isReasonRequired') as HTMLInputElement)?.checked ?? originalSnapshot.isReasonRequired;
+  const isNotesRequired = (document.getElementById('isNotesRequired') as HTMLInputElement)?.checked ?? originalSnapshot.isNotesRequired;
+
+  return { timeFormat, dateFormat, slotDuration, weekStartDay, hiddenDays, doctorSchedules, rejectionReasons, appointmentReasons, isReasonVisible, isReasonRequired, isNotesRequired };
 };
 
 /** Compare current form values against the snapshot and return a list of changes */
@@ -85,6 +94,24 @@ export const detectChanges = (): SettingChange[] => {
   const curRej = JSON.stringify(current.rejectionReasons);
   if (origRej !== curRej) {
     changes.push({ label: t('changeRejectionReasons') });
+  }
+
+  const origAppt = JSON.stringify(originalSnapshot.appointmentReasons);
+  const curAppt = JSON.stringify(current.appointmentReasons);
+  if (origAppt !== curAppt) {
+    changes.push({ label: t('changeAppointmentReasons') });
+  }
+
+  if (current.isReasonRequired !== originalSnapshot.isReasonRequired) {
+    changes.push({ label: t('changeReasonRequired', { old: String(originalSnapshot.isReasonRequired), new: String(current.isReasonRequired) }) });
+  }
+
+  if (current.isReasonVisible !== originalSnapshot.isReasonVisible) {
+    changes.push({ label: t('changeReasonVisible', { old: String(originalSnapshot.isReasonVisible), new: String(current.isReasonVisible) }) });
+  }
+
+  if (current.isNotesRequired !== originalSnapshot.isNotesRequired) {
+    changes.push({ label: t('changeNotesRequired', { old: String(originalSnapshot.isNotesRequired), new: String(current.isNotesRequired) }) });
   }
 
   return changes;

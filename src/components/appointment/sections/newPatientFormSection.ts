@@ -14,16 +14,16 @@ export function renderNewPatientFormSection(): string {
         </h6>
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label for="patientFirstName" class="form-label" data-i18n="patient.firstName">${t('patient.firstName', 'First Name')}</label>
+            <label for="patientFirstName" class="form-label"><span data-i18n="patient.firstName">${t('patient.firstName', 'First Name')}</span><span class="text-danger ms-1">*</span></label>
             <input type="text" class="form-control" id="patientFirstName" required>
           </div>
           <div class="col-md-6 mb-3">
-            <label for="patientLastName" class="form-label" data-i18n="patient.familyName">${t('patient.familyName', 'Family Name')}</label>
+            <label for="patientLastName" class="form-label"><span data-i18n="patient.familyName">${t('patient.familyName', 'Family Name')}</span><span class="text-danger ms-1">*</span></label>
             <input type="text" class="form-control" id="patientLastName" required>
           </div>
         </div>
         <div class="mb-3">
-          <label class="form-label" data-i18n="patient.phone">${t('patient.phone', 'Phone')}</label>
+          <label class="form-label"><span data-i18n="patient.phone">${t('patient.phone', 'Phone')}</span><span class="text-danger ms-1">*</span></label>
           <div class="input-group">
             <input type="text" class="form-control" id="patientCountryCode" list="countryCodeList" placeholder="+359" value="+359" style="max-width:100px;">
             <input type="tel" class="form-control" id="patientPhoneNumber" placeholder="888123456" required>

@@ -147,9 +147,10 @@ export function setupSaveAppointment(
     const dateEl = document.getElementById('appointmentDate') as HTMLInputElement;
     const startTimeEl = document.getElementById('appointmentStartTime') as HTMLSelectElement;
     const endTimeEl = document.getElementById('appointmentEndTime') as HTMLSelectElement;
-    const reasonEl = document.getElementById('appointmentReason') as HTMLTextAreaElement;
+    const reasonEl = document.getElementById('appointmentReason') as HTMLInputElement | null;
+    const notesEl = document.getElementById('appointmentNotes') as HTMLTextAreaElement | null;
 
-    if (!doctorEl || !dateEl || !startTimeEl || !endTimeEl || !reasonEl) {
+    if (!doctorEl || !dateEl || !startTimeEl || !endTimeEl) {
       await showAlertDialog({
         title: t('appointment.validationError', 'Validation Error'),
         body: t('appointment.errorFormMissing', 'Some form fields are missing. Please refresh the page.'),
@@ -162,12 +163,43 @@ export function setupSaveAppointment(
     const date = dateEl.value;
     const startTime = startTimeEl.value;
     const endTime = endTimeEl.value;
-    const reason = reasonEl.value.trim() || 'No reason specified'; // Optional field
+    const reason = reasonEl?.value.trim() || '';
+    const notes = notesEl?.value.trim() || '';
+
+    // Check application settings for requirements
+    const settingsStr = localStorage.getItem('dentisyn-calendar-settings');
+    let isReasonRequired = false;
+    let isNotesRequired = false;
+    if (settingsStr) {
+      try {
+        const settings = JSON.parse(settingsStr);
+        isReasonRequired = settings.isReasonRequired ?? false;
+        isNotesRequired = settings.isNotesRequired ?? false;
+      } catch (e) {}
+    }
 
     if (!doctor || !date || !startTime || !endTime) {
       await showAlertDialog({
         title: t('appointment.validationError', 'Validation Error'),
         body: t('appointment.errorRequiredFields', 'Please fill in all required fields (Doctor, Date, Times).'),
+        variant: 'warning',
+      });
+      return;
+    }
+
+    if (isReasonRequired && !reason) {
+      await showAlertDialog({
+        title: t('appointment.validationError', 'Validation Error'),
+        body: t('appointment.errorReasonRequired', 'Reason is required for this appointment.'),
+        variant: 'warning',
+      });
+      return;
+    }
+
+    if (isNotesRequired && !notes) {
+      await showAlertDialog({
+        title: t('appointment.validationError', 'Validation Error'),
+        body: t('appointment.errorNotesRequired', 'Notes are required for this appointment.'),
         variant: 'warning',
       });
       return;
@@ -218,6 +250,8 @@ export function setupSaveAppointment(
     const startDateTime = `${date}T${startTime}:00`;
     const endDateTime = `${date}T${endTime}:00`;
 
+    const finalReason = reason || 'No reason specified';
+
     const appointment = appointmentRepository.create({
       patientId: patient.id,
       patientName: patient.name,
@@ -225,7 +259,8 @@ export function setupSaveAppointment(
       doctor,
       startTime: startDateTime,
       endTime: endDateTime,
-      reason,
+      reason: finalReason,
+      notes: notes || undefined,
       status: 'Pending',
     });
 

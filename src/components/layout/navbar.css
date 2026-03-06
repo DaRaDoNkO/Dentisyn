@@ -1,0 +1,111 @@
+/* =========================================
+   COMPONENT: NAVIGATION
+   ========================================= */
+
+.navbar {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+  position: relative;
+  z-index: 1050;
+}
+
+[data-bs-theme="dark"] .navbar {
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.navbar-brand {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  /* Force gradient text */
+  font-size: 1.5rem;
+}
+
+.nav-link {
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.5rem;
+  transition: all var(--transition-fast);
+}
+
+.nav-link:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+[data-bs-theme="dark"] .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+  background-color: rgba(56, 189, 248, 0.1);
+  color: hsl(var(--primary-hue), var(--primary-sat), 40%) !important;
+  font-weight: 600;
+}
+
+[data-bs-theme="dark"] .nav-link.active {
+  background-color: rgba(56, 189, 248, 0.2);
+  color: hsl(var(--primary-hue), var(--primary-sat), 70%) !important;
+}
+
+/* Nested Dropdowns */
+.dropdown-menu {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border-radius: 1rem;
+  padding: 0.5rem;
+  /* Removed overflow: hidden to allow nested menus to pop out */
+}
+
+/* Nested Dropdowns - Accordion Style */
+.dropdown-menu .dropdown-menu {
+  position: static;
+  /* Flow naturally within the parent */
+  float: none;
+  width: auto;
+  margin-top: 0;
+  background-color: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-left: 1.5rem;
+  /* Indent the nested items */
+  padding-top: 0;
+  padding-bottom: 0;
+  display: none;
+}
+
+.dropdown-menu .dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-item {
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  position: relative;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="dark"] .dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* Mobile specific fixes */
+@media (max-width: 991px) {
+  .dropdown-menu-mobile-right {
+    left: auto !important;
+    right: auto !important;
+  }
+}

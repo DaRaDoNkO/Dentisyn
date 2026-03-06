@@ -152,6 +152,52 @@ export const renderCalendarSettings = (): string => {
         </div>
 
         <!-- Action Buttons -->
+
+        <!-- Appointment Options Card -->
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-header calendar-settings-card-header">
+            <h5 class="mb-0" data-i18n="settings.appointmentOptions">${t('settings.appointmentOptions', 'Appointment Options')}</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-4">
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="isReasonVisible" ${settings.isReasonVisible ? 'checked' : ''}>
+                <label class="form-check-label" for="isReasonVisible" data-i18n="settings.isReasonVisible">${t('settings.isReasonVisible', 'Reason field visible')}</label>
+              </div>
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="isReasonRequired" ${settings.isReasonRequired ? 'checked' : ''}>
+                <label class="form-check-label" for="isReasonRequired" data-i18n="settings.isReasonRequired">${t('settings.isReasonRequired', 'Reason is required')}</label>
+              </div>
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" role="switch" id="isNotesRequired" ${settings.isNotesRequired ? 'checked' : ''}>
+                <label class="form-check-label" for="isNotesRequired" data-i18n="settings.isNotesRequired">${t('settings.isNotesRequired', 'Notes are required')}</label>
+              </div>
+            </div>
+
+            <h6 class="mb-2" data-i18n="settings.appointmentReasons">${t('settings.appointmentReasons', 'Default Appointment Reasons')}</h6>
+            <p class="text-muted mb-3" data-i18n="settings.appointmentReasonsDesc" style="font-size: 0.85rem;">
+              ${t('settings.appointmentReasonsDesc', 'List of predefined reasons available in the appointment modal. Users can still type custom reasons.')}
+            </p>
+            <div id="appointmentReasonsChips" class="d-flex flex-wrap gap-2 mb-3">
+              ${settings.appointmentReasons.map((reason, i) => `
+                <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1 px-3 py-2 appointment-reason-chip"
+                  style="font-size:0.85rem;cursor:pointer;" data-index="${i}">
+                  ${reason}
+                  <i class="bi bi-x-circle ms-1 text-danger"></i>
+                </span>
+              `).join('')}
+            </div>
+            <div class="input-group" style="max-width: 400px;">
+              <input type="text" class="form-control" id="newAppointmentReasonInput"
+                placeholder="${t('settings.appointmentReasonPlaceholder', 'e.g. Consultation')}">
+              <button type="button" class="btn btn-outline-primary" id="addAppointmentReasonBtn">
+                <i class="bi bi-plus-lg me-1"></i>${t('settings.addAppointmentReason', 'Add Reason')}
+              </button>
+            </div>
+            <input type="hidden" id="appointmentReasonsData" value='${JSON.stringify(settings.appointmentReasons)}'>
+          </div>
+        </div>
+
         <!-- Rejection Reasons Card -->
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-header calendar-settings-card-header">

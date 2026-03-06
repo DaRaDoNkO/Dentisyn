@@ -1,0 +1,32 @@
+/* =========================================
+   COMPONENT: CALENDAR & SETTINGS
+   ========================================= */
+
+.calendar-settings-page {
+  /* Using standard colors now */
+}
+
+.calendar-settings-card-header {
+  background: linear-gradient(to right, rgba(238, 242, 255, 0.5), rgba(248, 250, 252, 0.5));
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.5rem;
+}
+
+[data-bs-theme="dark"] .calendar-settings-card-header {
+  background: linear-gradient(to right, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.5));
+}
+
+.calendar-settings-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(241, 245, 249, 0.8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+[data-bs-theme="dark"] .calendar-settings-icon {
+  background: rgba(255, 255, 255, 0.05);
+}

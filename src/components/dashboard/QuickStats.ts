@@ -1,3 +1,4 @@
+import '../../components/dashboard/dashboard.css';
 import { appointmentRepository } from '../../repositories/appointmentRepository';
 
 export function QuickStats(): string {

@@ -1,0 +1,48 @@
+/* =========================================
+   PATIENT QUEUE — Status & Action Styles
+   ========================================= */
+
+/* Purple badge for "In Treatment" status */
+.bg-purple-subtle { background-color: rgba(139, 92, 246, 0.15) !important; }
+.text-purple-emphasis { color: #7c3aed !important; }
+
+[data-bs-theme="dark"] .bg-purple-subtle { background-color: rgba(139, 92, 246, 0.25) !important; }
+[data-bs-theme="dark"] .text-purple-emphasis { color: #a78bfa !important; }
+
+/* Doctor filter pills */
+.doctor-filter-pill {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.75rem;
+    transition: all 0.2s;
+}
+.doctor-filter-pill.active {
+    color: #fff !important;
+    font-weight: 600;
+}
+
+/* Queue action buttons — compact */
+.queue-action-btn {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    white-space: nowrap;
+}
+
+/* Inline doctor name in queue rows */
+.doctor-name-inline {
+    cursor: pointer;
+    font-size: 0.78rem;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+.doctor-name-inline:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Patient name link style */
+.patient-name-link {
+    font-weight: 500;
+}
+.patient-name-link:hover {
+    color: var(--bs-primary) !important;
+}

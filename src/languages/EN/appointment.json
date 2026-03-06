@@ -54,5 +54,14 @@
   "errorDoctorHours": "Working hours: {{hours}}",
   "errorSelectedTime": "Selected time: {{time}}",
   "errorChooseDifferent": "Please select a different time or doctor.",
-  "validationError": "Validation Error"
+  "validationError": "Validation Error",
+  "errorReasonRequired": "Reason is required for this appointment.",
+  "errorNotesRequired": "Notes are required for this appointment.",
+  "reasonRoutineCheckup": "Routine checkup",
+  "reasonCleaning": "Cleaning",
+  "reasonRootCanal": "Root canal treatment",
+  "reasonExtraction": "Tooth extraction",
+  "reasonConsultation": "Consultation",
+  "notes": "Notes",
+  "notesPlaceholder": "Additional notes for the appointment..."
 }

@@ -45,6 +45,18 @@ export function getDateFormat(): DateFormatPattern {
   return 'dd.MM.yyyy';
 }
 
+/** Read the persisted time-format pattern. */
+export function getTimeFormat(): '24h' | '12h' {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.timeFormat) return parsed.timeFormat as '24h' | '12h';
+    }
+  } catch { /* use default */ }
+  return '24h';
+}
+
 /** Return the date-fns locale matching the current i18n language. */
 function getLocale(): typeof bg | typeof enUS {
   try {
@@ -80,7 +92,8 @@ export function formatDate(value: Date | string): string {
 export function formatDateTime(value: Date | string): string {
   const d = toDate(value);
   if (isNaN(d.getTime())) return '';
-  return dfFormat(d, `${getDateFormat()} HH:mm`, { locale: getLocale() });
+  const timeStr = getTimeFormat() === '12h' ? 'hh:mm a' : 'HH:mm';
+  return dfFormat(d, `${getDateFormat()} ${timeStr}`, { locale: getLocale() });
 }
 
 /**
@@ -91,7 +104,8 @@ export function formatDateTime(value: Date | string): string {
 export function formatTime(value: Date | string): string {
   const d = toDate(value);
   if (isNaN(d.getTime())) return '';
-  return dfFormat(d, 'HH:mm', { locale: getLocale() });
+  const timeStr = getTimeFormat() === '12h' ? 'hh:mm a' : 'HH:mm';
+  return dfFormat(d, timeStr, { locale: getLocale() });
 }
 
 /**

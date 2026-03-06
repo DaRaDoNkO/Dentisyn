@@ -3,7 +3,9 @@ import { loadCalendarSettings } from '../../user/Settings/CalendarSettings/index
 import { getCalendarInstance } from './types';
 import { CALENDAR_CONFIG } from './config/constants';
 import bgLocale from '@fullcalendar/core/locales/bg';
+import enGbLocale from '@fullcalendar/core/locales/en-gb';
 import i18next from '../../../i18n';
+import { getDateFormat } from '../../../utils/dateUtils';
 
 /**
  * Refresh calendar events from repository
@@ -29,14 +31,16 @@ export const refreshCalendar = () => {
       title: `${appt.reason} - ${appt.patientName}`,
       start: appt.startTime,
       end: appt.endTime,
-      backgroundColor: doctorColor,
-      borderColor: doctorColor,
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
       extendedProps: {
+        doctorColor,
         doctor: appt.doctor,
         patientName: appt.patientName,
         patientId: appt.patientId,
         phone: appt.phone,
         reason: appt.reason,
+        notes: appt.notes,
         status: appt.status,
       }
     };
@@ -64,8 +68,15 @@ export const refreshCalendarLocale = () => {
   }
 
   const currentLanguage = i18next.language;
-  const calendarLocale = currentLanguage === 'bg' ? bgLocale : undefined;
-  
+  const isUSFormat = getDateFormat() === 'MM/dd/yyyy';
+
+  let calendarLocale;
+  if (currentLanguage === 'bg') {
+    calendarLocale = bgLocale;
+  } else {
+    calendarLocale = isUSFormat ? undefined : enGbLocale;
+  }
+
   // Update locale dynamically
   calendarInstance.setOption('locale', calendarLocale);
   

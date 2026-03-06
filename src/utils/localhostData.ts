@@ -120,5 +120,31 @@ export function initializeTestData(): void {
     }));
     localStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(testAppointments));
     console.info('[INIT] Loaded test appointments from localhost folder (dates adjusted to today)');
+  } else {
+    // If appointments exist, check if there are pending test appointments from past dates and move them to today
+    // This solves the issue of test data "disappearing" on subsequent days
+    const today = new Date().toISOString().split('T')[0];
+    let appts = JSON.parse(existingAppointments) as AppointmentData[];
+    let changed = false;
+    
+    appts = appts.map(a => {
+      // Only process the test appointments (they have appt-00X format or similar, or just any pending in past)
+      if (a.status === 'Pending' && !a.startTime.startsWith(today) && a.startTime < today) {
+        changed = true;
+        const timeStartMatch = a.startTime.match(/T\d{2}:\d{2}:\d{2}/) || ['T10:00:00'];
+        const timeEndMatch = a.endTime.match(/T\d{2}:\d{2}:\d{2}/) || ['T10:30:00'];
+        return {
+          ...a,
+          startTime: `${today}${timeStartMatch[0]}`,
+          endTime: `${today}${timeEndMatch[0]}`
+        };
+      }
+      return a;
+    });
+
+    if (changed) {
+      localStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(appts));
+      console.info('[INIT] Re-adjusted past pending appointments forward to today for testing convenience');
+    }
   }
 }

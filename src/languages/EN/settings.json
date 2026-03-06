@@ -35,5 +35,17 @@
   "confirmSaveTitle": "Confirm Save",
   "confirmSaveMessage": "Are you sure you want to save these changes?",
   "resetConfirmTitle": "Reset to Defaults",
-  "resetConfirmMessage": "Are you sure you want to reset all settings to default values? This action cannot be undone."
+  "resetConfirmMessage": "Are you sure you want to reset all settings to default values? This action cannot be undone.",
+  "appointmentOptions": "Appointment Options",
+  "isReasonVisible": "Reason field visible",
+  "isReasonRequired": "Reason is required",
+  "isNotesRequired": "Notes are required",
+  "appointmentReasons": "Default Appointment Reasons",
+  "appointmentReasonsDesc": "List of predefined reasons available in the appointment modal. Users can still type custom reasons.",
+  "addAppointmentReason": "Add Reason",
+  "appointmentReasonPlaceholder": "e.g. Consultation",
+  "changeAppointmentReasons": "Appointment Reasons updated",
+  "changeReasonRequired": "Reason Required: {{old}} → {{new}}",
+  "changeReasonVisible": "Reason Visible: {{old}} → {{new}}",
+  "changeNotesRequired": "Notes Required: {{old}} → {{new}}"
 }
