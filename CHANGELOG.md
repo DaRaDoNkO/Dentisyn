@@ -1,3 +1,11 @@
+# [1.10.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.9.0...v1.10.0) (2026-03-06)
+
+
+### Features
+
+* Enhance appointment editing with time selection and reason/notes fields ([ae66848](https://github.com/DaRaDoNkO/Dentisyn/commit/ae668486d89a6739620417a2a7fc2b9bfa34cee2))
+* Enhance appointment settings and UI components ([c845031](https://github.com/DaRaDoNkO/Dentisyn/commit/c845031d5f567e2ba96eb2d34ce199469623df93))
+
 # [1.9.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.8.0...v1.9.0) (2026-03-05)
 
 
