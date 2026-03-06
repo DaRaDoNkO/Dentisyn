@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.10.0...v1.11.0) (2026-03-06)
+
+
+### Features
+
+* Update calendar settings to use dropdowns for start and end time selection ([9705afb](https://github.com/DaRaDoNkO/Dentisyn/commit/9705afbb38d67318ed3bc20d9e80b3baa5739d12))
+
 # [1.10.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.9.0...v1.10.0) (2026-03-06)
 
 
