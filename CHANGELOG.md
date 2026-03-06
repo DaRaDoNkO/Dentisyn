@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.8.0...v1.9.0) (2026-03-05)
+
+
+### Features
+
+* Enhance patient management with interactive tooltips, appointment history, and redesigned unconfirmed panel ([53c7bbb](https://github.com/DaRaDoNkO/Dentisyn/commit/53c7bbb8a49071ce1f5cb792d360441e56964337))
+
 # [1.8.0](https://github.com/DaRaDoNkO/Dentisyn/compare/v1.7.0...v1.8.0) (2026-03-05)
 
 
