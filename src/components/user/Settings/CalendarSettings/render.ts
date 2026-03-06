@@ -1,3 +1,4 @@
+import { generateTimeOptions } from '../../../appointment/timeUtils';
 import { loadCalendarSettings } from './storage';
 import { DATE_FORMAT_OPTIONS } from '../../../../utils/dateUtils';
 import i18next from '../../../../i18n';
@@ -9,6 +10,15 @@ const t = (key: string, fb: string) => i18next.t(key, fb);
  */
 export const renderCalendarSettings = (): string => {
   const settings = loadCalendarSettings();
+  const is24h = settings.timeFormat === '24h';
+  const timeOptionsHtml = generateTimeOptions(0, 23, 15, is24h);
+
+  const selectOpts = (selected: string) =>
+    timeOptionsHtml.split('\n').map(opt => {
+      const match = opt.match(/value="([^"]+)"/);
+      const value = match ? match[1] : '';
+      return opt.replace('<option', `<option${value === selected ? ' selected' : ''}`);
+    }).join('\n');
 
   return `
     <div class="container-xxl calendar-settings-page py-4">
@@ -117,25 +127,25 @@ export const renderCalendarSettings = (): string => {
                     </div>
                     <div class="col-12 col-md-6 col-lg-4">
                       <label for="startTime-${schedule.doctorId}" class="form-label">Start Time</label>
-                      <input
-                        type="time"
-                        class="form-control"
+                      <select
+                        class="form-select"
                         id="startTime-${schedule.doctorId}"
                         name="startTime-${schedule.doctorId}"
-                        value="${schedule.startTime}"
                         required
                       >
+                        ${selectOpts(schedule.startTime)}
+                      </select>
                     </div>
                     <div class="col-12 col-md-6 col-lg-4">
                       <label for="endTime-${schedule.doctorId}" class="form-label">End Time</label>
-                      <input
-                        type="time"
-                        class="form-control"
+                      <select
+                        class="form-select"
                         id="endTime-${schedule.doctorId}"
                         name="endTime-${schedule.doctorId}"
-                        value="${schedule.endTime}"
                         required
                       >
+                        ${selectOpts(schedule.endTime)}
+                      </select>
                     </div>
                     <div class="col-12 col-lg-1 text-lg-center">
                       <span class="calendar-settings-icon">

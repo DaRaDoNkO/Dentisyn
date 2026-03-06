@@ -39,8 +39,8 @@ export const readFormValues = (): CalendarSettings | null => {
     : originalSnapshot.hiddenDays;
 
   const doctorSchedules: DoctorSchedule[] = originalSnapshot.doctorSchedules.map(s => {
-    const st = (document.getElementById(`startTime-${s.doctorId}`) as HTMLInputElement)?.value ?? s.startTime;
-    const et = (document.getElementById(`endTime-${s.doctorId}`) as HTMLInputElement)?.value ?? s.endTime;
+    const st = (document.getElementById(`startTime-${s.doctorId}`) as HTMLSelectElement)?.value ?? s.startTime;
+    const et = (document.getElementById(`endTime-${s.doctorId}`) as HTMLSelectElement)?.value ?? s.endTime;
     return { ...s, startTime: st, endTime: et };
   });
 
